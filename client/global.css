@@ -54,6 +54,13 @@
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* War Room Dashboard Colors */
+    --war-room-background: 220 22% 14%;  /* #1a1f2e */
+    --war-room-header: 220 20% 19%;      /* #252d3d */
+    --war-room-card: 220 18% 22%;        /* #2a3342 */
+    --war-room-text: 210 20% 88%;        /* #e2e8f0 */
+    --war-room-border: 0 0% 100%;        /* rgba(255,255,255,0.08) */
   }
 
   .dark {
@@ -92,6 +99,13 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* War Room Dashboard Colors - same for dark mode */
+    --war-room-background: 220 22% 14%;  /* #1a1f2e */
+    --war-room-header: 220 20% 19%;      /* #252d3d */
+    --war-room-card: 220 18% 22%;        /* #2a3342 */
+    --war-room-text: 210 20% 88%;        /* #e2e8f0 */
+    --war-room-border: 0 0% 100%;        /* rgba(255,255,255,0.08) */
   }
 }
 
