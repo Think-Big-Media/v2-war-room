@@ -1,118 +1,549 @@
+import { useEffect } from 'react';
+
 export default function Index() {
-  return (
-    <div className="min-h-screen bg-war-room-background text-war-room-text">
-      {/* Header - 40px height */}
-      <header className="h-10 bg-war-room-header border-b border-war-room-border/8">
-        <div className="h-full px-6 flex items-center">
-          <h1 className="text-lg font-bold">WAR ROOM DASHBOARD V2</h1>
-        </div>
-      </header>
-      
-      {/* Main Content - Two equal columns */}
-      <main className="h-[calc(100vh-40px)] p-[15px] flex gap-[15px]">
-        {/* Left Column */}
-        <div className="flex-1 flex flex-col gap-[15px]">
-          {/* Political Map Card - 300px height */}
-          <div className="h-[300px] bg-war-room-card border border-war-room-border/8 rounded-lg p-6">
-            <h2 className="text-lg font-semibold mb-4">Political Map</h2>
-            <div className="h-full flex items-center justify-center text-war-room-text/60">
-              <div className="text-center">
-                <div className="w-48 h-32 mx-auto mb-4 bg-war-room-border/5 rounded-lg flex items-center justify-center">
-                  <span className="text-sm">Interactive Map Component</span>
-                </div>
-                <p className="text-sm">Electoral map visualization</p>
-              </div>
-            </div>
-          </div>
-          
-          {/* SWOT Radar Card - Remaining height */}
-          <div className="flex-1 bg-war-room-card border border-war-room-border/8 rounded-lg p-6">
-            <h2 className="text-lg font-semibold mb-4">SWOT Analysis Radar</h2>
-            <div className="h-full flex items-center justify-center text-war-room-text/60">
-              <div className="text-center">
-                <div className="w-48 h-48 mx-auto mb-4 bg-war-room-border/5 rounded-full flex items-center justify-center">
-                  <span className="text-sm">Radar Chart</span>
-                </div>
-                <p className="text-sm">Strengths, Weaknesses, Opportunities, Threats</p>
-              </div>
-            </div>
-          </div>
-        </div>
+  useEffect(() => {
+    // Interactive SWOT radar to Live Intelligence connection
+    const blobContainers = document.querySelectorAll('.radar-blob-container');
+    const feedWrapper = document.getElementById('feedWrapper');
+    let animationTimeout: NodeJS.Timeout | null = null;
+    
+    blobContainers.forEach(blob => {
+      blob.addEventListener('click', function() {
+        const feedId = this.getAttribute('data-feed-id');
+        if (!feedId) return;
         
-        {/* Right Column */}
-        <div className="flex-1 flex flex-col gap-[15px]">
-          {/* Phrase Cloud Card - 250px height */}
-          <div className="h-[250px] bg-war-room-card border border-war-room-border/8 rounded-lg p-6">
-            <h2 className="text-lg font-semibold mb-4">Trending Phrases</h2>
-            <div className="h-full flex items-center justify-center text-war-room-text/60">
-              <div className="text-center">
-                <div className="grid grid-cols-3 gap-2 mb-4">
-                  {["Healthcare", "Economy", "Security", "Jobs", "Climate", "Immigration"].map((phrase, i) => (
-                    <div key={i} className="px-3 py-1 bg-war-room-border/5 rounded text-xs">
-                      {phrase}
-                    </div>
-                  ))}
+        // Clear any existing timeout
+        if (animationTimeout) {
+          clearTimeout(animationTimeout);
+        }
+        
+        // Find matching feed item
+        const feedItems = feedWrapper?.querySelectorAll('.feed-item');
+        let targetItem: Element | null = null;
+        
+        feedItems?.forEach(item => {
+          item.classList.remove('highlighted');
+          if (item.getAttribute('data-id') === feedId && !targetItem) {
+            targetItem = item;
+          }
+        });
+        
+        if (targetItem && feedWrapper) {
+          // Stop animation
+          feedWrapper.classList.add('paused');
+          (feedWrapper as HTMLElement).style.animationPlayState = 'paused';
+          
+          // Scroll to put item at top
+          (feedWrapper as HTMLElement).style.transition = 'transform 0.5s ease';
+          (feedWrapper as HTMLElement).style.transform = `translateY(-${(targetItem as HTMLElement).offsetTop}px)`;
+          
+          // Highlight after scroll
+          setTimeout(() => {
+            targetItem?.classList.add('highlighted');
+          }, 200);
+        }
+      });
+      
+      blob.addEventListener('mouseleave', function() {
+        animationTimeout = setTimeout(() => {
+          const highlightedItem = feedWrapper?.querySelector('.feed-item.highlighted');
+          if (highlightedItem) {
+            highlightedItem.classList.remove('highlighted');
+          }
+          
+          if (feedWrapper) {
+            feedWrapper.classList.remove('paused');
+            (feedWrapper as HTMLElement).style.animationPlayState = '';
+            (feedWrapper as HTMLElement).style.transition = '';
+            (feedWrapper as HTMLElement).style.transform = '';
+          }
+        }, 500);
+      });
+    });
+
+    return () => {
+      if (animationTimeout) {
+        clearTimeout(animationTimeout);
+      }
+    };
+  }, []);
+
+  return (
+    <div style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif' }}>
+      {/* Header */}
+      <div className="header">
+        <div className="logo">WAR ROOM</div>
+        <div className="nav-tabs">
+          <div className="nav-tab active">DASHBOARD</div>
+          <div className="nav-tab">LIVE MONITORING</div>
+          <div className="nav-tab">WAR ROOM</div>
+          <div className="nav-tab">INTELLIGENCE</div>
+          <div className="nav-tab">ALERT CENTER</div>
+          <div className="nav-tab">SETTINGS</div>
+        </div>
+        <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+          <span style={{ fontSize: '12px' }}>🔔 3</span>
+          <span style={{ fontSize: '12px' }}>👤</span>
+        </div>
+      </div>
+
+      {/* Main Dashboard Wrapper */}
+      <div className="dashboard-wrapper">
+        <div className="dashboard">
+          {/* Left Column */}
+          <div className="left-column">
+            {/* Political Map - NO TITLE */}
+            <div className="card political-map">
+              <div className="map-container">
+                <div className="map-visual">
+                  {/* Inline SVG Electoral Map */}
+                  <svg className="electoral-map-svg" viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg">
+                    {/* US States simplified */}
+                    <rect x="50" y="50" width="60" height="40" fill="#3b82f6" opacity="0.7"/>
+                    <rect x="115" y="45" width="55" height="45" fill="#ef4444" opacity="0.7"/>
+                    <rect x="175" y="50" width="50" height="40" fill="#3b82f6" opacity="0.7"/>
+                    <rect x="230" y="55" width="45" height="35" fill="#9333ea" opacity="0.7"/>
+                    <rect x="280" y="50" width="55" height="40" fill="#ef4444" opacity="0.7"/>
+                    <rect x="340" y="45" width="60" height="45" fill="#3b82f6" opacity="0.7"/>
+                    <rect x="405" y="50" width="40" height="40" fill="#ef4444" opacity="0.7"/>
+                    
+                    <rect x="60" y="95" width="50" height="35" fill="#3b82f6" opacity="0.7"/>
+                    <rect x="115" y="95" width="55" height="35" fill="#9333ea" opacity="0.7"/>
+                    <rect x="175" y="95" width="50" height="35" fill="#ef4444" opacity="0.7"/>
+                    <rect x="230" y="95" width="45" height="35" fill="#3b82f6" opacity="0.7"/>
+                    <rect x="280" y="95" width="55" height="35" fill="#9333ea" opacity="0.7"/>
+                    <rect x="340" y="95" width="60" height="35" fill="#ef4444" opacity="0.7"/>
+                    <rect x="405" y="95" width="40" height="35" fill="#3b82f6" opacity="0.7"/>
+                    
+                    <rect x="70" y="135" width="45" height="30" fill="#ef4444" opacity="0.7"/>
+                    <rect x="120" y="135" width="50" height="30" fill="#3b82f6" opacity="0.7"/>
+                    <rect x="175" y="135" width="50" height="30" fill="#9333ea" opacity="0.7"/>
+                    <rect x="230" y="135" width="45" height="30" fill="#ef4444" opacity="0.7"/>
+                    <rect x="280" y="135" width="55" height="30" fill="#3b82f6" opacity="0.7"/>
+                    <rect x="340" y="135" width="60" height="30" fill="#9333ea" opacity="0.7"/>
+                    
+                    <rect x="80" y="170" width="40" height="25" fill="#3b82f6" opacity="0.7"/>
+                    <rect x="125" y="170" width="45" height="25" fill="#ef4444" opacity="0.7"/>
+                    <rect x="175" y="170" width="50" height="25" fill="#3b82f6" opacity="0.7"/>
+                    <rect x="230" y="170" width="45" height="25" fill="#9333ea" opacity="0.7"/>
+                    <rect x="280" y="170" width="55" height="25" fill="#ef4444" opacity="0.7"/>
+                    
+                    {/* Florida */}
+                    <polygon points="380,180 420,180 410,220 370,220" fill="#ef4444" opacity="0.7"/>
+                    
+                    {/* Texas */}
+                    <polygon points="200,200 280,200 280,250 200,250" fill="#ef4444" opacity="0.7"/>
+                    
+                    {/* California */}
+                    <polygon points="40,100 80,100 80,200 40,200" fill="#3b82f6" opacity="0.7"/>
+                    
+                    {/* Alaska */}
+                    <rect x="50" y="230" width="30" height="20" fill="#ef4444" opacity="0.7"/>
+                    
+                    {/* Hawaii */}
+                    <circle cx="100" cy="240" r="8" fill="#3b82f6" opacity="0.7"/>
+                    
+                    {/* State boundaries */}
+                    <g stroke="#475569" strokeWidth="0.5" fill="none" opacity="0.3">
+                      <line x1="110" y1="50" x2="110" y2="90"/>
+                      <line x1="170" y1="50" x2="170" y2="90"/>
+                      <line x1="225" y1="50" x2="225" y2="90"/>
+                      <line x1="275" y1="50" x2="275" y2="90"/>
+                      <line x1="335" y1="50" x2="335" y2="90"/>
+                      <line x1="400" y1="50" x2="400" y2="90"/>
+                      
+                      <line x1="50" y1="90" x2="445" y2="90"/>
+                      <line x1="60" y1="130" x2="400" y2="130"/>
+                      <line x1="70" y1="165" x2="335" y2="165"/>
+                      <line x1="80" y1="195" x2="280" y2="195"/>
+                    </g>
+                    
+                    {/* Legend */}
+                    <text x="20" y="20" fontSize="10" fill="#94a3b8">Democratic</text>
+                    <rect x="80" y="12" width="15" height="10" fill="#3b82f6" opacity="0.7"/>
+                    
+                    <text x="110" y="20" fontSize="10" fill="#94a3b8">Republican</text>
+                    <rect x="170" y="12" width="15" height="10" fill="#ef4444" opacity="0.7"/>
+                    
+                    <text x="200" y="20" fontSize="10" fill="#94a3b8">Swing State</text>
+                    <rect x="260" y="12" width="15" height="10" fill="#9333ea" opacity="0.7"/>
+                  </svg>
                 </div>
-                <p className="text-sm">Word cloud visualization</p>
+                <div className="map-data">
+                  <div style={{ fontSize: '9px', color: '#64748b', marginBottom: '5px' }}>SWING STATES</div>
+                  <div className="map-data-item">• Pennsylvania: +2.3% D</div>
+                  <div className="map-data-item">• Michigan: -1.2% R</div>
+                  <div className="map-data-item">• Wisconsin: TOSS UP</div>
+                  <div className="map-data-item">• Arizona: +0.8% R</div>
+                  <div className="map-data-item">• Georgia: +1.5% D</div>
+                  <div className="map-data-item">• Nevada: TOSS UP</div>
+                  <div className="map-data-item">• Florida: +3.2% R</div>
+                </div>
               </div>
             </div>
-          </div>
-          
-          {/* Metrics Grid - 130px height */}
-          <div className="h-[130px] bg-war-room-card border border-war-room-border/8 rounded-lg p-4">
-            <h3 className="text-sm font-semibold mb-3 text-war-room-text/80">Key Metrics</h3>
-            <div className="grid grid-cols-4 gap-3 h-full">
-              {[
-                { label: "Approval", value: "68%", color: "text-green-400" },
-                { label: "Swing States", value: "7", color: "text-blue-400" },
-                { label: "Fundraising", value: "$2.4M", color: "text-purple-400" },
-                { label: "Volunteers", value: "15.2K", color: "text-orange-400" }
-              ].map((metric, i) => (
-                <div key={i} className="bg-war-room-border/5 rounded p-2 text-center">
-                  <div className={`text-lg font-bold ${metric.color}`}>{metric.value}</div>
-                  <div className="text-xs text-war-room-text/60">{metric.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* Quick Actions Card - 215px height */}
-          <div className="h-[215px] bg-war-room-card border border-war-room-border/8 rounded-lg p-6">
-            <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                "Launch Campaign", "Schedule Event", "Send Alert", "Update Status",
-                "Generate Report", "Contact Volunteers"
-              ].map((action, i) => (
-                <button key={i} className="p-3 bg-war-room-border/5 hover:bg-war-room-border/10 rounded transition-colors text-sm">
-                  {action}
-                </button>
-              ))}
-            </div>
-          </div>
-          
-          {/* Performance Metrics Card - 215px height */}
-          <div className="h-[215px] bg-war-room-card border border-war-room-border/8 rounded-lg p-6">
-            <h2 className="text-lg font-semibold mb-4">Performance Metrics</h2>
-            <div className="space-y-4">
-              {[
-                { label: "Media Mentions", value: "1,247", change: "+12%" },
-                { label: "Social Engagement", value: "89.2K", change: "+8%" },
-                { label: "Poll Average", value: "52.3%", change: "+2.1%" },
-                { label: "Voter Registration", value: "23.1K", change: "+15%" }
-              ].map((metric, i) => (
-                <div key={i} className="flex justify-between items-center">
-                  <span className="text-sm text-war-room-text/80">{metric.label}</span>
-                  <div className="text-right">
-                    <div className="text-sm font-semibold">{metric.value}</div>
-                    <div className="text-xs text-green-400">{metric.change}</div>
+
+            {/* SWOT Radar + Live Intelligence - ALIGNED */}
+            <div className="card swot-intelligence">
+              <div className="swot-radar">
+                <div className="radar-container">
+                  <div className="radar-sweep"></div>
+                  {/* Quadrant Labels */}
+                  <div className="radar-quadrant" style={{ top: '15px', right: '15px' }}>STRENGTHS</div>
+                  <div className="radar-quadrant" style={{ top: '15px', left: '15px' }}>WEAKNESSES</div>
+                  <div className="radar-quadrant" style={{ bottom: '15px', right: '15px' }}>OPPORTUNITIES</div>
+                  <div className="radar-quadrant" style={{ bottom: '15px', left: '15px' }}>THREATS</div>
+                  
+                  {/* Radar Blobs with Labels */}
+                  <div className="radar-blob-container" style={{ width: '24px', height: '24px', top: '25%', right: '30%' }} data-feed-id="brand-recognition">
+                    <div className="radar-blob blob-strength"></div>
+                    <div className="blob-label">Brand Recognition +18%</div>
+                  </div>
+                  <div className="radar-blob-container" style={{ width: '18px', height: '18px', top: '35%', right: '20%' }} data-feed-id="youth-engagement">
+                    <div className="radar-blob blob-strength"></div>
+                    <div className="blob-label">Youth Engagement +23%</div>
+                  </div>
+                  <div className="radar-blob-container" style={{ width: '20px', height: '20px', top: '30%', left: '25%' }} data-feed-id="ad-fatigue">
+                    <div className="radar-blob blob-weakness"></div>
+                    <div className="blob-label">Ad Fatigue Detected</div>
+                  </div>
+                  <div className="radar-blob-container" style={{ width: '26px', height: '26px', bottom: '35%', right: '35%' }} data-feed-id="wisconsin-opens">
+                    <div className="radar-blob blob-opportunity"></div>
+                    <div className="blob-label">Wisconsin Opens +34%</div>
+                  </div>
+                  <div className="radar-blob-container" style={{ width: '19px', height: '19px', bottom: '25%', right: '22%' }} data-feed-id="fl-suburbs">
+                    <div className="radar-blob blob-opportunity"></div>
+                    <div className="blob-label">FL Suburbs +12%</div>
+                  </div>
+                  <div className="radar-blob-container" style={{ width: '22px', height: '22px', bottom: '30%', left: '30%' }} data-feed-id="competitor-launch">
+                    <div className="radar-blob blob-threat"></div>
+                    <div className="blob-label">Competitor $250K Launch</div>
+                  </div>
+                  <div className="radar-blob-container" style={{ width: '16px', height: '16px', bottom: '40%', left: '20%' }} data-feed-id="viral-negative">
+                    <div className="radar-blob blob-threat"></div>
+                    <div className="blob-label">Viral Negative 12K RT</div>
                   </div>
                 </div>
-              ))}
+                <div className="radar-stats">
+                  Active Threats: 2 • Opportunities: 4 • Risk Level: Medium<br/>
+                  Radar Sweep: 12s • Detection Rate: 97%
+                </div>
+              </div>
+
+              <div className="live-intelligence">
+                <div className="card-title">LIVE INTELLIGENCE</div>
+                <div className="feed-container" id="feedContainer">
+                  <div className="feed-items-wrapper" id="feedWrapper">
+                    <div className="feed-item info" data-id="wisconsin-opens">
+                      <span><strong>UPDATE:</strong> Wisconsin voter registration up 34%.</span>
+                    </div>
+                    <div className="feed-item warning">
+                      <span><strong>WARNING:</strong> Major news outlet published critical article.</span>
+                    </div>
+                    <div className="feed-item info" data-id="fl-suburbs">
+                      <span><strong>INFO:</strong> Positive sentiment in Florida suburbs +12%.</span>
+                    </div>
+                    <div className="feed-item critical" data-id="viral-negative">
+                      <span><strong>CRITICAL:</strong> Viral negative mention detected. 12K retweets in PA.</span>
+                    </div>
+                    <div className="feed-item warning" data-id="competitor-launch">
+                      <span><strong>WARNING:</strong> Competitor launched $250K ad campaign.</span>
+                    </div>
+                    <div className="feed-item info" data-id="youth-engagement">
+                      <span><strong>INFO:</strong> Youth voter engagement up 23% in Michigan.</span>
+                    </div>
+                    <div className="feed-item info">
+                      <span><strong>UPDATE:</strong> Meta ads performing 52% above benchmark.</span>
+                    </div>
+                    <div className="feed-item warning" data-id="ad-fatigue">
+                      <span><strong>ALERT:</strong> Ad fatigue detected in target demographics.</span>
+                    </div>
+                    <div className="feed-item info" data-id="brand-recognition">
+                      <span><strong>INFO:</strong> Brand recognition increased 18% this week.</span>
+                    </div>
+                    <div className="feed-item critical">
+                      <span><strong>CRITICAL:</strong> Opposition video trending #1 on Twitter.</span>
+                    </div>
+                    {/* Duplicate for seamless scrolling */}
+                    <div className="feed-item info" data-id="wisconsin-opens">
+                      <span><strong>UPDATE:</strong> Wisconsin voter registration up 34%.</span>
+                    </div>
+                    <div className="feed-item warning">
+                      <span><strong>WARNING:</strong> Major news outlet published critical article.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="right-column">
+            {/* Phrase Cloud */}
+            <div className="card phrase-cloud">
+              <div className="phrase-container">
+                <div className="keywords-section">
+                  <div className="keyword-group">
+                    <div style={{ color: '#94a3b8', fontWeight: 600, marginBottom: '6px', fontSize: '10px' }}>KEYWORDS</div>
+                    <div className="keyword-list">
+                      • Economy<br/>
+                      • Healthcare<br/>
+                      • Donald Trump
+                    </div>
+                  </div>
+                  <div className="keyword-group">
+                    <div style={{ color: '#94a3b8', fontWeight: 600, marginBottom: '6px', fontSize: '10px' }}>RELATED</div>
+                    <div className="keyword-list">
+                      • Inflation<br/>
+                      • Medicare<br/>
+                      • GOP Primary<br/>
+                      • Tax Policy<br/>
+                      • Border Security
+                    </div>
+                  </div>
+                </div>
+                <div className="phrase-3d">
+                  <div className="phrase-carousel">
+                    <div className="phrase-item">Trump leads GOP primary polling by 42 points nationwide</div>
+                    <div className="phrase-item">Healthcare costs surge 23% in critical swing states</div>
+                    <div className="phrase-item">Economy shows mixed signals ahead of Fed meeting</div>
+                    <div className="phrase-item">Medicare expansion gains bipartisan support</div>
+                    <div className="phrase-item">Trump defense fund raises $47M post-indictment</div>
+                    <div className="phrase-item">Inflation eases but remains top voter priority</div>
+                    <div className="phrase-item">Border security bill passes House committee</div>
+                    <div className="phrase-item">Trump rallies Iowa base before caucus deadline</div>
+                    <div className="phrase-item">Prescription drug costs hit unprecedented highs</div>
+                    <div className="phrase-item">Global market volatility impacts US outlook</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Golden Measure Squares */}
+            <div className="metric-boxes-container">
+              <div className="card metric-box-square">
+                <div style={{ fontSize: '28px', fontWeight: 700, color: '#ef4444' }}>7</div>
+                <div style={{ fontSize: '10px', color: '#94a3b8', textTransform: 'uppercase', marginTop: '8px', textAlign: 'center' }}>Real-Time<br/>Alerts</div>
+              </div>
+              <div className="card metric-box-square">
+                <div style={{ fontSize: '28px', fontWeight: 700, color: '#3b82f6' }}>$47.2K</div>
+                <div style={{ fontSize: '10px', color: '#94a3b8', textTransform: 'uppercase', marginTop: '8px' }}>Ad Spend</div>
+              </div>
+              <div className="card metric-box-square">
+                <div style={{ fontSize: '28px', fontWeight: 700, color: '#10b981' }}>2,847</div>
+                <div style={{ fontSize: '10px', color: '#94a3b8', textTransform: 'uppercase', marginTop: '8px', textAlign: 'center' }}>Mention<br/>Volume</div>
+              </div>
+              <div className="card metric-box-square">
+                <div style={{ fontSize: '28px', fontWeight: 700, color: '#10b981' }}>74%</div>
+                <div style={{ fontSize: '10px', color: '#94a3b8', textTransform: 'uppercase', marginTop: '8px', textAlign: 'center' }}>Sentiment<br/>Score</div>
+              </div>
+            </div>
+
+            {/* Quick Actions Grid */}
+            <div className="card quick-actions" style={{ padding: 0, overflow: 'hidden' }}>
+              <div style={{ background: '#1f2633', padding: '10px 12px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                <div style={{ fontSize: '11px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quick Actions</div>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'repeat(2, 1fr)', height: 'calc(100% - 40px)' }}>
+                <div style={{ background: '#2a3342', borderRight: '1px solid #1f2633', borderBottom: '1px solid #1f2633', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', cursor: 'pointer', transition: 'all 0.2s' }}>
+                  Quick Campaign
+                </div>
+                <div style={{ background: '#2a3342', borderRight: '1px solid #1f2633', borderBottom: '1px solid #1f2633', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', cursor: 'pointer', transition: 'all 0.2s' }}>
+                  Live Monitor
+                </div>
+                <div style={{ background: '#2a3342', borderBottom: '1px solid #1f2633', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', cursor: 'pointer', transition: 'all 0.2s' }}>
+                  Make Content
+                </div>
+                <div style={{ background: '#2a3342', borderRight: '1px solid #1f2633', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', cursor: 'pointer', transition: 'all 0.2s' }}>
+                  Trend Ops
+                </div>
+                <div style={{ background: '#2a3342', borderRight: '1px solid #1f2633', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', cursor: 'pointer', transition: 'all 0.2s' }}>
+                  Social Media
+                </div>
+                <div style={{ background: '#2a3342', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', cursor: 'pointer', transition: 'all 0.2s' }}>
+                  Alert Center
+                </div>
+              </div>
+            </div>
+
+            {/* Performance Metrics Table */}
+            <div className="card performance-metrics">
+              <div className="card-title">Performance Metrics</div>
+              <div className="metrics-table">
+                <div className="metric-cell">
+                  <div className="metric-label">Alert Response</div>
+                  <div className="metric-value">45s</div>
+                  <div className="metric-trend trend-up">▲ 12%</div>
+                </div>
+                <div className="metric-cell">
+                  <div className="metric-label">Campaign ROI</div>
+                  <div className="metric-value">3.2x</div>
+                  <div className="metric-trend trend-up">▲ 8%</div>
+                </div>
+                <div className="metric-cell">
+                  <div className="metric-label">Threat Score</div>
+                  <div className="metric-value">32</div>
+                  <div className="metric-trend trend-down">▼ 5%</div>
+                </div>
+                <div className="metric-cell">
+                  <div className="metric-label">Voter Rate</div>
+                  <div className="metric-value">67%</div>
+                  <div className="metric-trend trend-neutral">— 0%</div>
+                </div>
+                <div className="metric-cell">
+                  <div className="metric-label">Media Reach</div>
+                  <div className="metric-value">2.4M</div>
+                  <div className="metric-trend trend-up">▲ 23%</div>
+                </div>
+                <div className="metric-cell">
+                  <div className="metric-label">Sentiment</div>
+                  <div className="metric-value">+18</div>
+                  <div className="metric-trend trend-up">▲ 3%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Social Post Thumbnails - Full Width */}
+          <div className="card social-posts">
+            <div className="card-title">Social Post Thumbnails</div>
+            <div className="social-grid">
+              <div className="social-grid-wrapper">
+                {/* First set */}
+                <div className="social-thumbnail">
+                  <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', height: '100%' }}></div>
+                  <div className="social-overlay">
+                    <div className="social-metrics">
+                      <span>❤️ 2.3K</span>
+                      <span>🔄 847</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="social-thumbnail">
+                  <div style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', height: '100%' }}></div>
+                  <div className="social-overlay">
+                    <div className="social-metrics">
+                      <span>❤️ 5.1K</span>
+                      <span>🔄 1.2K</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="social-thumbnail">
+                  <div style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', height: '100%' }}></div>
+                  <div className="social-overlay">
+                    <div className="social-metrics">
+                      <span>❤️ 923</span>
+                      <span>🔄 145</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="social-thumbnail">
+                  <div style={{ background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', height: '100%' }}></div>
+                  <div className="social-overlay">
+                    <div className="social-metrics">
+                      <span>❤️ 7.8K</span>
+                      <span>🔄 2.9K</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="social-thumbnail">
+                  <div style={{ background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', height: '100%' }}></div>
+                  <div className="social-overlay">
+                    <div className="social-metrics">
+                      <span>❤️ 3.4K</span>
+                      <span>🔄 562</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="social-thumbnail">
+                  <div style={{ background: 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)', height: '100%' }}></div>
+                  <div className="social-overlay">
+                    <div className="social-metrics">
+                      <span>❤️ 8.9K</span>
+                      <span>🔄 2.1K</span>
+                    </div>
+                  </div>
+                </div>
+                {/* Duplicate set for seamless scrolling */}
+                <div className="social-thumbnail">
+                  <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', height: '100%' }}></div>
+                  <div className="social-overlay">
+                    <div className="social-metrics">
+                      <span>❤️ 2.3K</span>
+                      <span>🔄 847</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="social-thumbnail">
+                  <div style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', height: '100%' }}></div>
+                  <div className="social-overlay">
+                    <div className="social-metrics">
+                      <span>❤️ 5.1K</span>
+                      <span>🔄 1.2K</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="social-thumbnail">
+                  <div style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', height: '100%' }}></div>
+                  <div className="social-overlay">
+                    <div className="social-metrics">
+                      <span>❤️ 923</span>
+                      <span>🔄 145</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="social-thumbnail">
+                  <div style={{ background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', height: '100%' }}></div>
+                  <div className="social-overlay">
+                    <div className="social-metrics">
+                      <span>❤️ 7.8K</span>
+                      <span>🔄 2.9K</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="social-thumbnail">
+                  <div style={{ background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', height: '100%' }}></div>
+                  <div className="social-overlay">
+                    <div className="social-metrics">
+                      <span>❤️ 3.4K</span>
+                      <span>🔄 562</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="social-thumbnail">
+                  <div style={{ background: 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)', height: '100%' }}></div>
+                  <div className="social-overlay">
+                    <div className="social-metrics">
+                      <span>❤️ 8.9K</span>
+                      <span>🔄 2.1K</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </main>
+
+        {/* Bottom spacer */}
+        <div className="dashboard-footer"></div>
+      </div>
+
+      {/* Ticker Tape */}
+      <div className="ticker-tape">
+        <div className="ticker-content">
+          <span className="ticker-item critical">⚠️ CRITICAL: Pennsylvania sentiment -15% in 24hrs</span>
+          <span className="ticker-item">• Meta CPM: $12.45 ↑3.2%</span>
+          <span className="ticker-item positive">• Michigan youth engagement +23%</span>
+          <span className="ticker-item">• Google CTR: 2.8% ↓0.4%</span>
+          <span className="ticker-item critical">• Competitor ad spend increased 45%</span>
+          <span className="ticker-item">• Wisconsin: TOSS UP</span>
+          <span className="ticker-item positive">• Florida early voting +12%</span>
+          <span className="ticker-item">• Twitter mentions: 14.2K/hr</span>
+          <span className="ticker-item critical">• Crisis detected: Viral video 89K shares</span>
+          <span className="ticker-item">• Ad fatigue warning: Creative refresh needed</span>
+          <span className="ticker-item positive">• Donor engagement +18%</span>
+          <span className="ticker-item">• Media coverage: 234 articles today</span>
+        </div>
+      </div>
     </div>
   );
 }
