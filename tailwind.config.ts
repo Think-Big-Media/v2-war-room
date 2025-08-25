@@ -57,6 +57,14 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // War Room Dashboard Colors
+        "war-room": {
+          background: "hsl(var(--war-room-background))",
+          header: "hsl(var(--war-room-header))",
+          card: "hsl(var(--war-room-card))",
+          text: "hsl(var(--war-room-text))",
+          border: "hsl(var(--war-room-border))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
