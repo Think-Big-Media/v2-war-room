@@ -109,7 +109,11 @@ export default function Index() {
                     src="https://p129.p0.n0.cdn.zight.com/items/BluAK9rN/cb190d20-eec7-4e05-8969-259b1dbd9d69.png?source=client&v=6826eb6cb151acf76bf79d55b23b9628"
                     alt="Political Map"
                     className="electoral-map-svg"
-                    style={{ width: '90%', height: '90%', objectFit: 'contain' }}
+                    style={{
+                      width: "90%",
+                      height: "90%",
+                      objectFit: "contain",
+                    }}
                   />
                 </div>
                 <div className="map-data">
