@@ -873,7 +873,6 @@ export default function Index() {
         {/* Bottom spacer */}
         <div className="dashboard-footer"></div>
       </div>
-
     </div>
   );
 }

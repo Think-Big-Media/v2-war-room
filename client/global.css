@@ -128,7 +128,6 @@
     overflow-x: hidden;
   }
 
-
   /* Main Dashboard Container */
   .dashboard-wrapper {
     max-width: 1920px;
@@ -791,7 +790,6 @@
     gap: 8px;
     font-size: 9px;
   }
-
 
   /* Bottom spacing */
   .dashboard-footer {
