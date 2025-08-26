@@ -128,46 +128,6 @@
     overflow-x: hidden;
   }
 
-  /* Header */
-  .header {
-    background: #252d3d;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .logo {
-    font-weight: 600;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-  }
-
-  .nav-tabs {
-    display: flex;
-    gap: 25px;
-  }
-
-  .nav-tab {
-    padding: 4px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    opacity: 0.6;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 500;
-  }
-
-  .nav-tab.active {
-    background: rgba(59, 130, 246, 0.2);
-    opacity: 1;
-  }
 
   /* Main Dashboard Container */
   .dashboard-wrapper {
@@ -832,51 +792,6 @@
     font-size: 9px;
   }
 
-  /* Ticker Tape */
-  .ticker-tape {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 30px;
-    background: #1a1f2e;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    overflow: hidden;
-    z-index: 100;
-  }
-
-  .ticker-content {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    animation: tickerScroll 60s linear infinite;
-    white-space: nowrap;
-  }
-
-  @keyframes tickerScroll {
-    0% {
-      transform: translateX(100%);
-    }
-    100% {
-      transform: translateX(-100%);
-    }
-  }
-
-  .ticker-item {
-    display: inline-flex;
-    align-items: center;
-    padding: 0 20px;
-    font-size: 11px;
-    color: #94a3b8;
-  }
-
-  .ticker-item.critical {
-    color: #ef4444;
-  }
-
-  .ticker-item.positive {
-    color: #10b981;
-  }
 
   /* Bottom spacing */
   .dashboard-footer {
