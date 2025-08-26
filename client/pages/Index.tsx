@@ -78,23 +78,6 @@ export default function Index() {
           '-apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif',
       }}
     >
-      {/* Header */}
-      <div className="header">
-        <div className="logo">WAR ROOM</div>
-        <div className="nav-tabs">
-          <div className="nav-tab active">DASHBOARD</div>
-          <div className="nav-tab">LIVE MONITORING</div>
-          <div className="nav-tab">WAR ROOM</div>
-          <div className="nav-tab">INTELLIGENCE</div>
-          <div className="nav-tab">ALERT CENTER</div>
-          <div className="nav-tab">SETTINGS</div>
-        </div>
-        <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
-          <span style={{ fontSize: "12px" }}>🔔 3</span>
-          <span style={{ fontSize: "12px" }}>👤</span>
-        </div>
-      </div>
-
       {/* Main Dashboard Wrapper */}
       <div className="dashboard-wrapper">
         <div className="dashboard">
@@ -891,37 +874,6 @@ export default function Index() {
         <div className="dashboard-footer"></div>
       </div>
 
-      {/* Ticker Tape */}
-      <div className="ticker-tape">
-        <div className="ticker-content">
-          <span className="ticker-item critical">
-            ⚠️ CRITICAL: Pennsylvania sentiment -15% in 24hrs
-          </span>
-          <span className="ticker-item">• Meta CPM: $12.45 ↑3.2%</span>
-          <span className="ticker-item positive">
-            • Michigan youth engagement +23%
-          </span>
-          <span className="ticker-item">• Google CTR: 2.8% ↓0.4%</span>
-          <span className="ticker-item critical">
-            • Competitor ad spend increased 45%
-          </span>
-          <span className="ticker-item">• Wisconsin: TOSS UP</span>
-          <span className="ticker-item positive">
-            • Florida early voting +12%
-          </span>
-          <span className="ticker-item">• Twitter mentions: 14.2K/hr</span>
-          <span className="ticker-item critical">
-            • Crisis detected: Viral video 89K shares
-          </span>
-          <span className="ticker-item">
-            • Ad fatigue warning: Creative refresh needed
-          </span>
-          <span className="ticker-item positive">• Donor engagement +18%</span>
-          <span className="ticker-item">
-            • Media coverage: 234 articles today
-          </span>
-        </div>
-      </div>
     </div>
   );
 }
