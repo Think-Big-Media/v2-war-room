@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Install</title>
+    <style>
+        body {
+            font-family: Arial, 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            color: #333;
+            background: white;
+        }
+        h1 { 
+            color: #2563eb;
+            font-size: 2em;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 10px;
+            margin: 30px 0 20px 0;
+        }
+        h2 { 
+            color: #1e40af;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+        h3 { 
+            color: #1e3a8a;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        h4 {
+            color: #374151;
+            font-size: 1.1em;
+            margin: 15px 0 10px 0;
+        }
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #dc2626;
+        }
+        pre {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            line-height: 1.4;
+            margin: 15px 0;
+        }
+        pre code {
+            background: none;
+            color: #f9fafb;
+            padding: 0;
+        }
+        blockquote {
+            border-left: 4px solid #3b82f6;
+            margin: 20px 0;
+            padding-left: 20px;
+            color: #4b5563;
+            font-style: italic;
+            background: #f9fafb;
+            padding: 15px 20px;
+        }
+        a {
+            color: #2563eb;
+            text-decoration: none;
+            border-bottom: 1px dotted #2563eb;
+        }
+        a:hover {
+            border-bottom: 1px solid #2563eb;
+        }
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #f3f4f6;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+        hr {
+            border: none;
+            border-top: 2px solid #e5e7eb;
+            margin: 30px 0;
+        }
+        .info-box {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .warning-box {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .code-filename {
+            background: #374151;
+            color: #9ca3af;
+            padding: 5px 10px;
+            border-radius: 5px 5px 0 0;
+            font-size: 0.85em;
+            margin-bottom: -5px;
+            display: inline-block;
+        }
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+<h1>Installation</h1>
+
+<p>If you are new to Encore, we recommend following the <a href="./quick-start.md">quick start guide</a>.</p>
+
+<h2>Install the Encore CLI</h2>
+
+<p>To develop locally with Encore, you first need to install the Encore CLI. This provisions your local development environment and runs the Local Development Dashboard.</p>
+
+<h3>Installation Methods</h3>
+
+<h4>macOS (Brew)</h4>
+<strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h4>Linux</h4>
+<strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h4>Windows (WSL)</h4>
+<strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h3>Prerequisites</h3>
+
+<ul>
+<li><a href="https://nodejs.org/en/download/">Node.js</a> version 18+ is required to run Encore.ts apps</li>
+<li><a href="https://www.docker.com">Docker</a> is required for setting up local databases</li>
+</ul>
+
+<h3>Optional: LLM Instructions</h3>
+
+<p>To help LLM tools understand Encore, you can add pre-made instructions:</p>
+
+<ul>
+<li>Download <a href="https://github.com/encoredev/encore/blob/main/ts<em>llm</em>instructions.txt">ts<em>llm</em>instructions.txt</a></li>
+</ul>
+
+<ul>
+<li>Usage options:</li>
+</ul>
+   - Cursor: Rename to <code>.cursorrules</code>
+   - GitHub Copilot: Paste in <code>.github/copilot-instructions.md</code>
+   - Other tools: Place in app root</p>
+
+<h3>Build from Source</h3>
+
+<p>If you prefer building from source, <a href="https://github.com/encoredev/encore/blob/main/CONTRIBUTING.md">follow these instructions</a>.</p>
+
+<h2>Update to Latest Version</h2>
+
+<p>Check your current version:
+<strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<p>Expected output will look like:
+<strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<p>To update, run:
+<strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h2>Verify Installation</h2>
+
+<p>After installation, verify everything is working:
+<strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<p>This starts the Encore daemon which manages your local development environment.</p>
+<div class="footer">
+    <p>
+        <strong>Encore TypeScript Documentation</strong><br>
+        Original: install.md<br>
+        Converted: 2025-08-22 06:46:14<br>
+        <em>Open in Chrome and copy-paste to Google Docs for best results</em>
+    </p>
+</div>
+</body>
+</html>

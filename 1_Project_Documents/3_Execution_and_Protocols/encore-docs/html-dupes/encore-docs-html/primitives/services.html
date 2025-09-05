@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services</title>
+    <style>
+        body {
+            font-family: Arial, 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            color: #333;
+            background: white;
+        }
+        h1 { 
+            color: #2563eb;
+            font-size: 2em;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 10px;
+            margin: 30px 0 20px 0;
+        }
+        h2 { 
+            color: #1e40af;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+        h3 { 
+            color: #1e3a8a;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        h4 {
+            color: #374151;
+            font-size: 1.1em;
+            margin: 15px 0 10px 0;
+        }
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #dc2626;
+        }
+        pre {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            line-height: 1.4;
+            margin: 15px 0;
+        }
+        pre code {
+            background: none;
+            color: #f9fafb;
+            padding: 0;
+        }
+        blockquote {
+            border-left: 4px solid #3b82f6;
+            margin: 20px 0;
+            padding-left: 20px;
+            color: #4b5563;
+            font-style: italic;
+            background: #f9fafb;
+            padding: 15px 20px;
+        }
+        a {
+            color: #2563eb;
+            text-decoration: none;
+            border-bottom: 1px dotted #2563eb;
+        }
+        a:hover {
+            border-bottom: 1px solid #2563eb;
+        }
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #f3f4f6;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+        hr {
+            border: none;
+            border-top: 2px solid #e5e7eb;
+            margin: 30px 0;
+        }
+        .info-box {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .warning-box {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .code-filename {
+            background: #374151;
+            color: #9ca3af;
+            padding: 5px 10px;
+            border-radius: 5px 5px 0 0;
+            font-size: 0.85em;
+            margin-bottom: -5px;
+            display: inline-block;
+        }
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+<h1>Defining Services</h1>
+
+<p>Encore.ts simplifies building applications with multiple services, eliminating the typical complexity of microservice development.</p>
+
+<h2>What is a Service?</h2>
+
+<p>In Encore, a service is a logical grouping of related functionality. Each service:
+<ul>
+<li>Has its own package/directory</li>
+<li>Can expose APIs</li>
+<li>Can have its own database</li>
+<li>Runs as part of your application</li>
+</ul>
+
+<h2>Creating a Service</h2>
+
+<p>To create an Encore service:</p>
+
+<ul>
+<li>Create a directory for your service</li>
+<li>Add a file named <code>encore.service.ts</code> in that directory</li>
+<li>Export a service instance</li>
+</ul>
+
+<h3>Basic Example</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h3>Service Structure</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h2>Service Configuration</h2>
+
+<h3>Basic Configuration</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h3>Advanced Configuration</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h2>Service Communication</h2>
+
+<p>Services can call each other&#x27;s APIs:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<p><strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h2>Service Best Practices</h2>
+
+<h3>1. Single Responsibility</h3>
+Each service should have a clear, single purpose:
+<ul>
+<li>✅ <code>users</code> - User management</li>
+<li>✅ <code>payments</code> - Payment processing</li>
+<li>❌ <code>utils</code> - Too generic</li>
+</ul>
+
+<h3>2. Service Boundaries</h3>
+Keep services loosely coupled:
+<ul>
+<li>Communicate via APIs</li>
+<li>Don&#x27;t share databases between services</li>
+<li>Keep shared types minimal</li>
+</ul>
+
+<h3>3. Service Naming</h3>
+Use clear, descriptive names:
+<ul>
+<li>Use lowercase</li>
+<li>Use hyphens for multi-word names</li>
+<li>Be consistent across your application</li>
+</ul>
+
+<h3>4. Directory Structure</h3>
+Organize service code logically:
+<strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h2>Service Discovery</h2>
+
+<p>Encore automatically handles service discovery. You don&#x27;t need to:
+<ul>
+<li>Configure service URLs</li>
+<li>Set up load balancers</li>
+<li>Manage service registries</li>
+</ul>
+
+<p>Just import and call:
+<strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>Local Development</h2>
+
+<p>When running locally with <code>encore run</code>:
+<ul>
+<li>All services start automatically</li>
+<li>Services can communicate locally</li>
+<li>Hot reload works across services</li>
+<li>Shared development database</li>
+</ul>
+
+<h2>Production Deployment</h2>
+
+<p>In production:
+<ul>
+<li>Services can be deployed independently</li>
+<li>Automatic load balancing</li>
+<li>Built-in service mesh</li>
+<li>Zero-downtime deployments</li>
+</ul>
+
+<h2>Monitoring Services</h2>
+
+<p>The Encore dashboard provides:
+<ul>
+<li>Service topology view</li>
+<li>Request traces across services</li>
+<li>Service-specific metrics</li>
+<li>Error tracking per service</li>
+</ul>
+
+<h2>Related Topics</h2>
+
+<ul>
+<li><a href="./defining-apis.md">API Endpoints</a></li>
+<li><a href="./databases.md">Databases</a></li>
+<li><a href="../develop/auth.md">Authentication</a></li>
+</ul>
+<li><a href="../develop/testing.md">Testing</a></li></p>
+<div class="footer">
+    <p>
+        <strong>Encore TypeScript Documentation</strong><br>
+        Original: primitives/services.md<br>
+        Converted: 2025-08-22 06:46:14<br>
+        <em>Open in Chrome and copy-paste to Google Docs for best results</em>
+    </p>
+</div>
+</body>
+</html>

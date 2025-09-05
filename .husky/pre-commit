@@ -1,0 +1,49 @@
+#!/bin/sh
+
+# War Room Pre-commit Hook - Smart Health Checks
+# Only runs checks on modified apps for performance
+
+echo "🏥 Running pre-commit health checks..."
+
+# Check if UI files were modified
+if git diff --cached --name-only | grep -q "repositories/3.0-ui-war-room/"; then
+  echo "📦 UI files modified - running health check..."
+  cd repositories/3.0-ui-war-room
+  
+  # Run format check
+  echo "  Checking code formatting..."
+  npm run format:check --silent
+  if [ $? -ne 0 ]; then
+    echo "❌ Format check failed! Run 'npm run format' to fix."
+    exit 1
+  fi
+  
+  # Run lint
+  echo "  Running linter..."
+  npm run lint --silent
+  if [ $? -ne 0 ]; then
+    echo "❌ Lint check failed! Run 'npm run lint:fix' to fix."
+    exit 1
+  fi
+  
+  # Run type check
+  echo "  Checking TypeScript types..."
+  npm run type-check --silent
+  if [ $? -ne 0 ]; then
+    echo "❌ Type check failed! Fix TypeScript errors."
+    exit 1
+  fi
+  
+  # Run tests
+  echo "  Running tests..."
+  npm run test --silent
+  if [ $? -ne 0 ]; then
+    echo "❌ Tests failed! Fix failing tests."
+    exit 1
+  fi
+  
+  echo "✅ UI health check passed!"
+  cd ../..
+fi
+
+echo "✅ All pre-commit checks passed!"

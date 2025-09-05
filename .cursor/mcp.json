@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "gemini-collaboration-guide": {
+      "command": "node",
+      "args": ["/Users/rodericandrews/Obsidian/Master/_Projects/_War-Room-AI/v2-war-room/gemini-cli-orchestrator/gemini-collaboration-guide.mjs"]
+    }
+  }
+}

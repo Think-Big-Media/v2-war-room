@@ -1,0 +1,3570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encore TypeScript Documentation - Complete Reference</title>
+    <style>
+        @media print {
+            .page-break { page-break-after: always; }
+            .no-print { display: none; }
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 { 
+            color: #2563eb;
+            font-size: 2.5em;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 10px;
+            margin: 30px 0 20px 0;
+        }
+        h2 { 
+            color: #1e40af;
+            font-size: 1.8em;
+            margin: 25px 0 15px 0;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+        h3 { 
+            color: #1e3a8a;
+            font-size: 1.3em;
+            margin: 20px 0 10px 0;
+        }
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #dc2626;
+        }
+        pre {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            line-height: 1.4;
+            margin: 15px 0;
+        }
+        pre code {
+            background: none;
+            color: #f9fafb;
+            padding: 0;
+        }
+        blockquote {
+            border-left: 4px solid #3b82f6;
+            margin: 20px 0;
+            padding-left: 20px;
+            color: #4b5563;
+            font-style: italic;
+            background: #f9fafb;
+            padding: 15px 20px;
+        }
+        .toc {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        .toc h2 {
+            margin-top: 0;
+            color: #1e40af;
+            border: none;
+        }
+        .toc ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        .toc li {
+            margin: 8px 0;
+        }
+        .toc a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+        .section {
+            margin: 40px 0;
+            padding: 20px 0;
+            border-top: 2px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <h1>Encore TypeScript Documentation</h1>
+    <p style="font-size: 1.2em; color: #4b5563;">Complete Reference Guide</p>
+    
+    <div class="toc no-print">
+        <h2>📚 Table of Contents</h2>
+        <ul>
+            <li><a href="#section-1">Quick Start</a></li>
+            <li><a href="#section-2">Install</a></li>
+            <li><a href="#section-3">Concepts: Application Model</a></li>
+            <li><a href="#section-4">Concepts: Benefits</a></li>
+            <li><a href="#section-5">Concepts: Hello World</a></li>
+            <li><a href="#section-6">Primitives: Api Calls</a></li>
+            <li><a href="#section-7">Primitives: App Structure</a></li>
+            <li><a href="#section-8">Primitives: Cron Jobs</a></li>
+            <li><a href="#section-9">Primitives: Databases</a></li>
+            <li><a href="#section-10">Primitives: Defining Apis</a></li>
+            <li><a href="#section-11">Primitives: Errors</a></li>
+            <li><a href="#section-12">Primitives: Object Storage</a></li>
+            <li><a href="#section-13">Primitives: Pubsub</a></li>
+            <li><a href="#section-14">Primitives: Secrets</a></li>
+            <li><a href="#section-15">Primitives: Services</a></li>
+            <li><a href="#section-16">Primitives: Streaming Apis</a></li>
+            <li><a href="#section-17">Primitives: Validation</a></li>
+            <li><a href="#section-18">Develop: Auth</a></li>
+            <li><a href="#section-19">Develop: Middleware</a></li>
+            <li><a href="#section-20">Develop: Testing</a></li>
+            <li><a href="#section-21">Deploy: Environments</a></li>
+            <li><a href="#section-22">Observability: Logging</a></li>
+            <li><a href="#section-23">Observability: Tracing</a></li>
+            <li><a href="#section-24">Tutorials: Graphql</a></li>
+            <li><a href="#section-25">Tutorials: Rest Api</a></li>
+            <li><a href="#section-26">Tutorials: Slack Bot</a></li>
+            <li><a href="#section-27">Tutorials: Uptime</a></li>
+            <li><a href="#section-28">Cli: Cli Reference</a></li>
+        </ul>
+    </div>
+    
+    <div class="content">
+
+    <div class="section page-break" id="section-1">
+        <h2>Quick Start</h2>
+        
+<h1>Quick Start Guide</h1>
+
+<p>This guide helps you build your first Encore.ts application in approximately 5 minutes.</p>
+
+<h2>Prerequisites</h2>
+
+<ul>
+<li><a href="https://nodejs.org/">Node.js</a> version 18+</li>
+<li><a href="https://docker.com">Docker</a> for local databases</li>
+<li><a href="./install.md">Encore CLI</a> installed</li>
+</ul>
+
+<h2>Steps</h2>
+
+<h3>1. Install Encore CLI</h3>
+
+<p>If you haven&#x27;t already, install the Encore CLI:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h3>2. Create Your App</h3>
+
+<p>Create a new Encore application:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<p>When prompted:
+<ul>
+<li>Enter a name for your app</li>
+<li>Choose the <strong>Hello World</strong> template</li>
+<li>Optionally create a free Encore account for deployment</li>
+</ul>
+
+<h3>3. Explore the Code</h3>
+
+<p>Your app structure:
+<strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<p>Example API endpoint in <code>hello/hello.ts</code>:
+<strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h3>4. Run the Application</h3>
+
+<p>Start your local development server:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<p>This will:
+<ul>
+<li>Start the Encore daemon</li>
+<li>Launch the Local Development Dashboard at http://localhost:9400</li>
+<li>Run your API at http://localhost:4000</li>
+</ul>
+
+<p>Test your API:
+<strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h3>5. Make Changes</h3>
+
+<p>Try modifying the response in <code>hello/hello.ts</code>:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<p>Encore automatically reloads when you save changes.</p>
+
+<h3>6. Deploy Your Application</h3>
+
+<h4>Option A: Deploy to Encore Cloud</h4>
+
+<p><strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<p>Your app will be deployed to a preview environment with a URL like:
+<code>https://staging-your-app-name-abcd.encr.app</code></p>
+
+<h4>Option B: Generate Docker Image</h4>
+
+<p><strong><em>CODE</em>BLOCK<em>8</strong></em></p>
+
+<p>Then deploy the Docker image to any container platform.</p>
+
+<h2>What&#x27;s Next?</h2>
+
+<ul>
+<li><strong><a href="./tutorials/rest-api.md">REST API Tutorial</a></strong> - Build a complete REST API</li>
+<li><strong><a href="./primitives/databases.md">Database Guide</a></strong> - Add PostgreSQL to your app</li>
+<li><strong><a href="./develop/auth.md">Authentication</a></strong> - Secure your APIs</li>
+<li><strong><a href="./develop/testing.md">Testing</a></strong> - Write tests for your application</li>
+</ul>
+
+<h2>Useful Commands</h2>
+
+<p><strong><em>CODE</em>BLOCK<em>9</strong></em></p>
+
+<h2>Getting Help</h2>
+
+<ul>
+<li>📚 <a href="https://encore.dev/docs">Documentation</a></li>
+<li>💬 <a href="https://encore.dev/discord">Discord Community</a></li>
+</ul>
+<li>🐛 <a href="https://github.com/encoredev/encore">GitHub Issues</a></li></p>
+
+    </div>
+
+    <div class="section page-break" id="section-2">
+        <h2>Install</h2>
+        
+<h1>Installation</h1>
+
+<p>If you are new to Encore, we recommend following the <a href="./quick-start.md">quick start guide</a>.</p>
+
+<h2>Install the Encore CLI</h2>
+
+<p>To develop locally with Encore, you first need to install the Encore CLI. This provisions your local development environment and runs the Local Development Dashboard.</p>
+
+<h3>Installation Methods</h3>
+
+<h4>macOS (Brew)</h4>
+<strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h4>Linux</h4>
+<strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h4>Windows (WSL)</h4>
+<strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h3>Prerequisites</h3>
+
+<ul>
+<li><a href="https://nodejs.org/en/download/">Node.js</a> version 18+ is required to run Encore.ts apps</li>
+<li><a href="https://www.docker.com">Docker</a> is required for setting up local databases</li>
+</ul>
+
+<h3>Optional: LLM Instructions</h3>
+
+<p>To help LLM tools understand Encore, you can add pre-made instructions:</p>
+
+<ul>
+<li>Download <a href="https://github.com/encoredev/encore/blob/main/ts<em>llm</em>instructions.txt">ts<em>llm</em>instructions.txt</a></li>
+</ul>
+
+<ul>
+<li>Usage options:</li>
+</ul>
+   - Cursor: Rename to <code>.cursorrules</code>
+   - GitHub Copilot: Paste in <code>.github/copilot-instructions.md</code>
+   - Other tools: Place in app root</p>
+
+<h3>Build from Source</h3>
+
+<p>If you prefer building from source, <a href="https://github.com/encoredev/encore/blob/main/CONTRIBUTING.md">follow these instructions</a>.</p>
+
+<h2>Update to Latest Version</h2>
+
+<p>Check your current version:
+<strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<p>Expected output will look like:
+<strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<p>To update, run:
+<strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h2>Verify Installation</h2>
+
+<p>After installation, verify everything is working:
+<strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<p>This starts the Encore daemon which manages your local development environment.</p>
+
+    </div>
+
+    <div class="section page-break" id="section-3">
+        <h2>Concepts: Application Model</h2>
+        
+<h1>Encore Application Model</h1>
+
+<h2>Overview</h2>
+
+<p>Encore uses static analysis to understand your application by creating a comprehensive graph that represents how your systems and services communicate. This application model is the foundation of Encore&#x27;s powerful developer experience.</p>
+
+<h2>How It Works</h2>
+
+<h3>Static Analysis Pipeline</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<ul>
+<li><strong>Code Parsing</strong>: Encore parses your TypeScript code</li>
+<li><strong>AST Analysis</strong>: Builds an Abstract Syntax Tree</li>
+<li><strong>Model Generation</strong>: Creates a complete application model</li>
+<li><strong>Infrastructure Provisioning</strong>: Uses model to set up infrastructure</li>
+</ul>
+
+<h3>What Gets Analyzed</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h2>The Application Graph</h2>
+
+<p>Your application is represented as a directed graph:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h3>Graph Components</h3>
+
+<ul>
+<li><strong>Services</strong>: Logical groupings of functionality</li>
+<li><strong>APIs</strong>: Endpoints and their contracts</li>
+<li><strong>Resources</strong>: Databases, caches, queues</li>
+<li><strong>Dependencies</strong>: Service-to-service calls</li>
+<li><strong>Configuration</strong>: Secrets, environment variables</li>
+</ul>
+
+<h2>Benefits of the Application Model</h2>
+
+<h3>1. 100% Accuracy</h3>
+Traditional documentation drifts from reality. Encore&#x27;s model is always accurate because it&#x27;s derived directly from your code.</p>
+
+<h3>2. Automatic Documentation</h3>
+<strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h3>3. Infrastructure as Code (Without Writing Infrastructure Code)</h3>
+<strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h3>4. Compile-Time Validation</h3>
+<strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h2>Standardization Philosophy</h2>
+
+<h3>The Problem</h3>
+Developers make dozens of decisions when creating backend applications:
+<ul>
+<li>Which framework?</li>
+<li>How to structure code?</li>
+<li>How to handle authentication?</li>
+<li>How to manage configuration?</li>
+<li>How to set up testing?</li>
+</ul>
+
+<p>These decisions often stem from personal preference, leading to:
+<ul>
+<li>Inconsistent codebases</li>
+<li>Difficult onboarding</li>
+<li>Technical debt</li>
+<li>Integration challenges</li>
+</ul>
+
+<h3>Encore&#x27;s Solution</h3>
+Encore provides opinions on these decisions while maintaining flexibility:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h2>Modern Best Practices Built-In</h2>
+
+<h3>Automatic Implementation of:</h3>
+<ul>
+<li><strong>12-Factor App</strong> principles</li>
+<li><strong>Microservices</strong> patterns</li>
+<li><strong>Event-driven</strong> architecture</li>
+<li><strong>CQRS</strong> when appropriate</li>
+<li><strong>Circuit breakers</strong> for resilience</li>
+<li><strong>Distributed tracing</strong> for observability</li>
+</ul>
+
+<h3>Example: Circuit Breaker</h3>
+<strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>Developer Experience Benefits</h2>
+
+<h3>1. Visual Service Topology</h3>
+The application model generates real-time service maps:
+<strong><em>CODE</em>BLOCK<em>8</strong></em></p>
+
+<h3>2. API Explorer</h3>
+<ul>
+<li>Interactive API testing</li>
+<li>Auto-generated from your code</li>
+<li>Always up-to-date</li>
+<li>Includes authentication</li>
+</ul>
+
+<h3>3. Dependency Tracking</h3>
+<strong><em>CODE</em>BLOCK<em>9</strong></em></p>
+
+<h2>Infrastructure Generation</h2>
+
+<p>The application model drives infrastructure provisioning:</p>
+
+<h3>Development</h3>
+<strong><em>CODE</em>BLOCK<em>10</strong></em></p>
+
+<h3>Production</h3>
+<strong><em>CODE</em>BLOCK<em>11</strong></em></p>
+
+<h2>Open Source Foundation</h2>
+
+<p>The entire system is <a href="https://github.com/encoredev/encore">Open Source</a>:
+<ul>
+<li>Transparent implementation</li>
+<li>Community contributions</li>
+<li>No vendor lock-in</li>
+<li>Extensible architecture</li>
+</ul>
+
+<h3>Contributing</h3>
+<strong><em>CODE</em>BLOCK<em>12</strong></em></p>
+
+<h2>Extending the Model</h2>
+
+<h3>Custom Resources</h3>
+<strong><em>CODE</em>BLOCK<em>13</strong></em></p>
+
+<h3>Metadata Annotations</h3>
+<strong><em>CODE</em>BLOCK<em>14</strong></em></p>
+
+<h2>Real-World Example</h2>
+
+<p><strong><em>CODE</em>BLOCK<em>15</strong></em></p>
+
+<h2>Summary</h2>
+
+<p>The Encore Application Model:
+<ul>
+<li><strong>Understands</strong> your code through static analysis</li>
+<li><strong>Generates</strong> accurate documentation and diagrams</li>
+<li><strong>Provisions</strong> infrastructure automatically</li>
+<li><strong>Validates</strong> at compile time</li>
+<li><strong>Standardizes</strong> best practices</li>
+<li><strong>Maintains</strong> accuracy as code evolves</li>
+</ul>
+
+<p>This model is the foundation that enables Encore to provide a revolutionary developer experience while maintaining the flexibility to build any type of application.</p>
+
+    </div>
+
+    <div class="section page-break" id="section-4">
+        <h2>Concepts: Benefits</h2>
+        
+<h1>Benefits of using Encore.ts</h1>
+
+<h2>Integrated Developer Experience for Enhanced Productivity</h2>
+
+<p>Encore.ts offers a complete development platform that dramatically improves productivity:</p>
+
+<h3>Local Development with Instant Infrastructure</h3>
+<ul>
+<li>Infrastructure automatically provisions during development</li>
+<li>No manual Docker compose or service configuration</li>
+<li>Databases, pub/sub, and caching work out of the box</li>
+<li>Hot reload across all services</li>
+</ul>
+
+<h3>Rapid Feedback Loop</h3>
+<ul>
+<li>Catch issues at compile time with type-safe infrastructure</li>
+<li>Instant API documentation generation</li>
+<li>Real-time distributed tracing in development</li>
+<li>Automatic request/response validation</li>
+</ul>
+
+<h3>No Manual Configuration Required</h3>
+<ul>
+<li>Code serves as the single source of truth</li>
+<li>Infrastructure inferred from your application code</li>
+<li>No YAML files or configuration drift</li>
+<li>Convention over configuration approach</li>
+</ul>
+
+<h3>Unified Codebase</h3>
+<ul>
+<li>One codebase works across all environments</li>
+<li>Same code runs locally, in preview, and production</li>
+<li>No environment-specific configuration files</li>
+<li>Seamless deployment pipeline</li>
+</ul>
+
+<h2>High-Performance Rust Runtime</h2>
+
+<p>Encore&#x27;s secret weapon is its Rust-powered runtime that handles all infrastructure concerns:</p>
+
+<h3>Performance Benefits</h3>
+<ul>
+<li><strong>9x increased throughput</strong> compared to standard Node.js</li>
+<li><strong>85% reduced latency</strong> for API responses</li>
+<li>Multi-threaded request processing</li>
+<li>Zero-overhead infrastructure abstractions</li>
+</ul>
+
+<h3>Architecture</h3>
+<strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h3>Security Benefits</h3>
+<ul>
+<li><strong>Zero NPM dependencies</strong> for core infrastructure</li>
+<li>Reduced attack surface</li>
+<li>Memory-safe Rust implementation</li>
+<li>Built-in security best practices</li>
+</ul>
+
+<h2>Enhanced Type Safety</h2>
+
+<p>Static analysis provides unprecedented safety and developer experience:</p>
+
+<h3>Compile-Time Validation</h3>
+<strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h3>Benefits</h3>
+<ul>
+<li>API contracts enforced at compile time</li>
+<li>Automatic request/response validation</li>
+<li>Type-safe service-to-service calls</li>
+<li>Eliminates entire classes of runtime errors</li>
+</ul>
+
+<h2>DevOps Automation</h2>
+
+<p>Encore handles the complex parts of deployment and operations:</p>
+
+<h3>Infrastructure as Code (Without the Code)</h3>
+<strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h3>Deployment Options</h3>
+<ul>
+<li><strong>Encore Cloud</strong> - Fully managed platform</li>
+<li><strong>Self-Hosting</strong> - Docker images for any platform</li>
+<li><strong>Major Clouds</strong> - AWS, GCP, Azure support</li>
+</ul>
+
+<h3>What You Don&#x27;t Need to Learn</h3>
+<ul>
+<li>❌ Kubernetes</li>
+<li>❌ Terraform</li>
+<li>❌ Docker Compose</li>
+<li>❌ Service Mesh</li>
+<li>❌ API Gateway configuration</li>
+<li>❌ Load balancer setup</li>
+</ul>
+
+<h2>Cloud Flexibility</h2>
+
+<p>Avoid vendor lock-in while using cloud services:</p>
+
+<h3>Multi-Cloud Support</h3>
+<strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h3>Gradual Migration Path</h3>
+<ul>
+<li>Start with Encore&#x27;s abstractions</li>
+<li>Reference cloud services directly when needed</li>
+<li>Mix Encore and native cloud resources</li>
+<li>Full access to cloud provider consoles</li>
+</ul>
+
+<h2>Developer Experience Benefits</h2>
+
+<h3>Local Development Dashboard</h3>
+<ul>
+<li>Visual service topology</li>
+<li>Live request tracing</li>
+<li>API documentation</li>
+<li>Database explorer</li>
+<li>Real-time logs</li>
+</ul>
+
+<h3>Automatic Documentation</h3>
+<strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h3>Testing Made Simple</h3>
+<strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h2>Real-World Impact</h2>
+
+<h3>Before Encore</h3>
+<ul>
+<li>2-3 days to set up new service</li>
+<li>Complex Docker/Kubernetes configs</li>
+<li>Manual API documentation</li>
+<li>Slow local development</li>
+<li>DevOps bottlenecks</li>
+</ul>
+
+<h3>After Encore</h3>
+<ul>
+<li>5 minutes to new service</li>
+<li>Zero configuration</li>
+<li>Automatic documentation</li>
+<li>Instant local development</li>
+<li>Developers own deployment</li>
+</ul>
+
+<h2>Cost Benefits</h2>
+
+<h3>Reduced Operational Overhead</h3>
+<ul>
+<li>Fewer DevOps engineers needed</li>
+<li>Less time on infrastructure</li>
+<li>Reduced cloud costs through optimization</li>
+<li>No additional tooling licenses</li>
+</ul>
+
+<h3>Faster Time to Market</h3>
+<ul>
+<li>Ship features in hours, not weeks</li>
+<li>Rapid prototyping and iteration</li>
+<li>Quick pivot capability</li>
+<li>Reduced technical debt</li>
+</ul>
+
+<h2>Summary</h2>
+
+<p>Encore.ts provides:</p>
+
+<ul>
+<li><strong>Productivity</strong> - 5-10x faster development</li>
+<li><strong>Performance</strong> - 9x throughput improvement  </li>
+<li><strong>Safety</strong> - Type-safe infrastructure</li>
+<li><strong>Simplicity</strong> - No DevOps complexity</li>
+<li><strong>Flexibility</strong> - Use any cloud, avoid lock-in</li>
+<li><strong>Cost-Effective</strong> - Reduce operational overhead</li>
+</ul>
+
+<p>Perfect for:
+<ul>
+<li>Startups needing to move fast</li>
+<li>Teams without DevOps expertise</li>
+<li>Projects requiring high performance</li>
+<li>Applications needing to scale</li>
+</ul>
+<li>Companies wanting cloud flexibility</li></p>
+
+    </div>
+
+    <div class="section page-break" id="section-5">
+        <h2>Concepts: Hello World</h2>
+        
+<h1>Hello World in Encore.ts</h1>
+
+<p>Encore enables developers to create type-safe, idiomatic TypeScript API endpoints with minimal boilerplate. Here&#x27;s a simple Hello World example:</p>
+
+<h2>Defining an API Endpoint</h2>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h2>Key Features</h2>
+
+<p>Encore provides several key capabilities:
+<ul>
+<li>Automatically parses and validates incoming requests</li>
+<li>Generates necessary boilerplate at compile-time</li>
+<li>Enables creating production-ready services in under 10 lines of code</li>
+</ul>
+
+<h2>Getting Started</h2>
+
+<p>The framework supports adding various primitives easily, including:
+<ul>
+<li>Services</li>
+<li>APIs</li>
+<li>Databases</li>
+<li>Cron Jobs</li>
+<li>Pub/Sub</li>
+<li>Secrets</li>
+</ul>
+
+<h2>Example Project</h2>
+
+<p>You can create a Hello World example using the Encore CLI:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<p>A getting started video is also available to help developers understand the basics of Encore.ts.</p>
+
+    </div>
+
+    <div class="section page-break" id="section-6">
+        <h2>Primitives: Api Calls</h2>
+        
+<h1>API Calls Between Services</h1>
+
+<p>In Encore.ts, making API calls between services is as simple as calling a function. This provides a monolith-like developer experience even when using multiple services.</p>
+
+<h2>Basic Service-to-Service Calls</h2>
+
+<h3>Import and Call</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h2>How It Works</h2>
+
+<p>During compilation, Encore:
+<ul>
+<li>Parses all API definitions across services</li>
+<li>Generates type-safe clients</li>
+<li>Makes them available via <code>~encore/clients</code></li>
+<li>Handles service discovery automatically</li>
+</ul>
+
+<h2>Type Safety</h2>
+
+<p>All service calls are fully type-safe:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h2>Authentication Propagation</h2>
+
+<p>Authentication automatically propagates across service calls:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h2>Error Handling</h2>
+
+<p>Service calls can throw errors that propagate correctly:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h2>Parallel Calls</h2>
+
+<p>Make multiple service calls in parallel:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h2>Circuit Breaking</h2>
+
+<p>Encore automatically implements circuit breaking for service calls:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h2>Timeout Configuration</h2>
+
+<p>Configure timeouts for service calls:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h2>Service Discovery</h2>
+
+<p>Service discovery is automatic:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>Testing Service Calls</h2>
+
+<h3>Unit Testing with Mocks</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>8</strong></em></p>
+
+<h3>Integration Testing</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>9</strong></em></p>
+
+<h2>Monitoring Service Calls</h2>
+
+<p>The Encore dashboard automatically provides:
+<ul>
+<li>Service dependency maps</li>
+<li>Request traces across services</li>
+<li>Latency metrics per service call</li>
+<li>Error rates and circuit breaker status</li>
+</ul>
+
+<h2>Advanced Patterns</h2>
+
+<h3>Service Aggregation</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>10</strong></em></p>
+
+<h3>Saga Pattern</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>11</strong></em></p>
+
+<h3>Event-Driven Communication</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>12</strong></em></p>
+
+<h2>Best Practices</h2>
+
+<ul>
+<li><strong>Keep service interfaces small</strong> - Minimize coupling between services</li>
+<li><strong>Handle failures gracefully</strong> - Always have fallback strategies</li>
+<li><strong>Use async where possible</strong> - Don&#x27;t block on non-critical service calls</li>
+<li><strong>Monitor dependencies</strong> - Track which services depend on each other</li>
+<li><strong>Version your APIs</strong> - Support backward compatibility</li>
+<li><strong>Cache when appropriate</strong> - Reduce inter-service traffic</li>
+<li><strong>Document service contracts</strong> - Make expectations clear</li>
+</ul>
+
+<h2>Performance Optimization</h2>
+
+<h3>Caching Service Responses</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>13</strong></em></p>
+
+<h2>Summary</h2>
+
+<p>Service-to-service communication in Encore:
+<ul>
+<li>Feels like calling local functions</li>
+<li>Provides complete type safety</li>
+<li>Handles service discovery automatically</li>
+<li>Includes built-in resilience patterns</li>
+<li>Offers comprehensive monitoring</li>
+</ul>
+<li>Scales from monolith to microservices seamlessly</li></p>
+
+    </div>
+
+    <div class="section page-break" id="section-7">
+        <h2>Primitives: App Structure</h2>
+        
+<h1>Encore App Structure</h1>
+
+<h2>Overview</h2>
+
+<p>Encore uses a monorepo design, recommending &quot;one Encore app for your entire backend application&quot; to build a comprehensive application model.</p>
+
+<h3>Key Principles</h3>
+<ul>
+<li>Supports both monolithic and microservices architectures</li>
+<li>Provides a monolith-style developer experience for microservices</li>
+<li>Enables cross-service type-safety and IDE auto-complete</li>
+</ul>
+
+<h2>Service Definition</h2>
+
+<p>To create a service:
+<ul>
+<li>Add an <code>encore.service.ts</code> file in a directory</li>
+<li>Export a service instance using <code>new Service()</code></li>
+</ul>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h2>Project Structure Patterns</h2>
+
+<h3>1. Single-Service Application</h3>
+Ideal for beginners or simple applications:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<p><strong>Example <code>encore.service.ts</code>:</strong>
+<strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h3>2. Multi-Service Application</h3>
+Separate services in different directories:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<p><strong>Example service definition:</strong>
+<strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h3>3. Large Applications with Multiple Systems</h3>
+Organize services into logical system directories:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h2>Package Management</h2>
+
+<h3>Recommended: Single Root Package.json</h3>
+Benefits include:
+<ul>
+<li>Consistent dependency versions across services</li>
+<li>Simplified TypeScript configuration</li>
+<li>Easy sharing of types and utilities</li>
+<li>Reduced npm install overhead</li>
+</ul>
+
+<p><strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h3>Service-Level Dependencies (When Needed)</h3>
+For specific service requirements:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>File Naming Conventions</h2>
+
+<h3>Service Files</h3>
+<ul>
+<li><code>encore.service.ts</code> - Service definition (required)</li>
+<li><code>*.ts</code> - Business logic files</li>
+<li><code>migrations/</code> - Database migrations</li>
+<li><code>*.test.ts</code> - Test files</li>
+</ul>
+
+<h3>Common Patterns</h3>
+<strong><em>CODE</em>BLOCK<em>8</strong></em></p>
+
+<h2>Cross-Service Communication</h2>
+
+<h3>Type-Safe Service Calls</h3>
+<strong><em>CODE</em>BLOCK<em>9</strong></em></p>
+
+<h3>Shared Types</h3>
+Create a <code>types/</code> directory for shared interfaces:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>10</strong></em></p>
+
+<h2>Configuration Files</h2>
+
+<h3><code>encore.app</code></h3>
+Application configuration file (JSON):
+<strong><em>CODE</em>BLOCK<em>11</strong></em></p>
+
+<h3><code>tsconfig.json</code></h3>
+TypeScript configuration:
+<strong><em>CODE</em>BLOCK<em>12</strong></em></p>
+
+<h2>Best Practices</h2>
+
+<h3>1. Service Organization</h3>
+<ul>
+<li>Group related functionality in services</li>
+<li>Keep services focused and cohesive</li>
+<li>Use clear, descriptive service names</li>
+</ul>
+
+<h3>2. File Structure</h3>
+<ul>
+<li>Keep related files together</li>
+<li>Use consistent naming conventions</li>
+<li>Separate concerns (API, business logic, tests)</li>
+</ul>
+
+<h3>3. Dependencies</h3>
+<ul>
+<li>Prefer root-level package.json</li>
+<li>Minimize external dependencies</li>
+<li>Use TypeScript for type safety</li>
+</ul>
+
+<h3>4. Service Boundaries</h3>
+<ul>
+<li>Design services around business capabilities</li>
+<li>Minimize tight coupling between services</li>
+<li>Use well-defined interfaces for communication</li>
+</ul>
+
+<p>This structure enables Encore to automatically understand your application architecture and generate infrastructure, documentation, and tooling accordingly.</p>
+
+    </div>
+
+    <div class="section page-break" id="section-8">
+        <h2>Primitives: Cron Jobs</h2>
+        
+<h1>Encore Cron Jobs (TypeScript)</h1>
+
+<h2>Overview</h2>
+
+<p>Cron Jobs in Encore provide a declarative way to run periodic and recurring tasks in backend applications. Encore automatically manages scheduling, monitoring, and execution of these jobs.</p>
+
+<h2>Defining a Cron Job</h2>
+
+<h3>Basic Syntax</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h3>Key Configuration Options</h3>
+
+<ul>
+<li><code>unique-job-id</code>: A unique identifier for the job</li>
+<li><code>title</code>: Human-readable job description</li>
+<li><code>every</code>: Periodic interval (must divide 24 hours evenly)</li>
+<li><code>endpoint</code>: The API function to execute</li>
+</ul>
+
+<h2>Scheduling Modes</h2>
+
+<h3>Periodic Scheduling</h3>
+
+<p>Use the <code>every</code> field for simple recurring tasks:
+<ul>
+<li>Runs at midnight UTC</li>
+<li>Interval must evenly divide 24 hours</li>
+<li>Supported formats: <code>10m</code>, <code>6h</code></li>
+<li>Invalid example: <code>7h</code> (not evenly divisible)</li>
+</ul>
+
+<h3>Advanced Cron Expressions</h3>
+
+<p>For more complex scheduling, use the <code>schedule</code> field:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h2>Important Considerations</h2>
+
+<ul>
+<li>Not executed during local development or preview environments</li>
+<li>Free tier limited to once per hour</li>
+<li>Both public and private APIs supported</li>
+<li>Endpoints must be:</li>
+</ul>
+  - Idempotent
+  - Without request parameters</p>
+
+<h2>Execution Environment</h2>
+
+<ul>
+<li>Runs in Encore Cloud</li>
+<li>Managed scheduling and monitoring</li>
+</ul>
+<li>Dashboard available for tracking job executions</li></p>
+
+    </div>
+
+    <div class="section page-break" id="section-9">
+        <h2>Primitives: Databases</h2>
+        
+<h1>SQL Databases</h1>
+
+<p>Encore provides native PostgreSQL database support with automatic provisioning, migrations, and connection management.</p>
+
+<h2>Creating a Database</h2>
+
+<p>Define a database as a resource in your service:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h2>Migrations</h2>
+
+<p>Encore uses SQL migrations to manage your database schema.</p>
+
+<h3>Migration Files</h3>
+
+<p>Create migration files in the <code>migrations</code> directory:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h3>Migration Naming</h3>
+
+<p>Migration files must:
+<ul>
+<li>Start with a number (sequential)</li>
+<li>Followed by underscore</li>
+<li>Descriptive name</li>
+<li>End with <code>.up.sql</code></li>
+</ul>
+
+<h3>Example Migration</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h2>Querying Data</h2>
+
+<h3>Query Methods</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h3>Type-Safe Queries</h3>
+
+<p>Define types for your query results:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h2>Inserting Data</h2>
+
+<h3>Simple Insert</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h3>Insert with Returning</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h3>Bulk Insert</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>Updating Data</h2>
+
+<p><strong><em>CODE</em>BLOCK<em>8</strong></em></p>
+
+<h2>Deleting Data</h2>
+
+<p><strong><em>CODE</em>BLOCK<em>9</strong></em></p>
+
+<h2>Transactions</h2>
+
+<p>Use transactions for atomic operations:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>10</strong></em></p>
+
+<h2>Raw SQL Queries</h2>
+
+<p>For complex queries, use raw SQL:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>11</strong></em></p>
+
+<h2>Connection Pooling</h2>
+
+<p>Encore automatically manages connection pooling. You don&#x27;t need to:
+<ul>
+<li>Open/close connections</li>
+<li>Manage connection pools</li>
+<li>Handle connection errors</li>
+</ul>
+
+<h2>Testing with Databases</h2>
+
+<p>In tests, each test gets an isolated database:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>12</strong></em></p>
+
+<h2>Local Development</h2>
+
+<p>When running <code>encore run</code>:
+<ul>
+<li>Databases are created automatically</li>
+<li>Migrations run on startup</li>
+<li>Use <code>encore db shell &lt;database-name&gt;</code> to connect via psql</li>
+<li>Data persists between runs</li>
+</ul>
+
+<h2>Database Commands</h2>
+
+<p><strong><em>CODE</em>BLOCK<em>13</strong></em></p>
+
+<h2>Best Practices</h2>
+
+<ul>
+<li><strong>Always use migrations</strong> - Never modify schema manually</li>
+<li><strong>Use transactions</strong> - For operations that must be atomic</li>
+<li><strong>Type your queries</strong> - Define interfaces for query results</li>
+<li><strong>Index foreign keys</strong> - Improve join performance</li>
+<li><strong>Use connection pooling</strong> - Let Encore handle it</li>
+<li><strong>Avoid N+1 queries</strong> - Use joins or batch queries</li>
+<li><strong>Parameterize queries</strong> - Never concatenate SQL strings</li>
+</ul>
+
+<h2>Performance Tips</h2>
+
+<h3>Indexes</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>14</strong></em></p>
+
+<h3>Query Optimization</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>15</strong></em></p>
+
+<h2>Related Topics</h2>
+
+<ul>
+<li><a href="./databases-extensions.md">PostgreSQL Extensions</a></li>
+<li><a href="./caching.md">Caching</a></li>
+<li><a href="../develop/testing.md">Testing</a></li>
+</ul>
+<li><a href="../develop/migrations.md">Migrations Guide</a></li></p>
+
+    </div>
+
+    <div class="section page-break" id="section-10">
+        <h2>Primitives: Defining Apis</h2>
+        
+<h1>Defining APIs</h1>
+
+<p>Encore.ts makes it simple to create type-safe, idiomatic TypeScript API endpoints with automatic validation.</p>
+
+<h2>Basic API Definition</h2>
+
+<p>Use the <code>api</code> function from <code>encore.dev/api</code> to define endpoints:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h2>Request and Response Types</h2>
+
+<p>Define interfaces for type-safe requests and responses:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h2>API Visibility</h2>
+
+<h3>Private APIs (Default)</h3>
+Only accessible from other services within your application:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h3>Public APIs</h3>
+Accessible from the internet:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h2>Path Parameters</h2>
+
+<p>Use <code>:paramName</code> in the path:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h2>Query Parameters</h2>
+
+<p>Use the <code>Query</code> type for query string parameters:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h2>Headers</h2>
+
+<p>Access HTTP headers using the <code>Header</code> type:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h2>Authentication</h2>
+
+<p>Require authentication with <code>auth: true</code>:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>Custom Status Codes</h2>
+
+<p>Return custom HTTP status codes:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>8</strong></em></p>
+
+<h2>Request Body</h2>
+
+<p>For POST/PUT/PATCH requests, the entire params object is the body:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>9</strong></em></p>
+
+<h2>Cookies</h2>
+
+<p>Work with cookies using the <code>Cookie</code> type:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>10</strong></em></p>
+
+<h2>Validation</h2>
+
+<p>Encore automatically validates requests based on your TypeScript types:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>11</strong></em></p>
+
+<p>Invalid requests automatically return 400 Bad Request with details.</p>
+
+<h2>API Documentation</h2>
+
+<p>Encore automatically generates OpenAPI documentation for all your APIs:
+<ul>
+<li>Available at <code>http://localhost:9400</code> in development</li>
+<li>Includes all endpoints, parameters, and responses</li>
+<li>Interactive API explorer for testing</li>
+</ul>
+
+<h2>Best Practices</h2>
+
+<ul>
+<li><strong>Use descriptive names</strong>: <code>createUser</code> instead of <code>create</code></li>
+<li><strong>Group related APIs</strong>: Put them in the same service</li>
+<li><strong>Version your APIs</strong>: Use path prefixes like <code>/v1/users</code></li>
+<li><strong>Handle errors gracefully</strong>: Return appropriate status codes</li>
+<li><strong>Document complex logic</strong>: Add comments for business rules</li>
+<li><strong>Keep payloads small</strong>: Don&#x27;t return unnecessary data</li>
+<li><strong>Use consistent naming</strong>: camelCase for fields</li>
+</ul>
+
+<h2>Related Topics</h2>
+
+<ul>
+<li><a href="./api-calls.md">API Calls</a> - Calling APIs between services</li>
+<li><a href="./validation.md">Validation</a> - Advanced validation rules</li>
+<li><a href="./raw-endpoints.md">Raw Endpoints</a> - Low-level HTTP handling</li>
+<li><a href="./errors.md">API Errors</a> - Error handling</li>
+</ul>
+<li><a href="../develop/auth.md">Authentication</a> - Setting up auth</li></p>
+
+    </div>
+
+    <div class="section page-break" id="section-11">
+        <h2>Primitives: Errors</h2>
+        
+<h1>Encore TypeScript API Errors</h1>
+
+<h2>Overview</h2>
+
+<p>Encore provides a standardized approach to handling and returning API errors with structured information. The error format includes three key components:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h2>Error Handling</h2>
+
+<h3>Throwing Errors</h3>
+
+<p>To return an error, use the <code>APIError</code> from <code>encore.dev/api</code>:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h2>Error Codes</h2>
+
+<p>Encore uses error codes compatible with gRPC, mapping to specific HTTP status codes:</p>
+
+<p>| Error Code | String Value | HTTP Status |
+|-----------|--------------|-------------|
+| <code>OK</code> | <code>&quot;ok&quot;</code> | 200 OK |
+| <code>NotFound</code> | <code>&quot;not_found&quot;</code> | 404 Not Found |
+| <code>InvalidArgument</code> | <code>&quot;invalid_argument&quot;</code> | 400 Bad Request |
+| <code>PermissionDenied</code> | <code>&quot;permission_denied&quot;</code> | 403 Forbidden |
+| <code>Unauthenticated</code> | <code>&quot;unauthenticated&quot;</code> | 401 Unauthorized |</p>
+
+<h2>Additional Error Details</h2>
+
+<p>You can attach structured details to errors using the <code>withDetails</code> method:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<p>This allows for more comprehensive error reporting while maintaining a consistent error response structure.</p>
+
+    </div>
+
+    <div class="section page-break" id="section-12">
+        <h2>Primitives: Object Storage</h2>
+        
+<h1>Encore Object Storage Documentation</h1>
+
+<h2>Overview</h2>
+
+<p>Object Storage provides a simple and scalable solution for storing files and unstructured data in backend applications. Encore offers a cloud-agnostic API supporting multiple storage providers like Amazon S3, Google Cloud Storage, and S3-compatible services.</p>
+
+<h2>Key Features</h2>
+
+<ul>
+<li>Cloud-agnostic storage API</li>
+<li>Automatic tracing of storage operations</li>
+<li>Local development support</li>
+<li>Integration testing capabilities</li>
+<li>Support for multiple cloud providers</li>
+</ul>
+
+<h2>Creating a Bucket</h2>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h2>File Operations</h2>
+
+<h3>Uploading Files</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h3>Downloading Files</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h3>Listing Objects</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h3>Deleting Objects</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h2>Advanced Features</h2>
+
+<h3>Public Buckets</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h3>Signed Upload/Download URLs</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h2>Bucket References and Permissions</h2>
+
+<p><strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>Error Handling</h2>
+
+<p>Object Storage operations can throw errors for various reasons such as network issues, permission problems, or missing objects. Always implement proper error handling in your applications.</p>
+
+<h2>Best Practices</h2>
+
+<ul>
+<li>Use appropriate content types for uploads</li>
+<li>Implement proper error handling</li>
+<li>Consider using signed URLs for secure access</li>
+<li>Leverage bucket versioning for important data</li>
+</ul>
+<li>Monitor storage costs and usage</li></p>
+
+    </div>
+
+    <div class="section page-break" id="section-13">
+        <h2>Primitives: Pubsub</h2>
+        
+<h1>Pub/Sub Messaging</h1>
+
+<p>Pub/Sub (Publishers &amp; Subscribers) enables asynchronous, event-driven communication between services.</p>
+
+<h2>Core Concepts</h2>
+
+<h3>What is Pub/Sub?</h3>
+
+<p>Pub/Sub is a messaging pattern where:
+<ul>
+<li><strong>Publishers</strong> emit events without knowing who will receive them</li>
+<li><strong>Subscribers</strong> listen for events without knowing who sent them</li>
+<li><strong>Topics</strong> act as channels for specific event types</li>
+</ul>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h2>Creating Topics</h2>
+
+<p>Define topics as package-level variables:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h3>Topic Configuration Options</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h2>Publishing Events</h2>
+
+<h3>Basic Publishing</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h3>Publishing Multiple Events</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h3>Publishing with Attributes</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h2>Creating Subscriptions</h2>
+
+<h3>Basic Subscription</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h3>Subscription Configuration</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>Delivery Guarantees</h2>
+
+<h3>At-Least-Once Delivery</h3>
+
+<p>Default guarantee - messages may be delivered multiple times:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>8</strong></em></p>
+
+<h3>Exactly-Once Delivery</h3>
+
+<p>Stronger guarantee but with performance limitations:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>9</strong></em></p>
+
+<h2>Error Handling</h2>
+
+<h3>Retry Policy</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>10</strong></em></p>
+
+<h3>Dead Letter Queue</h3>
+
+<p>After max retries, messages go to DLQ:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>11</strong></em></p>
+
+<h2>Ordered Topics</h2>
+
+<p>Ensure message order for related events:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>12</strong></em></p>
+
+<h2>Common Patterns</h2>
+
+<h3>Event Sourcing</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>13</strong></em></p>
+
+<h3>Saga Pattern</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>14</strong></em></p>
+
+<h3>Fan-Out Pattern</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>15</strong></em></p>
+
+<h2>Testing Pub/Sub</h2>
+
+<h3>Unit Testing Publishers</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>16</strong></em></p>
+
+<h3>Testing Subscriptions</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>17</strong></em></p>
+
+<h2>Monitoring</h2>
+
+<p>The Encore dashboard provides:
+<ul>
+<li>Topic throughput metrics</li>
+<li>Subscription lag monitoring</li>
+<li>Error rates and retry counts</li>
+<li>Dead letter queue size</li>
+<li>Message flow visualization</li>
+</ul>
+
+<h2>Best Practices</h2>
+
+<ul>
+<li><strong>Make handlers idempotent</strong> - Handle duplicate deliveries gracefully</li>
+<li><strong>Keep events small</strong> - Store references, not large payloads</li>
+<li><strong>Version your events</strong> - Support backward compatibility</li>
+<li><strong>Use dead letter queues</strong> - Handle permanent failures</li>
+<li><strong>Monitor subscription lag</strong> - Ensure timely processing</li>
+<li><strong>Document event schemas</strong> - Make contracts clear</li>
+<li><strong>Test error scenarios</strong> - Verify retry and DLQ behavior</li>
+</ul>
+
+<h2>Performance Considerations</h2>
+
+<h3>Batching</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>18</strong></em></p>
+
+<h3>Parallel Processing</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>19</strong></em></p>
+
+<h2>Summary</h2>
+
+<p>Encore&#x27;s Pub/Sub provides:
+<ul>
+<li><strong>Type-safe</strong> event definitions</li>
+<li><strong>Automatic</strong> infrastructure provisioning</li>
+<li><strong>Built-in</strong> retry and error handling</li>
+<li><strong>Flexible</strong> delivery guarantees</li>
+<li><strong>Comprehensive</strong> monitoring</li>
+<li><strong>Simple</strong> testing patterns</li>
+</ul>
+
+<p>Perfect for:
+<ul>
+<li>Decoupling services</li>
+<li>Event-driven architectures</li>
+<li>Asynchronous workflows</li>
+<li>Fan-out processing</li>
+<li>Event sourcing</li>
+</ul>
+<li>Saga orchestration</li></p>
+
+    </div>
+
+    <div class="section page-break" id="section-14">
+        <h2>Primitives: Secrets</h2>
+        
+<h1>Secrets Management</h1>
+
+<p>Encore provides built-in secrets management to securely handle sensitive information like API keys, tokens, and credentials.</p>
+
+<h2>Defining Secrets</h2>
+
+<p>Use the <code>secret()</code> function to define secrets in your code:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h2>Using Secrets</h2>
+
+<p>Call the secret as a function to retrieve its value:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h2>Setting Secret Values</h2>
+
+<h3>Via Encore Cloud Dashboard</h3>
+
+<ul>
+<li>Open <a href="https://app.encore.dev">Encore Cloud Dashboard</a></li>
+<li>Navigate to <strong>Settings</strong> → <strong>Secrets</strong></li>
+<li>Add secrets for each environment:</li>
+</ul>
+   - Production
+   - Development
+   - Preview
+   - Local</p>
+
+<h3>Via CLI</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<p>Environment type shortcuts:
+<ul>
+<li><code>prod</code> → production</li>
+<li><code>dev</code> → development</li>
+<li><code>pr</code> → preview</li>
+</ul>
+
+<h3>Local Override File</h3>
+
+<p>Create <code>.secrets.local</code> file in your project root:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<p><strong>Important</strong>: Add <code>.secrets.local</code> to <code>.gitignore</code>:
+<strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h2>Secret Validation</h2>
+
+<p>Encore validates secrets at compile time:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h2>Environment-Specific Secrets</h2>
+
+<p>Different values per environment:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h2>Common Secret Patterns</h2>
+
+<h3>Database Credentials</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h3>API Keys</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>8</strong></em></p>
+
+<h3>JWT Secrets</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>9</strong></em></p>
+
+<h3>OAuth Credentials</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>10</strong></em></p>
+
+<h2>Secret Rotation</h2>
+
+<p>Best practices for rotating secrets:</p>
+
+<ul>
+<li><strong>Add new secret version</strong>:</li>
+</ul>
+<strong><em>CODE</em>BLOCK<em>11</strong></em></p>
+
+<ul>
+<li><strong>Update code to support both</strong>:</li>
+</ul>
+<strong><em>CODE</em>BLOCK<em>12</strong></em></p>
+
+<ul>
+<li><strong>Deploy and verify</strong></li>
+<li><strong>Remove old secret</strong></li>
+</ul>
+
+<h2>Security Best Practices</h2>
+
+<h3>1. Never Commit Secrets</h3>
+<strong><em>CODE</em>BLOCK<em>13</strong></em></p>
+
+<h3>2. Use Descriptive Names</h3>
+<strong><em>CODE</em>BLOCK<em>14</strong></em></p>
+
+<h3>3. Limit Secret Scope</h3>
+<strong><em>CODE</em>BLOCK<em>15</strong></em></p>
+
+<h3>4. Audit Secret Usage</h3>
+<strong><em>CODE</em>BLOCK<em>16</strong></em></p>
+
+<h2>Testing with Secrets</h2>
+
+<h3>Mock Secrets in Tests</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>17</strong></em></p>
+
+<h3>Test Environment Secrets</h3>
+
+<p>Set test-specific secrets:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>18</strong></em></p>
+
+<h2>Secret Storage Security</h2>
+
+<p>Encore encrypts secrets using:
+<ul>
+<li><strong>Google Cloud KMS</strong> for Encore Cloud</li>
+<li><strong>AES-256</strong> for local development</li>
+<li><strong>Environment-specific encryption keys</strong></li>
+</ul>
+
+<h3>How Secrets Are Stored</h3>
+
+<ul>
+<li><strong>Encore Cloud</strong>: Encrypted in Google Secret Manager</li>
+<li><strong>Local Development</strong>: Encrypted in <code>.encore</code> directory</li>
+<li><strong>Self-Hosted</strong>: Your choice of secret manager</li>
+</ul>
+
+<h2>Debugging Secrets</h2>
+
+<h3>Check if Secret is Set</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>19</strong></em></p>
+
+<h3>List All Secrets</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>20</strong></em></p>
+
+<h3>View Secret Metadata</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>21</strong></em></p>
+
+<h2>Migration from Environment Variables</h2>
+
+<p>Migrating from traditional env vars:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>22</strong></em></p>
+
+<h2>Common Issues and Solutions</h2>
+
+<h3>Secret Not Found</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>23</strong></em></p>
+
+<p><strong>Solution</strong>: Set the secret using CLI or dashboard</p>
+
+<h3>Secret Access in Non-API Code</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>24</strong></em></p>
+
+<h3>Different Secrets Per Service</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>25</strong></em></p>
+
+<h2>Summary</h2>
+
+<p>Encore&#x27;s secrets management:
+<ul>
+<li><strong>Secure</strong>: Encrypted storage and transmission</li>
+<li><strong>Simple</strong>: Define and use with one function</li>
+<li><strong>Validated</strong>: Compile-time checking</li>
+<li><strong>Flexible</strong>: Different values per environment</li>
+<li><strong>Auditable</strong>: Track secret usage</li>
+</ul>
+<li><strong>Testable</strong>: Easy mocking for tests</li></p>
+
+    </div>
+
+    <div class="section page-break" id="section-15">
+        <h2>Primitives: Services</h2>
+        
+<h1>Defining Services</h1>
+
+<p>Encore.ts simplifies building applications with multiple services, eliminating the typical complexity of microservice development.</p>
+
+<h2>What is a Service?</h2>
+
+<p>In Encore, a service is a logical grouping of related functionality. Each service:
+<ul>
+<li>Has its own package/directory</li>
+<li>Can expose APIs</li>
+<li>Can have its own database</li>
+<li>Runs as part of your application</li>
+</ul>
+
+<h2>Creating a Service</h2>
+
+<p>To create an Encore service:</p>
+
+<ul>
+<li>Create a directory for your service</li>
+<li>Add a file named <code>encore.service.ts</code> in that directory</li>
+<li>Export a service instance</li>
+</ul>
+
+<h3>Basic Example</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h3>Service Structure</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h2>Service Configuration</h2>
+
+<h3>Basic Configuration</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h3>Advanced Configuration</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h2>Service Communication</h2>
+
+<p>Services can call each other&#x27;s APIs:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<p><strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h2>Service Best Practices</h2>
+
+<h3>1. Single Responsibility</h3>
+Each service should have a clear, single purpose:
+<ul>
+<li>✅ <code>users</code> - User management</li>
+<li>✅ <code>payments</code> - Payment processing</li>
+<li>❌ <code>utils</code> - Too generic</li>
+</ul>
+
+<h3>2. Service Boundaries</h3>
+Keep services loosely coupled:
+<ul>
+<li>Communicate via APIs</li>
+<li>Don&#x27;t share databases between services</li>
+<li>Keep shared types minimal</li>
+</ul>
+
+<h3>3. Service Naming</h3>
+Use clear, descriptive names:
+<ul>
+<li>Use lowercase</li>
+<li>Use hyphens for multi-word names</li>
+<li>Be consistent across your application</li>
+</ul>
+
+<h3>4. Directory Structure</h3>
+Organize service code logically:
+<strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h2>Service Discovery</h2>
+
+<p>Encore automatically handles service discovery. You don&#x27;t need to:
+<ul>
+<li>Configure service URLs</li>
+<li>Set up load balancers</li>
+<li>Manage service registries</li>
+</ul>
+
+<p>Just import and call:
+<strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>Local Development</h2>
+
+<p>When running locally with <code>encore run</code>:
+<ul>
+<li>All services start automatically</li>
+<li>Services can communicate locally</li>
+<li>Hot reload works across services</li>
+<li>Shared development database</li>
+</ul>
+
+<h2>Production Deployment</h2>
+
+<p>In production:
+<ul>
+<li>Services can be deployed independently</li>
+<li>Automatic load balancing</li>
+<li>Built-in service mesh</li>
+<li>Zero-downtime deployments</li>
+</ul>
+
+<h2>Monitoring Services</h2>
+
+<p>The Encore dashboard provides:
+<ul>
+<li>Service topology view</li>
+<li>Request traces across services</li>
+<li>Service-specific metrics</li>
+<li>Error tracking per service</li>
+</ul>
+
+<h2>Related Topics</h2>
+
+<ul>
+<li><a href="./defining-apis.md">API Endpoints</a></li>
+<li><a href="./databases.md">Databases</a></li>
+<li><a href="../develop/auth.md">Authentication</a></li>
+</ul>
+<li><a href="../develop/testing.md">Testing</a></li></p>
+
+    </div>
+
+    <div class="section page-break" id="section-16">
+        <h2>Primitives: Streaming Apis</h2>
+        
+<h1>Encore TypeScript Streaming APIs</h1>
+
+<h2>Overview</h2>
+
+<p>Encore provides a robust streaming API system that supports three primary streaming patterns:</p>
+
+<ul>
+<li><strong>StreamIn</strong>: Client-to-server data streaming</li>
+<li><strong>StreamOut</strong>: Server-to-client data streaming</li>
+<li><strong>StreamInOut</strong>: Bidirectional data streaming</li>
+</ul>
+
+<h2>Key Streaming Concepts</h2>
+
+<h3>WebSocket Handshake</h3>
+When establishing a stream, Encore performs an initial HTTP handshake that can include:
+<ul>
+<li>Path parameters</li>
+<li>Query parameters</li>
+<li>Headers</li>
+</ul>
+
+<h3>Stream Types</h3>
+
+<h4>StreamIn Example</h4>
+<strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h4>StreamOut Example</h4>
+<strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h4>StreamInOut Example</h4>
+<strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h2>Advanced Streaming Patterns</h2>
+
+<h3>Authentication</h3>
+<ul>
+<li>Use <code>auth: true</code> in endpoint options</li>
+<li>Authentication data passed via query parameters or headers</li>
+<li>Access authentication data with <code>getAuthData()</code></li>
+</ul>
+
+<h3>Broadcasting Messages</h3>
+<strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h2>Error Handling</h2>
+
+<p>Streaming APIs support error handling through standard Encore error mechanisms:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h2>Best Practices</h2>
+
+<ul>
+<li>Always clean up resources in finally blocks</li>
+<li>Implement proper error handling for stream interruptions</li>
+<li>Use authentication for sensitive streaming endpoints</li>
+<li>Consider rate limiting for high-volume streams</li>
+</ul>
+<li>Monitor stream connections for resource management</li></p>
+
+    </div>
+
+    <div class="section page-break" id="section-17">
+        <h2>Primitives: Validation</h2>
+        
+<h1>Request Validation in Encore.ts</h1>
+
+<h2>Overview</h2>
+
+<p>Encore.ts provides built-in runtime validation using TypeScript types, ensuring both compile-time and runtime type safety. The validation system automatically validates request data from multiple sources including request body, query parameters, headers, and path parameters.</p>
+
+<h2>Basic Type Validation</h2>
+
+<h3>Primitive Types</h3>
+<strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h3>Optional and Nullable Fields</h3>
+<strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h3>Array Validation</h3>
+<strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h2>Advanced Validation Rules</h2>
+
+<h3>Numeric Constraints</h3>
+<strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h3>String Length Validation</h3>
+<strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h3>Format Validation</h3>
+<strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h3>Pattern Matching</h3>
+<strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h3>Enum Validation</h3>
+<strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>Complex Validation Examples</h2>
+
+<h3>User Registration</h3>
+<strong><em>CODE</em>BLOCK<em>8</strong></em></p>
+
+<h3>Product Creation</h3>
+<strong><em>CODE</em>BLOCK<em>9</strong></em></p>
+
+<h3>Query Parameter Validation</h3>
+<strong><em>CODE</em>BLOCK<em>10</strong></em></p>
+
+<h2>Validation Sources</h2>
+
+<h3>Request Body</h3>
+<strong><em>CODE</em>BLOCK<em>11</strong></em></p>
+
+<h3>Path Parameters</h3>
+<strong><em>CODE</em>BLOCK<em>12</strong></em></p>
+
+<h3>Query Parameters</h3>
+<strong><em>CODE</em>BLOCK<em>13</strong></em></p>
+
+<h3>Headers</h3>
+<strong><em>CODE</em>BLOCK<em>14</strong></em></p>
+
+<h2>Error Handling</h2>
+
+<h3>Validation Errors</h3>
+When validation fails, Encore automatically returns a <code>400 Bad Request</code> response with detailed error information:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>15</strong></em></p>
+
+<h3>Custom Validation</h3>
+For complex business logic validation:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>16</strong></em></p>
+
+<h2>Best Practices</h2>
+
+<h3>1. Use Type-Safe Validation</h3>
+<strong><em>CODE</em>BLOCK<em>17</strong></em></p>
+
+<h3>2. Combine Multiple Constraints</h3>
+<strong><em>CODE</em>BLOCK<em>18</strong></em></p>
+
+<h3>3. Use Union Types for Options</h3>
+<strong><em>CODE</em>BLOCK<em>19</strong></em></p>
+
+<h3>4. Validate All Input Sources</h3>
+<strong><em>CODE</em>BLOCK<em>20</strong></em></p>
+
+<h2>Performance Considerations</h2>
+
+<ul>
+<li>Validation runs in Encore&#x27;s Rust runtime for optimal performance</li>
+<li>Failed validation short-circuits request processing</li>
+<li>Type information is compiled into efficient validation rules</li>
+<li>No runtime overhead for TypeScript type checking</li>
+</ul>
+
+<p>The validation system provides robust request handling while maintaining excellent performance and developer experience.</p>
+
+    </div>
+
+    <div class="section page-break" id="section-18">
+        <h2>Develop: Auth</h2>
+        
+<h1>Authentication</h1>
+
+<p>Encore provides a flexible authentication system that integrates seamlessly with your API endpoints.</p>
+
+<h2>Overview</h2>
+
+<p>Authentication in Encore involves:
+<ul>
+<li>Defining an authentication handler</li>
+<li>Validating credentials</li>
+<li>Protecting API endpoints</li>
+<li>Accessing auth data in your code</li>
+</ul>
+
+<h2>Setting Up Authentication</h2>
+
+<h3>Create an Auth Handler</h3>
+
+<p>Create an auth handler in your application:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h3>Configure the API Gateway</h3>
+
+<p>Register your auth handler with the gateway:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h2>Protecting Endpoints</h2>
+
+<h3>Require Authentication</h3>
+
+<p>Set <code>auth: true</code> on endpoints that require authentication:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h2>Accessing Auth Data</h2>
+
+<h3>In API Endpoints</h3>
+
+<p>Use <code>getAuthData()</code> to access authentication data:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h3>In Service Functions</h3>
+
+<p>Auth data is available in any function called from an authenticated endpoint:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h2>JWT Authentication Example</h2>
+
+<p>Complete JWT implementation:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h3>Login Endpoint</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h2>API Key Authentication</h2>
+
+<p>Alternative authentication using API keys:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>Role-Based Access Control</h2>
+
+<p>Implement RBAC in your endpoints:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>8</strong></em></p>
+
+<h2>Testing Authentication</h2>
+
+<h3>Mocking Auth in Tests</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>9</strong></em></p>
+
+<h3>Testing Protected Endpoints</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>10</strong></em></p>
+
+<h2>Cross-Service Authentication</h2>
+
+<p>Auth data automatically propagates across service calls:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>11</strong></em></p>
+
+<h2>Security Best Practices</h2>
+
+<ul>
+<li><strong>Always use HTTPS</strong> in production</li>
+<li><strong>Store secrets securely</strong> using Encore&#x27;s secrets management</li>
+<li><strong>Implement rate limiting</strong> for auth endpoints</li>
+<li><strong>Use strong JWT secrets</strong> and rotate them regularly</li>
+<li><strong>Validate and sanitize</strong> all inputs</li>
+<li><strong>Log authentication attempts</strong> for security monitoring</li>
+<li><strong>Implement token refresh</strong> for long-lived sessions</li>
+<li><strong>Use secure cookies</strong> for web applications</li>
+</ul>
+
+<h2>Common Patterns</h2>
+
+<h3>Refresh Tokens</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>12</strong></em></p>
+
+<h3>Session Management</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>13</strong></em></p>
+
+<h2>Related Topics</h2>
+
+<ul>
+<li><a href="../primitives/defining-apis.md">API Endpoints</a></li>
+<li><a href="../primitives/secrets.md">Secrets Management</a></li>
+<li><a href="./testing.md">Testing</a></li>
+</ul>
+<li><a href="./middleware.md">Middleware</a></li></p>
+
+    </div>
+
+    <div class="section page-break" id="section-19">
+        <h2>Develop: Middleware</h2>
+        
+<h1>Encore TypeScript Middleware Guide</h1>
+
+<h2>Overview</h2>
+
+<p>Middleware in Encore.ts is a powerful mechanism for &quot;writing reusable code that runs before, after, or both before and after the handling of API requests&quot;.</p>
+
+<h2>Key Concepts</h2>
+
+<h3>Middleware Functions</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h3>Core Characteristics</h3>
+
+<ul>
+<li>Runs in a chain of middleware functions</li>
+<li>Can process requests before and after API handler execution</li>
+<li>Supports targeting specific endpoint types</li>
+</ul>
+
+<h3>Request Handling</h3>
+
+<p>Middleware can access different request types:
+<ul>
+<li>Typed API endpoints via <code>req.requestMeta</code></li>
+<li>Streaming endpoints via <code>req.stream</code></li>
+<li>Raw endpoints via <code>req.rawRequest</code> and <code>req.rawResponse</code></li>
+</ul>
+
+<h3>Data Passing</h3>
+
+<p>You can pass data between middleware and API handlers using <code>req.data</code>:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h3>Middleware Ordering</h3>
+
+<p>Middlewares execute in the order they are defined in the service configuration.</p>
+
+<h3>Targeting APIs</h3>
+
+<p>Middleware can be precisely targeted using options like:
+<ul>
+<li><code>tags</code>: Apply to endpoints with specific tags</li>
+<li><code>expose</code>: Target exposed/non-exposed endpoints</li>
+<li><code>auth</code>: Apply to authenticated/non-authenticated endpoints</li>
+<li><code>isRaw</code>: Target raw endpoints</li>
+<li><code>isStream</code>: Target streaming endpoints</li>
+</ul>
+
+<h2>Common Middleware Patterns</h2>
+
+<h3>Authentication Middleware</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h3>Logging Middleware</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h3>Rate Limiting Middleware</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h2>Best Practices</h2>
+
+<ul>
+<li>Use <code>target</code> option for performance optimization</li>
+<li>Leverage middleware for cross-cutting concerns like logging, authentication, and tracing</li>
+<li>Keep middleware focused and composable</li>
+<li>Order middleware thoughtfully based on dependencies</li>
+</ul>
+<li>Use <code>req.data</code> for passing context between middleware and handlers</li></p>
+
+    </div>
+
+    <div class="section page-break" id="section-20">
+        <h2>Develop: Testing</h2>
+        
+<h1>Automated Testing in Encore TypeScript</h1>
+
+<h2>Overview</h2>
+
+<p>Encore provides built-in testing tools designed to simplify application testing across various test runners. The core testing workflow involves:</p>
+
+<ul>
+<li>Configuring the test command in <code>package.json</code></li>
+<li>Setting up your preferred test runner</li>
+<li>Running tests via <code>encore test</code></li>
+</ul>
+
+<h2>Recommended Test Runner: Vitest</h2>
+
+<h3>Why Vitest?</h3>
+
+<p>Vitest offers key advantages:
+<ul>
+<li>Fast test execution</li>
+<li>Native ESM and TypeScript support</li>
+<li>Jest API compatibility</li>
+</ul>
+
+<h3>Setup Steps</h3>
+
+<h4>Configuration Files</h4>
+
+<ul>
+<li>Create <code>vite.config.ts</code>:</li>
+</ul>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<ul>
+<li>Update <code>package.json</code>:</li>
+</ul>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h4>Optional VS Code Integration</h4>
+
+<ul>
+<li>Install Vitest VS Code extension</li>
+<li>Add to <code>.vscode/settings.json</code>:</li>
+</ul>
+
+<p><strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h2>Testing Best Practices</h2>
+
+<h3>Integration Testing Focus</h3>
+
+<p>Encore recommends integration testing because:
+<ul>
+<li>Minimal boilerplate code</li>
+<li>Business logic often involves databases and inter-service API calls</li>
+<li>Integration tests provide more comprehensive verification</li>
+</ul>
+
+<h3>Test Environment Optimizations</h3>
+
+<p>Encore automatically:
+<ul>
+<li>Creates separate test databases</li>
+<li>Optimizes database performance by:</li>
+</ul>
+  - Skipping <code>fsync</code>
+  - Using in-memory filesystems
+  - Removing durability overhead</p>
+
+<p>These optimizations make integration tests nearly as performant as unit tests.</p>
+
+<h2>Example Test Structure</h2>
+
+<p><strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h2>Key Testing Principles</h2>
+
+<ul>
+<li>Prioritize integration over unit tests</li>
+<li>Leverage Encore&#x27;s built-in infrastructure setup</li>
+<li>Use Vitest for efficient, TypeScript-friendly testing</li>
+<li>Focus on testing actual business logic and service interactions</li>
+</ul>
+<li>Take advantage of automatic database provisioning and cleanup</li></p>
+
+    </div>
+
+    <div class="section page-break" id="section-21">
+        <h2>Deploy: Environments</h2>
+        
+<h1>Encore Deployment Environments</h1>
+
+<h2>Overview</h2>
+
+<p>Encore provides comprehensive environment management for deploying applications across different stages of the development lifecycle. Each environment is isolated with its own resources, configurations, and data.</p>
+
+<h2>Environment Types</h2>
+
+<h3>Development Environment</h3>
+<ul>
+<li><strong>Local development</strong>: Runs on your machine with <code>encore run</code></li>
+<li><strong>Hot reloading</strong>: Automatic code reloading during development</li>
+<li><strong>Local dashboard</strong>: Built-in development tools and API explorer</li>
+<li><strong>Ephemeral databases</strong>: Automatically created and managed</li>
+</ul>
+
+<h3>Staging/Preview Environments</h3>
+<ul>
+<li><strong>Pull request previews</strong>: Automatic environment creation for PRs</li>
+<li><strong>Integration testing</strong>: Safe environment for testing changes</li>
+<li><strong>Shared staging</strong>: Stable environment for team collaboration</li>
+<li><strong>Production-like</strong>: Mirrors production configuration</li>
+</ul>
+
+<h3>Production Environment</h3>
+<ul>
+<li><strong>High availability</strong>: Redundant infrastructure and failover</li>
+<li><strong>Monitoring</strong>: Comprehensive observability and alerting</li>
+<li><strong>Scaling</strong>: Automatic scaling based on traffic</li>
+<li><strong>Security</strong>: Enhanced security controls and access management</li>
+</ul>
+
+<h2>Environment Configuration</h2>
+
+<h3>Environment Variables</h3>
+
+<p>Configure environment-specific settings:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h3>Secrets Management</h3>
+
+<p>Store sensitive configuration securely:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h3>Service Configuration</h3>
+
+<p>Environment-specific service configuration:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h2>Deployment Strategies</h2>
+
+<h3>Automatic Deployment</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h3>Manual Deployment</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h3>Preview Environments</h3>
+
+<p>Automatic preview environments for pull requests:
+<ul>
+<li>Created automatically on PR creation</li>
+<li>Updated on each commit</li>
+<li>Destroyed when PR is closed</li>
+<li>Full isolation from other environments</li>
+</ul>
+
+<h2>Environment Management</h2>
+
+<h3>Creating Environments</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h3>Environment Configuration</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h3>Database Management</h3>
+
+<p>Each environment has isolated databases:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>Environment Isolation</h2>
+
+<h3>Resource Separation</h3>
+<ul>
+<li><strong>Databases</strong>: Completely isolated per environment</li>
+<li><strong>Object storage</strong>: Separate buckets/containers</li>
+<li><strong>Secrets</strong>: Environment-specific secret stores</li>
+<li><strong>Logs</strong>: Isolated logging and monitoring</li>
+</ul>
+
+<h3>Network Isolation</h3>
+<ul>
+<li><strong>VPC separation</strong>: Production networks isolated</li>
+<li><strong>Security groups</strong>: Environment-specific access controls</li>
+<li><strong>Load balancers</strong>: Dedicated load balancing per environment</li>
+</ul>
+
+<h2>Monitoring and Observability</h2>
+
+<h3>Environment-Specific Monitoring</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>8</strong></em></p>
+
+<h3>Performance Monitoring</h3>
+<ul>
+<li><strong>Metrics</strong>: Environment-specific performance metrics</li>
+<li><strong>Alerts</strong>: Custom alerting per environment</li>
+<li><strong>Tracing</strong>: Distributed tracing with environment context</li>
+</ul>
+
+<h2>Best Practices</h2>
+
+<h3>Environment Promotion</h3>
+<ul>
+<li><strong>Development</strong>: Local development and testing</li>
+<li><strong>Staging</strong>: Integration testing and QA</li>
+<li><strong>Production</strong>: Live user traffic</li>
+</ul>
+
+<h3>Configuration Management</h3>
+<ul>
+<li>Use environment variables for configuration</li>
+<li>Store secrets securely with <code>encore secret</code></li>
+<li>Avoid hardcoding environment-specific values</li>
+<li>Test configuration changes in staging first</li>
+</ul>
+
+<h3>Deployment Safety</h3>
+<ul>
+<li><strong>Gradual rollouts</strong>: Deploy to staging before production</li>
+<li><strong>Health checks</strong>: Verify deployment success</li>
+<li><strong>Rollback capability</strong>: Quick rollback for issues</li>
+<li><strong>Database migrations</strong>: Test migrations in staging</li>
+</ul>
+
+<h3>Security Considerations</h3>
+<ul>
+<li><strong>Access controls</strong>: Restrict production access</li>
+<li><strong>Audit logging</strong>: Track all production changes</li>
+<li><strong>Secret rotation</strong>: Regular secret updates</li>
+<li><strong>Compliance</strong>: Meet regulatory requirements per environment</li>
+</ul>
+
+<h2>Advanced Features</h2>
+
+<h3>Custom Domains</h3>
+<strong><em>CODE</em>BLOCK<em>9</strong></em></p>
+
+<h3>Auto-scaling Configuration</h3>
+Environment-specific scaling rules:
+<ul>
+<li><strong>Development</strong>: Minimal resources</li>
+<li><strong>Staging</strong>: Moderate scaling for testing</li>
+<li><strong>Production</strong>: Aggressive scaling for performance</li>
+</ul>
+
+<h3>Backup and Recovery</h3>
+<ul>
+<li><strong>Automated backups</strong>: Scheduled database backups</li>
+<li><strong>Point-in-time recovery</strong>: Restore to specific timestamps</li>
+<li><strong>Cross-environment restore</strong>: Restore production data to staging</li>
+</ul>
+
+<h2>Troubleshooting</h2>
+
+<h3>Common Issues</h3>
+<ul>
+<li><strong>Environment access</strong>: Check permissions and authentication</li>
+<li><strong>Configuration drift</strong>: Verify environment-specific settings</li>
+<li><strong>Resource limits</strong>: Monitor resource usage and limits</li>
+</ul>
+
+<h3>Debugging Tools</h3>
+<strong><em>CODE</em>BLOCK<em>10</strong></em></p>
+
+    </div>
+
+    <div class="section page-break" id="section-22">
+        <h2>Observability: Logging</h2>
+        
+<h1>Encore Structured Logging for TypeScript</h1>
+
+<h2>Overview</h2>
+
+<p>Encore provides a robust structured logging system that combines free-form messages with type-safe key-value pairs, enabling comprehensive application observability.</p>
+
+<h2>Key Features</h2>
+
+<h3>Logging Levels</h3>
+
+<p>Encore supports multiple log levels:
+<ul>
+<li><code>error</code></li>
+<li><code>warn</code></li>
+<li><code>info</code></li>
+<li><code>debug</code></li>
+<li><code>trace</code></li>
+</ul>
+
+<h3>Basic Usage</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h3>Advanced Logging Patterns</h3>
+
+<h4>Persistent Logger</h4>
+
+<p>Create a logger with consistent metadata:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h4>Contextual Logging</h4>
+
+<p><strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h4>Error Logging</h4>
+
+<p><strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h2>Integration Features</h2>
+
+<ul>
+<li>Automatically integrated with distributed tracing</li>
+<li>Logs are included in active traces</li>
+<li>Simplifies application debugging</li>
+</ul>
+
+<h2>Live Log Streaming</h2>
+
+<p>Stream logs directly to your terminal across environments:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h3>Filtering Logs</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h2>Structured Data Examples</h2>
+
+<h3>User Activity Logging</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h3>API Performance Logging</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>Best Practices</h2>
+
+<ul>
+<li>Use structured logging for better log analysis</li>
+<li>Include relevant context in log metadata</li>
+<li>Leverage different log levels appropriately</li>
+<li>Use persistent loggers for repeated context</li>
+<li>Avoid logging sensitive information (passwords, tokens)</li>
+<li>Include correlation IDs for request tracing</li>
+</ul>
+
+<h2>Benefits</h2>
+
+<ul>
+<li>Computer-parsable log format</li>
+<li>Easy filtering and searching</li>
+<li>Simplified debugging</li>
+<li>Comprehensive application insights</li>
+</ul>
+<li>Automatic trace correlation</li></p>
+
+    </div>
+
+    <div class="section page-break" id="section-23">
+        <h2>Observability: Tracing</h2>
+        
+<h1>Distributed Tracing in Encore</h1>
+
+<h2>Overview</h2>
+
+<p>Distributed tracing is a powerful observability technique that helps developers understand complex application behaviors across multiple services. Encore provides an automated tracing solution with unique capabilities:</p>
+
+<h2>Key Concepts</h2>
+
+<h3>What is Distributed Tracing?</h3>
+
+<p>&quot;Tracing is a revolutionary way to gain insight into what your applications are doing. It works by capturing the series of events as they occur during the execution of your code.&quot;</p>
+
+<h3>Trace Propagation</h3>
+
+<p>Traces work by:
+<ul>
+<li>Generating a unique trace ID</li>
+<li>Propagating this ID across different system components</li>
+<li>Correlating events to create an end-to-end view of request processing</li>
+</ul>
+
+<h2>Encore&#x27;s Tracing Features</h2>
+
+<h3>Comprehensive Insights</h3>
+
+<p>Encore captures detailed trace information including:
+<ul>
+<li>Stack traces</li>
+<li>Structured logging</li>
+<li>HTTP requests</li>
+<li>Network connection details</li>
+<li>API calls</li>
+<li>Database queries</li>
+</ul>
+
+<h3>Automatic Instrumentation</h3>
+
+<p>&quot;Encore automatically captures traces for your entire application – in all environments.&quot;</p>
+
+<p>Benefits of automatic tracing:
+<ul>
+<li>No manual instrumentation required</li>
+<li>Consistent trace collection</li>
+<li>Zero-configuration setup</li>
+<li>Complete request lifecycle visibility</li>
+</ul>
+
+<h3>Development and Production Support</h3>
+
+<p>Traces can be viewed in:
+<ul>
+<li>Local Development Dashboard</li>
+<li>Encore Cloud dashboard for production environments</li>
+</ul>
+
+<h2>Trace Data Collection</h2>
+
+<h3>Request/Response Capture</h3>
+
+<p>Encore automatically captures:
+<ul>
+<li>Request payloads</li>
+<li>Response data</li>
+<li>Headers and metadata</li>
+<li>Timing information</li>
+</ul>
+
+<h3>Database Operations</h3>
+
+<p>Automatic tracking of:
+<ul>
+<li>SQL queries</li>
+<li>Query parameters</li>
+<li>Execution times</li>
+<li>Connection details</li>
+</ul>
+
+<h3>Service Communications</h3>
+
+<p>Monitor:
+<ul>
+<li>Inter-service API calls</li>
+<li>Message passing</li>
+<li>External API requests</li>
+<li>Network latency</li>
+</ul>
+
+<h2>Sensitive Data Handling</h2>
+
+<p>&quot;Encore&#x27;s tracing automatically captures request and response payloads to simplify debugging.&quot;</p>
+
+<h3>Data Redaction</h3>
+
+<p>For sensitive information like passwords or PII, Encore supports:
+<ul>
+<li>Marking sensitive fields in API schemas</li>
+<li>Automatically redacting confidential data</li>
+<li>Maintaining trace utility while protecting privacy</li>
+</ul>
+
+<p>Example of sensitive field marking:
+<strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h2>Viewing Traces</h2>
+
+<h3>Local Development</h3>
+<ul>
+<li>Start your application with <code>encore run</code></li>
+<li>Access the Development Dashboard</li>
+<li>Navigate to the Traces section</li>
+<li>View real-time trace data</li>
+</ul>
+
+<h3>Production Environment</h3>
+<ul>
+<li>Deploy to Encore Cloud</li>
+<li>Access the Cloud dashboard</li>
+<li>Use trace filtering and search</li>
+<li>Analyze performance patterns</li>
+</ul>
+
+<h2>Trace Analysis</h2>
+
+<h3>Performance Monitoring</h3>
+<ul>
+<li>Identify slow operations</li>
+<li>Analyze request patterns</li>
+<li>Monitor service dependencies</li>
+<li>Track error rates</li>
+</ul>
+
+<h3>Debugging Capabilities</h3>
+<ul>
+<li>Complete request flow visualization</li>
+<li>Error stack traces with context</li>
+<li>Database query analysis</li>
+<li>Service interaction mapping</li>
+</ul>
+
+<h2>Best Practices</h2>
+
+<ul>
+<li>Leverage automatic tracing for comprehensive system insights</li>
+<li>Use trace data for debugging and performance optimization</li>
+<li>Carefully mark sensitive fields to protect confidential information</li>
+<li>Regularly review traces for performance bottlenecks</li>
+<li>Use traces to understand service dependencies</li>
+</ul>
+
+<h2>Additional Resources</h2>
+
+<ul>
+<li><a href="/docs/ts/primitives/defining-apis#sensitive-data">API Schemas Documentation</a></li>
+<li>Local Development Dashboard</li>
+<li>Encore Cloud Dashboard</li>
+</ul>
+<li>Performance monitoring guides</li></p>
+
+    </div>
+
+    <div class="section page-break" id="section-24">
+        <h2>Tutorials: Graphql</h2>
+        
+<h1>Building a GraphQL API with Encore.ts</h1>
+
+<h2>Overview</h2>
+
+<p>This tutorial guides you through building a GraphQL API using Encore.ts and Apollo Server. You&#x27;ll learn how to:</p>
+
+<ul>
+<li>Set up GraphQL with Encore</li>
+<li>Define GraphQL schemas</li>
+<li>Create resolvers</li>
+<li>Implement CRUD operations</li>
+<li>Deploy GraphQL APIs</li>
+</ul>
+
+<h2>Prerequisites</h2>
+
+<ul>
+<li>Node.js</li>
+<li>Encore CLI</li>
+<li>Basic GraphQL knowledge</li>
+</ul>
+
+<h2>Step 1: Create Encore Application</h2>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h2>Step 2: Install Dependencies</h2>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h2>Step 3: Define GraphQL Schema</h2>
+
+<p>Create <code>schema.graphql</code>:
+<strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h2>Step 4: Create Book Service</h2>
+
+<p>Create <code>book/encore.service.ts</code>:
+<strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<p>Create <code>book/book.ts</code>:
+<strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h2>Step 5: Create GraphQL Resolvers</h2>
+
+<p>Create <code>graphql/resolvers.ts</code>:
+<strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h2>Step 6: Configure Apollo Server</h2>
+
+<p>Create <code>graphql/encore.service.ts</code>:
+<strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<p>Create <code>graphql/server.ts</code>:
+<strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>Step 7: Run and Test</h2>
+
+<p><strong><em>CODE</em>BLOCK<em>8</strong></em></p>
+
+<h3>Example Queries</h3>
+
+<p>Query all books:
+<strong><em>CODE</em>BLOCK<em>9</strong></em></p>
+
+<p>Add a new book:
+<strong><em>CODE</em>BLOCK<em>10</strong></em></p>
+
+<p>Update a book:
+<strong><em>CODE</em>BLOCK<em>11</strong></em></p>
+
+<h2>Step 8: Deploy</h2>
+
+<h3>Encore Cloud</h3>
+<strong><em>CODE</em>BLOCK<em>12</strong></em></p>
+
+<h3>Self-hosting</h3>
+<strong><em>CODE</em>BLOCK<em>13</strong></em></p>
+
+<h2>Key Features</h2>
+
+<ul>
+<li><strong>Type-safe resolvers</strong> with TypeScript integration</li>
+<li><strong>Automatic tracing</strong> for performance monitoring</li>
+<li><strong>Built-in authentication</strong> support (when configured)</li>
+<li><strong>Minimal boilerplate</strong> compared to traditional setups</li>
+<li><strong>GraphQL Playground</strong> for development testing</li>
+</ul>
+
+<h2>Best Practices</h2>
+
+<ul>
+<li>Use Encore&#x27;s built-in service communication for resolvers</li>
+<li>Implement proper error handling in resolvers</li>
+<li>Consider database integration for production applications</li>
+<li>Use Encore&#x27;s authentication for secure GraphQL endpoints</li>
+<li>Leverage Encore&#x27;s automatic API documentation generation</li>
+</ul>
+
+<p>This tutorial demonstrates how to create a fully functional GraphQL API with Encore.ts, combining the power of GraphQL with Encore&#x27;s development experience.</p>
+
+    </div>
+
+    <div class="section page-break" id="section-25">
+        <h2>Tutorials: Rest Api</h2>
+        
+<h1>Building a REST API with Encore and TypeScript: URL Shortener Tutorial</h1>
+
+<h2>Overview</h2>
+
+<p>This tutorial guides you through creating a URL shortener REST API using Encore and TypeScript. You&#x27;ll learn how to:</p>
+
+<ul>
+<li>Create REST APIs</li>
+<li>Use PostgreSQL databases</li>
+<li>Utilize the local development dashboard</li>
+<li>Write and run tests</li>
+</ul>
+
+<h2>Prerequisites</h2>
+
+<ul>
+<li>Node.js installed</li>
+<li>Docker installed</li>
+<li>Encore CLI</li>
+</ul>
+
+<h2>Step 1: Create a New Encore Application</h2>
+
+<ul>
+<li>Create a new application:</li>
+</ul>
+<strong><em>CODE</em>BLOCK<em>0</strong></em>
+Select the &quot;Empty app&quot; template.</p>
+
+<ul>
+<li>Create a URL service directory:</li>
+</ul>
+<strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<ul>
+<li>Define the service in <code>url/encore.service.ts</code>:</li>
+</ul>
+<strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h2>Step 2: Implement URL Shortening Endpoint</h2>
+
+<p>Create <code>url/url.ts</code>:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h2>Step 3: Add Database Storage</h2>
+
+<ul>
+<li>Create database migration file:</li>
+</ul>
+<strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<ul>
+<li>Define database schema in <code>001<em>create</em>tables.up.sql</code>:</li>
+</ul>
+<strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<ul>
+<li>Update <code>url/url.ts</code> to use database:</li>
+</ul>
+<strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h2>Step 4: Add URL Retrieval Endpoint</h2>
+
+<p><strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>Step 5: Testing Your API</h2>
+
+<ul>
+<li>Run your application:</li>
+</ul>
+<strong><em>CODE</em>BLOCK<em>8</strong></em></p>
+
+<ul>
+<li>Test using the local development dashboard or curl:</li>
+</ul>
+<strong><em>CODE</em>BLOCK<em>9</strong></em></p>
+
+<h2>Step 6: Writing Tests</h2>
+
+<p>Create <code>url/url.test.ts</code>:
+<strong><em>CODE</em>BLOCK<em>10</strong></em></p>
+
+<p>Run tests with:
+<strong><em>CODE</em>BLOCK<em>11</strong></em></p>
+
+<h2>Step 7: Deployment Options</h2>
+
+<h3>Self-hosting with Docker</h3>
+<strong><em>CODE</em>BLOCK<em>12</strong></em></p>
+
+<h3>Encore Cloud</h3>
+<strong><em>CODE</em>BLOCK<em>13</strong></em></p>
+
+<h2>Key Features Demonstrated</h2>
+
+<ul>
+<li><strong>Type-safe APIs</strong>: Full TypeScript support with compile-time checking</li>
+<li><strong>Database Integration</strong>: Built-in PostgreSQL support with migrations</li>
+<li><strong>Testing Framework</strong>: Integrated testing with Vitest</li>
+<li><strong>Local Development</strong>: Hot reloading and development dashboard</li>
+<li><strong>Error Handling</strong>: Structured error responses</li>
+</ul>
+
+<p>This tutorial showcases Encore&#x27;s streamlined approach to building production-ready REST APIs with minimal boilerplate code.</p>
+
+    </div>
+
+    <div class="section page-break" id="section-26">
+        <h2>Tutorials: Slack Bot</h2>
+        
+<h1>Building a Slack Bot with Encore.ts</h1>
+
+<h2>Overview</h2>
+
+<p>This tutorial guides you through creating a Slack bot using Encore.ts that implements a &quot;/cowsay&quot; command. You&#x27;ll learn how to:</p>
+
+<ul>
+<li>Create a serverless backend with webhook integration</li>
+<li>Handle Slack slash commands</li>
+<li>Implement security verification for Slack requests</li>
+<li>Deploy and configure a production Slack bot</li>
+</ul>
+
+<h2>Prerequisites</h2>
+
+<ul>
+<li>Encore CLI</li>
+<li>Slack workspace with admin permissions</li>
+<li>Node.js</li>
+</ul>
+
+<h2>Step 1: Create Encore Application</h2>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<p>Note your app ID from the output - you&#x27;ll need it for Slack configuration.</p>
+
+<h2>Step 2: Create Slack App</h2>
+
+<ul>
+<li>Go to <a href="https://api.slack.com/apps">Slack API website</a></li>
+<li>Click &quot;Create New App&quot; → &quot;From an app manifest&quot;</li>
+<li>Use this manifest (replace YOUR<em>APP</em>ID):</li>
+</ul>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h2>Step 3: Implement Slack Service</h2>
+
+<p>Create <code>slack/encore.service.ts</code>:
+<strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<p>Create <code>slack/slack.ts</code>:
+<strong><em>CODE</em>BLOCK<em>3</strong></em>&quot; + cowsayText + &quot;``<code>&quot;
+    }));
+  }
+);</p>
+
+<p>function verifySlackSignature(body: Buffer, timestamp: string, signature: string): boolean {
+  const signingSecret = slackSigningSecret();
+  
+  // Reject old requests (older than 5 minutes)
+  const now = Math.floor(Date.now() / 1000);
+  if (Math.abs(now - parseInt(timestamp)) &gt; 300) {
+    return false;
+  }
+  
+  // Compute the expected signature
+  const sigBasestring = </code>v0:${timestamp}:${body.toString()}<code>;
+  const expectedSignature = </code>v0=${createHmac(&#x27;sha256&#x27;, signingSecret)
+    .update(sigBasestring)
+    .digest(&#x27;hex&#x27;)}<code>;
+  
+  // Compare signatures securely
+  return signature &amp;&amp; timingSafeEqual(
+    Buffer.from(expectedSignature),
+    Buffer.from(signature)
+  );
+}</p>
+
+<p>function generateCowsay(text: string): string {
+  const message = text.length &gt; 40 ? text.substring(0, 37) + &quot;...&quot; : text;
+  const border = &quot;-&quot;.repeat(message.length + 2);
+  
+  return </code>
+ ${border}
+&lt; ${message} &gt;
+ ${border}
+        \\   ^__^
+         \\  (oo)\\<strong><em></strong></em>_
+            (__)\\       )\\/\\
+                ||----w |
+                ||     ||<code>;
+}
+<strong><em>CODE</em>BLOCK<em>4</strong></em>bash
+encore secret set --type dev,staging,prod SlackSigningSecret
+<strong><em>CODE</em>BLOCK<em>5</strong></em>typescript
+interface CowsayOptions {
+  eyes?: string;
+  tongue?: string;
+  mode?: &#x27;default&#x27; | &#x27;borg&#x27; | &#x27;dead&#x27; | &#x27;greedy&#x27; | &#x27;paranoid&#x27; | &#x27;stoned&#x27; | &#x27;tired&#x27; | &#x27;wired&#x27; | &#x27;young&#x27;;
+}</p>
+
+<p>export function generateAdvancedCowsay(text: string, options: CowsayOptions = {}): string {
+  const { eyes = &quot;oo&quot;, tongue = &quot;  &quot;, mode = &quot;default&quot; } = options;
+  
+  // Apply mode-specific settings
+  const modeSettings = getModeSettings(mode);
+  const actualEyes = modeSettings.eyes || eyes;
+  const actualTongue = modeSettings.tongue || tongue;
+  
+  // Word wrap the text
+  const lines = wrapText(text, 38);
+  const maxLength = Math.max(...lines.map(line =&gt; line.length));
+  
+  // Create speech bubble
+  const border = &quot;-&quot;.repeat(maxLength + 2);
+  const bubble = [
+    </code> ${border}<code>,
+    ...lines.map((line, index) =&gt; {
+      const padding = &quot; &quot;.repeat(maxLength - line.length);
+      if (lines.length === 1) return </code>&lt; ${line}${padding} &gt;<code>;
+      if (index === 0) return </code>/ ${line}${padding} \\<code>;
+      if (index === lines.length - 1) return </code>\\ ${line}${padding} /<code>;
+      return </code>| ${line}${padding} |<code>;
+    }),
+    </code> ${border}<code>
+  ].join(&#x27;\n&#x27;);
+  
+  // Create cow
+  const cow = </code>
+        \\   ^__^
+         \\  (${actualEyes})\\<strong><em></strong></em>_
+            (__)\\       )\\/\\
+             ${actualTongue} ||----w |
+                ||     ||<code>;
+  
+  return bubble + cow;
+}</p>
+
+<p>function getModeSettings(mode: string) {
+  const modes: Record&lt;string, { eyes?: string; tongue?: string }&gt; = {
+    borg: { eyes: &quot;==&quot; },
+    dead: { eyes: &quot;xx&quot;, tongue: &quot;U &quot; },
+    greedy: { eyes: &quot;$$&quot; },
+    paranoid: { eyes: &quot;@@&quot; },
+    stoned: { eyes: &quot;**&quot;, tongue: &quot;U &quot; },
+    tired: { eyes: &quot;--&quot; },
+    wired: { eyes: &quot;OO&quot; },
+    young: { eyes: &quot;..&quot; }
+  };
+  return modes[mode] || {};
+}</p>
+
+<p>function wrapText(text: string, maxWidth: number): string[] {
+  const words = text.split(&#x27; &#x27;);
+  const lines: string[] = [];
+  let currentLine = &#x27;&#x27;;
+  
+  for (const word of words) {
+    if ((currentLine + word).length &lt;= maxWidth) {
+      currentLine += (currentLine ? &#x27; &#x27; : &#x27;&#x27;) + word;
+    } else {
+      if (currentLine) lines.push(currentLine);
+      currentLine = word;
+    }
+  }
+  
+  if (currentLine) lines.push(currentLine);
+  return lines.length ? lines : [&#x27;&#x27;];
+}
+<strong><em>CODE</em>BLOCK<em>6</strong></em>typescript
+export const cowsay = api.raw(
+  { expose: true, path: &quot;/slack/cowsay&quot;, method: &quot;POST&quot; },
+  async (req, resp) =&gt; {
+    // ... verification code ...
+    
+    const body = new URLSearchParams(req.body.toString());
+    const text = body.get(&quot;text&quot;) || &quot;Hello, World!&quot;;
+    
+    // Parse command options
+    const parts = text.split(&#x27; &#x27;);
+    const options: CowsayOptions = {};
+    let message = text;
+    
+    // Check for mode flags
+    if (parts[0] &amp;&amp; parts[0].startsWith(&#x27;-&#x27;)) {
+      const mode = parts[0].substring(1);
+      options.mode = mode as any;
+      message = parts.slice(1).join(&#x27; &#x27;);
+    }
+    
+    const cowsayText = generateAdvancedCowsay(message, options);
+    
+    resp.writeHead(200, { &quot;Content-Type&quot;: &quot;application/json&quot; });
+    resp.end(JSON.stringify({
+      response<em>type: &quot;in</em>channel&quot;,
+      text: &quot;</code>`<code>&quot; + cowsayText + &quot;</code>`<code>&quot;
+    }));
+  }
+);
+<strong><em>CODE</em>BLOCK<em>7</strong></em>bash
+<h1>Deploy to staging</h1>
+git add . &amp;&amp; git commit -m &quot;Slack bot implementation&quot;
+git push encore</p>
+
+<h1>Install the Slack app to your workspace</h1>
+<h1>Test with: /cowsay Hello from Encore!</h1>
+<h1>Test modes: /cowsay -dead Something spooky</h1>
+<strong><em>CODE</em>BLOCK<em>8</strong></em>
+/cowsay Hello, World!
+<strong><em>CODE</em>BLOCK<em>9</strong></em>
+/cowsay -dead I&#x27;m not feeling well
+/cowsay -borg Resistance is futile
+/cowsay -stoned Whoa, dude...
+</code>``</p>
+
+<h2>Key Features</h2>
+
+<ul>
+<li><strong>Secure webhook verification</strong> using HMAC signatures</li>
+<li><strong>Multiple cow modes</strong> for different personalities</li>
+<li><strong>Word wrapping</strong> for long messages</li>
+<li><strong>Production-ready deployment</strong> with Encore Cloud</li>
+<li><strong>Secret management</strong> for API credentials</li>
+</ul>
+
+<h2>Security Considerations</h2>
+
+<ul>
+<li>Always verify Slack signatures to prevent unauthorized requests</li>
+<li>Use timing-safe comparison for signature verification</li>
+<li>Reject old requests to prevent replay attacks</li>
+<li>Store sensitive credentials in Encore&#x27;s secret management</li>
+<li>Use HTTPS endpoints for all Slack integrations</li>
+</ul>
+
+<p>This tutorial demonstrates how to build a robust, secure Slack bot using Encore.ts with minimal infrastructure setup and built-in security best practices.</p>
+
+    </div>
+
+    <div class="section page-break" id="section-27">
+        <h2>Tutorials: Uptime</h2>
+        
+<h1>Building an Event-Driven Uptime Monitoring System with Encore.ts</h1>
+
+<h2>Overview</h2>
+
+<p>This tutorial guides you through creating an uptime monitoring system using TypeScript and Encore. The application will:
+<ul>
+<li>Check website availability</li>
+<li>Track site status</li>
+<li>Send Slack notifications when sites go down</li>
+</ul>
+
+<h2>Prerequisites</h2>
+
+<ul>
+<li>Docker</li>
+<li>Node.js</li>
+<li>Encore CLI</li>
+</ul>
+
+<h2>Project Structure</h2>
+
+<p>The application will consist of three main services:
+<ul>
+<li><code>site</code> - Manage monitored websites</li>
+<li><code>monitor</code> - Check website status</li>
+<li><code>slack</code> - Send notifications</li>
+</ul>
+
+<h2>Step 1: Create Encore Application</h2>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h2>Step 2: Create Monitor Service</h2>
+
+<h3>Create Service Definition</h3>
+
+<p><code>monitor/encore.service.ts</code>:
+<strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h3>Implement Ping Endpoint</h3>
+
+<p><code>monitor/ping.ts</code>:
+<strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h2>Step 3: Create Site Service</h2>
+
+<h3>Database Migration</h3>
+
+<p><code>site/migrations/1<em>create</em>tables.up.sql</code>:
+<strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h3>Site Management</h3>
+
+<p><code>site/site.ts</code>:
+<strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h2>Step 4: Event-Driven Architecture</h2>
+
+<h3>Pub/Sub Topics</h3>
+
+<p><code>monitor/check.ts</code>:
+<strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h2>Step 5: Slack Integration</h2>
+
+<h3>Slack Service</h3>
+
+<p><code>slack/slack.ts</code>:
+<strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h2>Step 6: Cron Jobs</h2>
+
+<h3>Periodic Monitoring</h3>
+
+<p><code>monitor/check.ts</code> (additional code):
+<strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>Step 7: Run and Test</h2>
+
+<p><strong><em>CODE</em>BLOCK<em>8</strong></em></p>
+
+<h2>Key Concepts Demonstrated</h2>
+
+<ul>
+<li><strong>Event-driven architecture</strong> with Pub/Sub</li>
+<li><strong>Cron jobs</strong> for scheduled tasks</li>
+<li><strong>Database integration</strong> with migrations</li>
+<li><strong>External API integration</strong> (Slack)</li>
+<li><strong>Secret management</strong> for API keys</li>
+<li><strong>Service communication</strong> patterns</li>
+</ul>
+
+<p>This tutorial showcases Encore&#x27;s capabilities for building production-ready, event-driven applications with minimal boilerplate code.</p>
+
+    </div>
+
+    <div class="section page-break" id="section-28">
+        <h2>Cli: Cli Reference</h2>
+        
+<h1>Encore TypeScript CLI Reference</h1>
+
+<h2>Running Commands</h2>
+
+<h3><code>encore run</code></h3>
+Runs the Encore application with optional flags:
+<strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<p><strong>Flags:</strong>
+<ul>
+<li><code>--debug</code>: Enable debug mode</li>
+<li><code>--watch</code>: Enable hot reloading (default: true)</li>
+<li><code>--port</code>: Specify port number (default: 4000)</li>
+</ul>
+
+<h3><code>encore test</code></h3>
+Runs application tests, supporting standard test flags:
+<strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<p><strong>Examples:</strong>
+<strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h3><code>encore check</code></h3>
+Checks the application for compile-time errors:
+<strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h3><code>encore exec</code></h3>
+Runs executable scripts with the Encore app environment:
+<strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<p><strong>Example - Database seeding:</strong>
+<strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h2>App Management Commands</h2>
+
+<h3><code>encore app clone</code></h3>
+Clone an existing Encore app:
+<strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h3><code>encore app create</code></h3>
+Create a new Encore application:
+<strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<p><strong>Interactive prompts:</strong>
+<ul>
+<li>App name</li>
+<li>Template selection</li>
+<li>Git repository setup</li>
+</ul>
+
+<h3><code>encore app init</code></h3>
+Initialize a new Encore app from an existing repository:
+<strong><em>CODE</em>BLOCK<em>8</strong></em></p>
+
+<h3><code>encore app link</code></h3>
+Link an Encore app with the server:
+<strong><em>CODE</em>BLOCK<em>9</strong></em></p>
+
+<h2>Authentication Commands</h2>
+
+<h3><code>encore auth login</code></h3>
+Log in to Encore:
+<strong><em>CODE</em>BLOCK<em>10</strong></em></p>
+
+<h3><code>encore auth logout</code></h3>
+Log out of the current session:
+<strong><em>CODE</em>BLOCK<em>11</strong></em></p>
+
+<h3><code>encore auth signup</code></h3>
+Create a new Encore account:
+<strong><em>CODE</em>BLOCK<em>12</strong></em></p>
+
+<h3><code>encore auth whoami</code></h3>
+Display the current logged-in user:
+<strong><em>CODE</em>BLOCK<em>13</strong></em></p>
+
+<h2>Database Management</h2>
+
+<h3><code>encore db shell</code></h3>
+Connect to a database shell:
+<strong><em>CODE</em>BLOCK<em>14</strong></em></p>
+
+<p><strong>Examples:</strong>
+<strong><em>CODE</em>BLOCK<em>15</strong></em></p>
+
+<h3><code>encore db conn-uri</code></h3>
+Get database connection URI:
+<strong><em>CODE</em>BLOCK<em>16</strong></em></p>
+
+<h3><code>encore db proxy</code></h3>
+Set up a local database proxy:
+<strong><em>CODE</em>BLOCK<em>17</strong></em></p>
+
+<h3><code>encore db reset</code></h3>
+Reset database to clean state:
+<strong><em>CODE</em>BLOCK<em>18</strong></em></p>
+
+<h2>Environment Management</h2>
+
+<h3><code>encore env list</code></h3>
+List all environments:
+<strong><em>CODE</em>BLOCK<em>19</strong></em></p>
+
+<h3><code>encore env clone</code></h3>
+Clone an environment:
+<strong><em>CODE</em>BLOCK<em>20</strong></em></p>
+
+<h2>Secret Management</h2>
+
+<h3><code>encore secret set</code></h3>
+Set a secret value:
+<strong><em>CODE</em>BLOCK<em>21</strong></em></p>
+
+<h3><code>encore secret list</code></h3>
+List all secrets:
+<strong><em>CODE</em>BLOCK<em>22</strong></em></p>
+
+<h2>Deployment Commands</h2>
+
+<h3><code>encore deploy</code></h3>
+Deploy to Encore Cloud:
+<strong><em>CODE</em>BLOCK<em>23</strong></em></p>
+
+<h3><code>encore build</code></h3>
+Build application for deployment:
+<strong><em>CODE</em>BLOCK<em>24</strong></em></p>
+
+<p><strong>Examples:</strong>
+<strong><em>CODE</em>BLOCK<em>25</strong></em></p>
+
+<h2>Monitoring Commands</h2>
+
+<h3><code>encore logs</code></h3>
+Stream application logs:
+<strong><em>CODE</em>BLOCK<em>26</strong></em></p>
+
+<p><strong>Flags:</strong>
+<ul>
+<li><code>--follow</code>: Follow logs in real-time</li>
+<li><code>--level</code>: Filter by log level</li>
+<li><code>--service</code>: Filter by service name</li>
+</ul>
+
+<h3><code>encore daemon</code></h3>
+Manage the Encore daemon:
+<strong><em>CODE</em>BLOCK<em>27</strong></em></p>
+
+<h2>Development Tools</h2>
+
+<h3><code>encore gen</code></h3>
+Generate code and documentation:
+<strong><em>CODE</em>BLOCK<em>28</strong></em></p>
+
+<p><strong>Examples:</strong>
+<strong><em>CODE</em>BLOCK<em>29</strong></em></p>
+
+<h3><code>encore version</code></h3>
+Display Encore CLI version:
+<strong><em>CODE</em>BLOCK<em>30</strong></em></p>
+
+<h2>Global Flags</h2>
+
+<p>Most commands support these global flags:
+<ul>
+<li><code>--help</code>: Show command help</li>
+<li><code>--verbose</code>: Enable verbose output</li>
+<li><code>--json</code>: Output in JSON format (where applicable)</li>
+</ul>
+
+<h2>Configuration</h2>
+
+<p>The CLI reads configuration from:
+<ul>
+<li><code>~/.encore/auth.json</code> - Authentication tokens</li>
+<li><code>encore.app</code> - App configuration</li>
+<li>Environment variables</li>
+</ul>
+
+<h2>Getting Help</h2>
+
+<p>For detailed help on any command:
+<strong><em>CODE</em>BLOCK<em>31</strong></em></p>
+
+<p>For general help:
+<strong><em>CODE</em>BLOCK<em>32</strong></em></p>
+
+    </div>
+    </div>
+    
+    <div class="footer" style="margin-top: 60px; padding-top: 20px; border-top: 2px solid #e5e7eb; color: #6b7280;">
+        <p>Generated: 2025-08-22 06:50:40</p>
+        <p>Encore TypeScript Documentation - Complete Reference</p>
+    </div>
+</body>
+</html>

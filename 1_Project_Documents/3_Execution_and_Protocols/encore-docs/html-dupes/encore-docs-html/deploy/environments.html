@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environments</title>
+    <style>
+        body {
+            font-family: Arial, 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            color: #333;
+            background: white;
+        }
+        h1 { 
+            color: #2563eb;
+            font-size: 2em;
+            border-bottom: 3px solid #3b82f6;
+            padding-bottom: 10px;
+            margin: 30px 0 20px 0;
+        }
+        h2 { 
+            color: #1e40af;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+        h3 { 
+            color: #1e3a8a;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+        h4 {
+            color: #374151;
+            font-size: 1.1em;
+            margin: 15px 0 10px 0;
+        }
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #dc2626;
+        }
+        pre {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            line-height: 1.4;
+            margin: 15px 0;
+        }
+        pre code {
+            background: none;
+            color: #f9fafb;
+            padding: 0;
+        }
+        blockquote {
+            border-left: 4px solid #3b82f6;
+            margin: 20px 0;
+            padding-left: 20px;
+            color: #4b5563;
+            font-style: italic;
+            background: #f9fafb;
+            padding: 15px 20px;
+        }
+        a {
+            color: #2563eb;
+            text-decoration: none;
+            border-bottom: 1px dotted #2563eb;
+        }
+        a:hover {
+            border-bottom: 1px solid #2563eb;
+        }
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #f3f4f6;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        tr:nth-child(even) {
+            background: #f9fafb;
+        }
+        hr {
+            border: none;
+            border-top: 2px solid #e5e7eb;
+            margin: 30px 0;
+        }
+        .info-box {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .warning-box {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .code-filename {
+            background: #374151;
+            color: #9ca3af;
+            padding: 5px 10px;
+            border-radius: 5px 5px 0 0;
+            font-size: 0.85em;
+            margin-bottom: -5px;
+            display: inline-block;
+        }
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+<h1>Encore Deployment Environments</h1>
+
+<h2>Overview</h2>
+
+<p>Encore provides comprehensive environment management for deploying applications across different stages of the development lifecycle. Each environment is isolated with its own resources, configurations, and data.</p>
+
+<h2>Environment Types</h2>
+
+<h3>Development Environment</h3>
+<ul>
+<li><strong>Local development</strong>: Runs on your machine with <code>encore run</code></li>
+<li><strong>Hot reloading</strong>: Automatic code reloading during development</li>
+<li><strong>Local dashboard</strong>: Built-in development tools and API explorer</li>
+<li><strong>Ephemeral databases</strong>: Automatically created and managed</li>
+</ul>
+
+<h3>Staging/Preview Environments</h3>
+<ul>
+<li><strong>Pull request previews</strong>: Automatic environment creation for PRs</li>
+<li><strong>Integration testing</strong>: Safe environment for testing changes</li>
+<li><strong>Shared staging</strong>: Stable environment for team collaboration</li>
+<li><strong>Production-like</strong>: Mirrors production configuration</li>
+</ul>
+
+<h3>Production Environment</h3>
+<ul>
+<li><strong>High availability</strong>: Redundant infrastructure and failover</li>
+<li><strong>Monitoring</strong>: Comprehensive observability and alerting</li>
+<li><strong>Scaling</strong>: Automatic scaling based on traffic</li>
+<li><strong>Security</strong>: Enhanced security controls and access management</li>
+</ul>
+
+<h2>Environment Configuration</h2>
+
+<h3>Environment Variables</h3>
+
+<p>Configure environment-specific settings:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>0</strong></em></p>
+
+<h3>Secrets Management</h3>
+
+<p>Store sensitive configuration securely:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>1</strong></em></p>
+
+<h3>Service Configuration</h3>
+
+<p>Environment-specific service configuration:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>2</strong></em></p>
+
+<h2>Deployment Strategies</h2>
+
+<h3>Automatic Deployment</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>3</strong></em></p>
+
+<h3>Manual Deployment</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>4</strong></em></p>
+
+<h3>Preview Environments</h3>
+
+<p>Automatic preview environments for pull requests:
+<ul>
+<li>Created automatically on PR creation</li>
+<li>Updated on each commit</li>
+<li>Destroyed when PR is closed</li>
+<li>Full isolation from other environments</li>
+</ul>
+
+<h2>Environment Management</h2>
+
+<h3>Creating Environments</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>5</strong></em></p>
+
+<h3>Environment Configuration</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>6</strong></em></p>
+
+<h3>Database Management</h3>
+
+<p>Each environment has isolated databases:</p>
+
+<p><strong><em>CODE</em>BLOCK<em>7</strong></em></p>
+
+<h2>Environment Isolation</h2>
+
+<h3>Resource Separation</h3>
+<ul>
+<li><strong>Databases</strong>: Completely isolated per environment</li>
+<li><strong>Object storage</strong>: Separate buckets/containers</li>
+<li><strong>Secrets</strong>: Environment-specific secret stores</li>
+<li><strong>Logs</strong>: Isolated logging and monitoring</li>
+</ul>
+
+<h3>Network Isolation</h3>
+<ul>
+<li><strong>VPC separation</strong>: Production networks isolated</li>
+<li><strong>Security groups</strong>: Environment-specific access controls</li>
+<li><strong>Load balancers</strong>: Dedicated load balancing per environment</li>
+</ul>
+
+<h2>Monitoring and Observability</h2>
+
+<h3>Environment-Specific Monitoring</h3>
+
+<p><strong><em>CODE</em>BLOCK<em>8</strong></em></p>
+
+<h3>Performance Monitoring</h3>
+<ul>
+<li><strong>Metrics</strong>: Environment-specific performance metrics</li>
+<li><strong>Alerts</strong>: Custom alerting per environment</li>
+<li><strong>Tracing</strong>: Distributed tracing with environment context</li>
+</ul>
+
+<h2>Best Practices</h2>
+
+<h3>Environment Promotion</h3>
+<ul>
+<li><strong>Development</strong>: Local development and testing</li>
+<li><strong>Staging</strong>: Integration testing and QA</li>
+<li><strong>Production</strong>: Live user traffic</li>
+</ul>
+
+<h3>Configuration Management</h3>
+<ul>
+<li>Use environment variables for configuration</li>
+<li>Store secrets securely with <code>encore secret</code></li>
+<li>Avoid hardcoding environment-specific values</li>
+<li>Test configuration changes in staging first</li>
+</ul>
+
+<h3>Deployment Safety</h3>
+<ul>
+<li><strong>Gradual rollouts</strong>: Deploy to staging before production</li>
+<li><strong>Health checks</strong>: Verify deployment success</li>
+<li><strong>Rollback capability</strong>: Quick rollback for issues</li>
+<li><strong>Database migrations</strong>: Test migrations in staging</li>
+</ul>
+
+<h3>Security Considerations</h3>
+<ul>
+<li><strong>Access controls</strong>: Restrict production access</li>
+<li><strong>Audit logging</strong>: Track all production changes</li>
+<li><strong>Secret rotation</strong>: Regular secret updates</li>
+<li><strong>Compliance</strong>: Meet regulatory requirements per environment</li>
+</ul>
+
+<h2>Advanced Features</h2>
+
+<h3>Custom Domains</h3>
+<strong><em>CODE</em>BLOCK<em>9</strong></em></p>
+
+<h3>Auto-scaling Configuration</h3>
+Environment-specific scaling rules:
+<ul>
+<li><strong>Development</strong>: Minimal resources</li>
+<li><strong>Staging</strong>: Moderate scaling for testing</li>
+<li><strong>Production</strong>: Aggressive scaling for performance</li>
+</ul>
+
+<h3>Backup and Recovery</h3>
+<ul>
+<li><strong>Automated backups</strong>: Scheduled database backups</li>
+<li><strong>Point-in-time recovery</strong>: Restore to specific timestamps</li>
+<li><strong>Cross-environment restore</strong>: Restore production data to staging</li>
+</ul>
+
+<h2>Troubleshooting</h2>
+
+<h3>Common Issues</h3>
+<ul>
+<li><strong>Environment access</strong>: Check permissions and authentication</li>
+<li><strong>Configuration drift</strong>: Verify environment-specific settings</li>
+<li><strong>Resource limits</strong>: Monitor resource usage and limits</li>
+</ul>
+
+<h3>Debugging Tools</h3>
+<strong><em>CODE</em>BLOCK<em>10</strong></em></p>
+<div class="footer">
+    <p>
+        <strong>Encore TypeScript Documentation</strong><br>
+        Original: deploy/environments.md<br>
+        Converted: 2025-08-22 06:46:14<br>
+        <em>Open in Chrome and copy-paste to Google Docs for best results</em>
+    </p>
+</div>
+</body>
+</html>
