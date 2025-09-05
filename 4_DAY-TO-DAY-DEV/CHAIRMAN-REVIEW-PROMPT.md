@@ -2,7 +2,7 @@
 **Date**: September 5, 2025  
 **Project**: War Room V2 - Napoleon Backend Conquest  
 **Status**: Ready for Executive Review  
-**GitHub**: https://github.com/Think-Big-Media/v2-wr-dashboard/tree/napoleon-backend-conquest
+**GitHub**: https://github.com/Think-Big-Media/v2-wr-dashboard/tree/main
 
 ---
 
