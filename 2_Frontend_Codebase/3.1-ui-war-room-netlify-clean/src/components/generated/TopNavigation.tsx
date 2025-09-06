@@ -62,7 +62,11 @@ const TopNavigation: React.FC = () => {
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [isAdminMode, setIsAdminMode] = useState(false);
+  // Use localStorage to persist admin mode across page changes - CRITICAL FIX
+  const [isAdminMode, setIsAdminMode] = useState(() => {
+    const saved = localStorage.getItem('war-room-admin-mode');
+    return saved === 'true';
+  });
   const [logoClickCount, setLogoClickCount] = useState(0);
   const [dataMode, setDataMode] = useState<'MOCK' | 'LIVE'>('LIVE'); // Admin data toggle
   const logoClickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -83,24 +87,24 @@ const TopNavigation: React.FC = () => {
     },
     {
       icon: BarChart3,
-      label: NAV_LABELS.ANALYTICS,
-      path: ROUTES.REAL_TIME_MONITORING,
-      route: 'analytics',
-      active: location.pathname === ROUTES.REAL_TIME_MONITORING,
+      label: NAV_LABELS.LIVE_MONITORING,
+      path: ROUTES.LIVE_MONITORING,
+      route: 'monitoring',
+      active: location.pathname === ROUTES.LIVE_MONITORING,
     },
     {
       icon: Target,
-      label: NAV_LABELS.COMMAND_CENTER,
-      path: ROUTES.COMMAND_CENTER,
-      route: 'command',
-      active: location.pathname === ROUTES.COMMAND_CENTER,
+      label: NAV_LABELS.WAR_ROOM,
+      path: ROUTES.WAR_ROOM,
+      route: 'war-room',
+      active: location.pathname === ROUTES.WAR_ROOM,
     },
     {
       icon: Brain,
-      label: NAV_LABELS.INTELLIGENCE_HUB,
-      path: ROUTES.INTELLIGENCE_HUB,
+      label: NAV_LABELS.INTELLIGENCE,
+      path: ROUTES.INTELLIGENCE,
       route: 'intelligence',
-      active: location.pathname === ROUTES.INTELLIGENCE_HUB,
+      active: location.pathname === ROUTES.INTELLIGENCE,
     },
     {
       icon: Bell,
@@ -122,6 +126,27 @@ const TopNavigation: React.FC = () => {
     navigate(path);
   };
 
+  // Exit admin mode handler
+  const exitAdminMode = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation(); // Prevent triggering parent click handler
+    console.log('🔧 [ADMIN] Exiting admin mode...');
+    
+    // PERSISTENT admin mode exit - save to localStorage
+    setIsAdminMode(false);
+    localStorage.setItem('war-room-admin-mode', 'false');
+    setLogoClickCount(0); // Reset click counter
+    
+    // Dispatch admin mode change event
+    const event = new CustomEvent('admin-mode-change', { 
+      detail: { isAdminMode: false } 
+    });
+    window.dispatchEvent(event);
+    
+    handleNavigation(ROUTES.DASHBOARD);
+    console.log('🔧 [SUCCESS] Admin mode exited and PERSISTED, returned to dashboard');
+  };
+
   // Triple-click admin activation handler
   const handleLogoClick = (e: React.MouseEvent) => {
     console.log('🔍 [DIAGNOSTIC] Logo clicked! Current count:', logoClickCount + 1);
@@ -137,15 +162,30 @@ const TopNavigation: React.FC = () => {
       console.log('🔍 [DIAGNOSTIC] Processing click sequence. Final count:', logoClickCount + 1);
       
       if (logoClickCount + 1 >= 3) {
-        // Triple-click detected - activate admin mode
-        setIsAdminMode(true);
-        console.log('🔧 [SUCCESS] Admin mode activated via triple-click logo!');
-        console.log('🔍 [DIAGNOSTIC] Dispatching debug-sidecar-toggle event...');
+        console.log('🔧 [TRIPLE-CLICK] Activating admin mode - GUARANTEED PERSISTENT ADMIN BUTTON DISPLAY');
         
-        // Dispatch event to activate DebugSidecar
-        const event = new CustomEvent('debug-sidecar-toggle', { detail: { isOpen: true } });
+        // FORCE admin mode activation AND persist to localStorage - this must always work
+        setIsAdminMode(true);
+        localStorage.setItem('war-room-admin-mode', 'true');
+        
+        // Force a re-render to ensure admin button appears
+        setTimeout(() => {
+          setIsAdminMode(true); // Double-ensure admin mode is set
+          localStorage.setItem('war-room-admin-mode', 'true'); // Double-ensure persistence
+          console.log('🔧 [ADMIN-MODE] Admin mode FORCED active and PERSISTED, admin button should be visible');
+        }, 10);
+        
+        // Dispatch admin mode change event
+        const event = new CustomEvent('admin-mode-change', { 
+          detail: { isAdminMode: true } 
+        });
         window.dispatchEvent(event);
-        console.log('🔍 [DIAGNOSTIC] Event dispatched successfully');
+        
+        console.log('🔍 [NAVIGATION] Navigating to admin dashboard page...');
+        
+        // Navigate to full-screen admin dashboard page (7th page)
+        handleNavigation('/admin-dashboard');
+        console.log('🔧 [SUCCESS] Triple-click complete - Admin button with X should be visible and PERSISTED!');
       } else if (logoClickCount + 1 === 1) {
         // Single click - normal navigation
         console.log('🔍 [DIAGNOSTIC] Single click detected, navigating to dashboard');
@@ -214,15 +254,32 @@ const TopNavigation: React.FC = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 lg:px-6">
         <div className="flex items-center justify-between h-16">
-          {/* Logo/Brand - Responsive - Triple-click activates admin mode */}
-          <button
-            onClick={handleLogoClick}
-            className="flex items-center ml-[25px] hover:opacity-80 transition-opacity duration-200 cursor-pointer"
-          >
+          {/* Logo/Brand - Admin Button replaces logo completely when in admin mode */}
+          <div className="ml-[25px]">
+            {/* DEBUG: Force admin mode visibility check */}
+            {console.log('🔍 [RENDER] isAdminMode:', isAdminMode, '- Will show:', isAdminMode ? 'ADMIN BUTTON' : 'LOGO')}
             {isAdminMode ? (
-              <span className="text-red-400 font-bold text-lg">Admin Dashboard ({dataMode})</span>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => handleNavigation('/admin-dashboard')}
+                  className="flex items-center px-2 py-2 rounded-lg text-sm lg:text-base font-medium bg-red-600/20 text-red-400 hover:bg-red-600/30 hover:text-red-300 transition-all duration-200"
+                >
+                  <Settings className="w-4 h-4 lg:w-5 lg:h-5 mr-1 lg:mr-2" />
+                  <span>Admin Dashboard ({dataMode})</span>
+                </button>
+                <button
+                  onClick={exitAdminMode}
+                  className="text-red-400 hover:text-red-300 transition-colors duration-200 p-2 hover:bg-red-400/20 rounded-lg"
+                  title="Exit Admin Mode"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             ) : (
-              <>
+              <button
+                onClick={handleLogoClick}
+                className="hover:opacity-80 transition-opacity duration-200 cursor-pointer"
+              >
                 {/* Full logo for large screens */}
                 <img
                   src="/images/WarRoom_Logo_White.png"
@@ -244,9 +301,9 @@ const TopNavigation: React.FC = () => {
                   className="block md:hidden h-[24px] w-auto"
                   style={{ aspectRatio: '1/1' }}
                 />
-              </>
+              </button>
             )}
-          </button>
+          </div>
 
           {/* Navigation Items - Responsive */}
           <div className="hidden md:flex items-center space-x-0.5 lg:space-x-1 xl:space-x-2">
@@ -261,7 +318,7 @@ const TopNavigation: React.FC = () => {
                 `}
               >
                 <item.icon className="w-4 h-4 lg:w-5 lg:h-5 mr-1 lg:mr-2" />
-                <span className="hidden lg:inline">{item.label}</span>
+                <span className="hidden md:inline">{item.label}</span>
               </button>
             ))}
           </div>

@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
 // Core Pages - Builder Export
 import Dashboard from './pages/Dashboard'; // Fresh 30Aug Dashboard with SWOT radar
@@ -17,6 +17,7 @@ import SettingsPage from './pages/SettingsPage';
 
 // Additional Dashboard Routes - Temporarily commented out to avoid missing dependencies
 // import AnalyticsDashboard from './pages/AnalyticsDashboard';
+import { AdminDashboard } from './components/AdminDashboard';
 // import AutomationDashboard from './pages/AutomationDashboard';
 // import DocumentIntelligence from './pages/DocumentIntelligence';
 // import ContentCalendarPage from './pages/ContentCalendarPage';
@@ -42,18 +43,101 @@ import { BackgroundThemeProvider } from './contexts/BackgroundThemeContext';
 // Styles
 import './warroom.css';
 
+// AppContent component that can use routing hooks
+function AppContent() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isDebugOpen, closeDebug, openDebug } = useDebugTrigger();
+  const [isAdminMode, setIsAdminMode] = React.useState(false);
+  
+  // 🔍 DIAGNOSTIC: Log debug state changes
+  console.log('🔍 [DIAGNOSTIC] AppContent - isDebugOpen state:', isDebugOpen);
+  console.log('🔍 [DIAGNOSTIC] AppContent - current route:', location.pathname);
+  console.log('🔍 [DIAGNOSTIC] AppContent - isAdminMode state:', isAdminMode);
+
+  // Listen for admin mode changes from TopNavigation
+  React.useEffect(() => {
+    const handleAdminModeChange = (e: CustomEvent) => {
+      console.log('🔧 [ADMIN] Admin mode change received:', e.detail);
+      if (e.detail?.isAdminMode !== undefined) {
+        const newAdminMode = e.detail.isAdminMode;
+        setIsAdminMode(newAdminMode);
+        
+        // Auto-open debug panel when in admin mode and NOT on admin dashboard
+        if (newAdminMode && location.pathname !== '/admin-dashboard') {
+          console.log('🔧 [ADMIN] Auto-opening debug panel for admin mode');
+          openDebug();
+        } else if (!newAdminMode) {
+          // Close debug panel when exiting admin mode
+          console.log('🔧 [ADMIN] Closing debug panel - exited admin mode');
+          closeDebug();
+        }
+      }
+    };
+
+    window.addEventListener('admin-mode-change', handleAdminModeChange as EventListener);
+    
+    return () => {
+      window.removeEventListener('admin-mode-change', handleAdminModeChange as EventListener);
+    };
+  }, [location.pathname, openDebug, closeDebug]);
+
+  // Auto-open debug panel when navigating to different pages while in admin mode
+  React.useEffect(() => {
+    if (isAdminMode && location.pathname !== '/admin-dashboard') {
+      console.log('🔧 [ADMIN] Auto-opening debug panel - navigated to:', location.pathname);
+      openDebug();
+    }
+  }, [location.pathname, isAdminMode, openDebug]);
+  
+  return (
+    <>
+      <Routes>
+        {/* Admin Dashboard Route */}
+        <Route path="/admin-dashboard" element={
+          <AdminDashboard 
+            isOpen={true}
+            onClose={() => navigate('/')}
+            onNavigationClick={() => {/* Handle navigation mode switch */}}
+          />
+        } />
+        
+        {/* Command Center - Fresh 30-Aug with SWOT radar */}
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/command-center" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />{' '}
+        {/* Legacy route for compatibility */}
+        {/* Core Navigation Routes */}
+        <Route path="/command-center" element={<CommandCenter />} />
+        <Route path="/real-time-monitoring" element={<RealTimeMonitoring />} />
+        <Route path="/campaign-control" element={<CampaignControl />} />
+        <Route path="/intelligence-hub" element={<IntelligenceHub />} />
+        <Route path="/alert-center" element={<AlertCenter />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        {/* 404 Fallback */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+
+      {/* Global Components */}
+      <TickerTape />
+      
+      {/* Admin System - Debug Sidecar (Bottom Panel Mode) */}
+      {location.pathname !== '/admin-dashboard' && (
+        <div>
+          {console.log('🔍 [DIAGNOSTIC] Rendering DebugSidecar with isOpen:', isDebugOpen)}
+          <DebugSidecar isOpen={isDebugOpen} onClose={closeDebug} />
+        </div>
+      )}
+    </>
+  );
+}
+
 function App() {
   console.log('%c[DIAGNOSTIC] 5. App.tsx component function is executing.', 'color: yellow;');
   
   // 🔍 DIAGNOSTIC: Global marker for our enhanced code
   console.log('%c🔍 [CLEOPATRA-ENHANCED] This is the enhanced admin system version!', 'color: red; font-weight: bold; font-size: 14px;');
   (window as any).CLEOPATRA_ADMIN_VERSION = 'v2.0-enhanced';
-  
-  // Initialize debug trigger hook
-  const { isDebugOpen, closeDebug } = useDebugTrigger();
-  
-  // 🔍 DIAGNOSTIC: Log debug state changes
-  console.log('🔍 [DIAGNOSTIC] App.tsx - isDebugOpen state:', isDebugOpen);
   
   // Apply saved theme on app load
   React.useEffect(() => {
@@ -102,6 +186,7 @@ function App() {
   useEffect(() => {
     console.log('%c[DIAGNOSTIC] 6. App.tsx component has successfully mounted (useEffect).', 'color: green; font-weight: bold;');
   }, []);
+  
   return (
     <>
       <SupabaseAuthProvider>
@@ -109,47 +194,7 @@ function App() {
           <NotificationProvider>
             <Router>
               <ErrorBoundary>
-              <Routes>
-                {/* Command Center - Fresh 30-Aug with SWOT radar */}
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/command-center" element={<Dashboard />} />
-                <Route path="/dashboard" element={<Dashboard />} />{' '}
-                {/* Legacy route for compatibility */}
-                {/* Core Navigation Routes */}
-                <Route path="/command-center" element={<CommandCenter />} />
-                <Route path="/real-time-monitoring" element={<RealTimeMonitoring />} />
-                <Route path="/campaign-control" element={<CampaignControl />} />
-                <Route path="/intelligence-hub" element={<IntelligenceHub />} />
-                <Route path="/alert-center" element={<AlertCenter />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                {/* Additional Dashboard Routes - Temporarily disabled */}
-                {/* <Route path="/analytics" element={<AnalyticsDashboard />} />
-                <Route path="/automation" element={<AutomationDashboard />} />
-                <Route path="/documents" element={<DocumentIntelligence />} />
-                <Route path="/information-center" element={<InformationCenter />} />
-                
-                Content Management Routes
-                <Route path="/content-calendar" element={<ContentCalendarPage />} />
-                <Route path="/content-engine" element={<ContentEnginePage />} />
-                
-                Builder.io Routes
-                <Route path="/builder/*" element={<BuilderPage />} />
-                <Route path="/builder" element={<BuilderPage />} />
-                
-                Development Routes
-                {import.meta.env.DEV && (
-                  <Route path="/debug" element={<DebugDashboard />} />
-                )} */}
-                {/* 404 Fallback */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-
-              {/* Global Components */}
-              <TickerTape />
-              
-              {/* Admin System - Debug Sidecar */}
-              {console.log('🔍 [DIAGNOSTIC] Rendering DebugSidecar with isOpen:', isDebugOpen)}
-              <DebugSidecar isOpen={isDebugOpen} onClose={closeDebug} />
+                <AppContent />
               </ErrorBoundary>
             </Router>
           </NotificationProvider>
