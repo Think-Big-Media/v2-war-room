@@ -45,8 +45,15 @@ import './warroom.css';
 function App() {
   console.log('%c[DIAGNOSTIC] 5. App.tsx component function is executing.', 'color: yellow;');
   
+  // 🔍 DIAGNOSTIC: Global marker for our enhanced code
+  console.log('%c🔍 [CLEOPATRA-ENHANCED] This is the enhanced admin system version!', 'color: red; font-weight: bold; font-size: 14px;');
+  (window as any).CLEOPATRA_ADMIN_VERSION = 'v2.0-enhanced';
+  
   // Initialize debug trigger hook
   const { isDebugOpen, closeDebug } = useDebugTrigger();
+  
+  // 🔍 DIAGNOSTIC: Log debug state changes
+  console.log('🔍 [DIAGNOSTIC] App.tsx - isDebugOpen state:', isDebugOpen);
   
   // Apply saved theme on app load
   React.useEffect(() => {
@@ -141,6 +148,7 @@ function App() {
               <TickerTape />
               
               {/* Admin System - Debug Sidecar */}
+              {console.log('🔍 [DIAGNOSTIC] Rendering DebugSidecar with isOpen:', isDebugOpen)}
               <DebugSidecar isOpen={isDebugOpen} onClose={closeDebug} />
               </ErrorBoundary>
             </Router>

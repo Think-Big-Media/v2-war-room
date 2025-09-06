@@ -589,6 +589,9 @@ export const DebugSidecar: React.FC<DebugSidecarProps> = ({ isOpen, onClose }) =
 // Global debug trigger (double-click bottom-right corner + triple-click logo)
 export const useDebugTrigger = () => {
   const [isDebugOpen, setIsDebugOpen] = useState(false);
+  
+  // 🔍 DIAGNOSTIC: Hook mounted
+  console.log('🔍 [DIAGNOSTIC] useDebugTrigger hook mounted');
 
   useEffect(() => {
     let clickCount = 0;
@@ -621,7 +624,9 @@ export const useDebugTrigger = () => {
 
     // Listen for triple-click logo admin activation
     const handleDebugSidecarToggle = (e: CustomEvent) => {
+      console.log('🔍 [DIAGNOSTIC] DebugSidecar received debug-sidecar-toggle event!', e.detail);
       const { isOpen } = e.detail;
+      console.log('🔍 [DIAGNOSTIC] Setting debug state to:', isOpen);
       setIsDebugOpen(isOpen);
     };
 
