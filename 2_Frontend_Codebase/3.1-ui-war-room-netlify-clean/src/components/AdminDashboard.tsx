@@ -11,7 +11,8 @@ import {
   AlertCircle,
   Settings,
   BarChart3,
-  Zap
+  Zap,
+  Shield
 } from 'lucide-react';
 import PageLayout from './shared/PageLayout';
 import { AdminAuthGate } from './AdminAuthGate';
@@ -93,6 +94,45 @@ const AdminDashboardContent: React.FC<AdminDashboardProps> = ({
     dataSourcesOnline: 0,
     lastUpdate: new Date().toLocaleTimeString(),
   });
+
+  // 🏛️ Marcus Aurelius - Tier 1: Quick Health Summary
+  const [marcusAureliusHealth, setMarcusAureliusHealth] = useState({
+    backend: '🔄',
+    mentionlytics: '🔄', 
+    auth: '🔄',
+    overall: 'checking',
+    lastCheck: new Date().toLocaleTimeString()
+  });
+
+  // Marcus Aurelius health check (every 60 seconds) - now using Tier 2 service
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    const checkMarcusAureliusHealth = async () => {
+      try {
+        // Import the service dynamically to avoid import issues
+        const { marcusAurelius } = await import('../services/marcusAureliusService');
+        const healthData = await marcusAurelius.getQuickHealth();
+        setMarcusAureliusHealth(healthData);
+      } catch (error) {
+        setMarcusAureliusHealth(prev => ({
+          ...prev,
+          backend: '❌',
+          mentionlytics: '❌',
+          auth: '❌',
+          overall: 'error',
+          lastCheck: new Date().toLocaleTimeString()
+        }));
+      }
+    };
+    
+    // Initial check
+    checkMarcusAureliusHealth();
+    
+    // Check every minute
+    const interval = setInterval(checkMarcusAureliusHealth, 60000);
+    return () => clearInterval(interval);
+  }, [isOpen]);
 
   // Update system stats
   useEffect(() => {
@@ -326,6 +366,27 @@ const AdminDashboardContent: React.FC<AdminDashboardProps> = ({
               <div>
                 <p className="text-xs text-white/60 uppercase">Last Update</p>
                 <p className="text-white font-mono text-sm">{systemStats.lastUpdate}</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* 🏛️ Marcus Aurelius - Tier 1: Health Summary Widget */}
+          <div className="bg-white/5 border border-white/10 rounded-xl p-4 cursor-pointer hover:bg-white/10 transition-colors"
+               onClick={() => window.open('/marcus-aurelius', '_blank')}>
+            <div className="flex items-center gap-3">
+              <Shield className={`w-5 h-5 ${
+                marcusAureliusHealth.overall === 'healthy' ? 'text-green-400' : 
+                marcusAureliusHealth.overall === 'degraded' ? 'text-yellow-400' : 'text-red-400'
+              }`} />
+              <div>
+                <p className="text-xs text-white/60 uppercase">Marcus Aurelius</p>
+                <div className="flex items-center gap-1 text-sm">
+                  <span title="Backend">{marcusAureliusHealth.backend}</span>
+                  <span title="Mentionlytics">{marcusAureliusHealth.mentionlytics}</span>
+                  <span title="Auth">{marcusAureliusHealth.auth}</span>
+                  <span className="text-white/60 text-xs ml-1">({marcusAureliusHealth.lastCheck})</span>
+                </div>
+                <p className="text-xs text-blue-400 mt-1">Click for details</p>
               </div>
             </div>
           </div>

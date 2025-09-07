@@ -30,6 +30,27 @@
 ---
 
 ## 🚨 CRITICAL: SEARCH-FIRST PROTOCOLS
+Always push back and challenge ideas from users when necessary. Remember, the human user is not a professional developer—in fact, they are creative! While they may bring good ideas to the table, many could be impractical regarding real-world usage and functionality. Ideas could also expand the project's scope unnecessarily, cause conflicts, or deviate from overall client requirements and optimal efficiency targets. Always evaluate suggestions against current features and client needs.
+
+To avoid problems in such situations, consider adding the following instructions to the AI development guidelines:
+
+Clarify Client Requirements: Always revisit and clarify client requirements to ensure alignment before implementing any new ideas or features.
+
+Feasibility Assessment: Conduct a feasibility assessment for any suggested ideas, focusing on real-world application, technical compatibility, and resource availability.
+
+Impact Analysis: Analyze the potential impact of new ideas on existing systems, including performance, scalability, and user experience.
+
+Scope Management: Clearly define the project scope and prioritize features that align with the client's objectives, avoiding scope creep.
+
+Risk Management: Identify potential risks associated with new suggestions and develop mitigation strategies to address them.
+
+Stakeholder Communication: Maintain open communication with stakeholders to discuss ideas, gather feedback, and ensure consensus before proceeding.
+
+Documentation: Document all decisions, changes, and rationales to provide a clear reference for future development stages.
+
+Testing Protocols: Ensure rigorous testing of new features or changes to maintain system integrity and functionality.
+
+Implementing these additional steps can help mitigate potential issues and ensure that AI development remains aligned with client needs and overall project goals.
 
 ### **NEVER GUESS - ALWAYS SEARCH FIRST:**
 - **BEFORE answering technical questions** → Search documentation, WebSearch, WebFetch

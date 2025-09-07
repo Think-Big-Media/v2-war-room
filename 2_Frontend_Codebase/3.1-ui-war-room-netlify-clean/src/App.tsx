@@ -26,6 +26,10 @@ import { AdminDashboard } from './components/AdminDashboard';
 // import DebugDashboard from './pages/DebugDashboard';
 import NotFound from './pages/NotFound';
 
+// 🏛️ Marcus Aurelius - Health Monitoring
+import MarcusAureliusHealthPage from './components/MarcusAureliusHealthPage';
+import MarcusAureliusFloatingIndicator from './components/MarcusAureliusFloatingIndicator';
+
 // Builder.io Integration - Temporarily commented out to avoid missing dependencies
 // import BuilderPage from './pages/BuilderPage';
 
@@ -114,12 +118,19 @@ function AppContent() {
         <Route path="/intelligence-hub" element={<IntelligenceHub />} />
         <Route path="/alert-center" element={<AlertCenter />} />
         <Route path="/settings" element={<SettingsPage />} />
+        
+        {/* 🏛️ Marcus Aurelius - Health Monitoring */}
+        <Route path="/marcus-aurelius" element={<MarcusAureliusHealthPage />} />
+        
         {/* 404 Fallback */}
         <Route path="*" element={<NotFound />} />
       </Routes>
 
       {/* Global Components */}
       <TickerTape />
+      
+      {/* 🏛️ Marcus Aurelius - Floating Health Indicator */}
+      <MarcusAureliusFloatingIndicator />
       
       {/* Admin System - Debug Sidecar (Bottom Panel Mode) */}
       {location.pathname !== '/admin-dashboard' && (
