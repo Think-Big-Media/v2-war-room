@@ -54,7 +54,7 @@ export const ROUTES = {
 /**
  * API Endpoints - VERIFIED backend routes
  * ✅ Backend analysis confirms these endpoints exist
- * 🔗 Backend URL: war-room-3-backend-d2msjrk82vjjq794glog.lp.dev
+ * 🔗 Backend URL: war-room-backend-foundation-d2tdhv482vjq88rgfm3g.lp.dev
  */
 export const API_ENDPOINTS = {
   // Authentication
