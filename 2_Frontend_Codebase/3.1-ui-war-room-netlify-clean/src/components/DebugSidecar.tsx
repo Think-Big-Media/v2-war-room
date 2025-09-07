@@ -17,7 +17,7 @@ import {
   TrendingUp,
   TrendingDown,
 } from 'lucide-react';
-import { safeParseJSON, safeSetJSON } from '../utils/localStorage';
+import { safeParseJSON, safeSetJSON, isLocalStorageAvailable } from '../utils/localStorage';
 import { useDataMode } from '../hooks/useDataMode';
 import { useMentionlyticsDashboard } from '../hooks/useMentionlytics';
 import { api } from '../lib/api';
@@ -46,10 +46,13 @@ export const DebugSidecar: React.FC<DebugSidecarProps> = ({ isOpen, onClose }) =
   
   // Custom close handler that exits admin mode completely
   const handleAdminExit = () => {
-    console.log('🔧 [DEBUG-PANEL] X button clicked - Exiting admin mode completely');
+    console.log('🔧 [DEBUG-PANEL] X button clicked - Exiting admin mode securely');
     
-    // Clear admin mode from localStorage
-    localStorage.setItem('war-room-admin-mode', 'false');
+    // Clear admin mode from localStorage SAFELY
+    if (isLocalStorageAvailable()) {
+      safeSetJSON('war-room-admin-mode', false, false); // Silent errors for exit
+      safeSetJSON('war-room-admin-session', null, false); // Clear auth session
+    }
     
     // Dispatch admin mode change event to notify other components
     const event = new CustomEvent('admin-mode-change', { 
@@ -62,7 +65,7 @@ export const DebugSidecar: React.FC<DebugSidecarProps> = ({ isOpen, onClose }) =
     
     // Navigate back to dashboard
     window.location.href = '/';
-    console.log('🔧 [SUCCESS] Debug panel X - Admin mode exited completely');
+    console.log('🔧 [SUCCESS] Debug panel X - Admin mode exited securely');
   };
   const [logs, setLogs] = useState<Array<{ timestamp: string; level: string; message: string }>>(
     []

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 // Import fix for Netlify build compatibility
 import { informationService } from '../../services/informationService';
+import { safeGetItem, safeSetJSON, isLocalStorageAvailable } from '../../utils/localStorage';
 import { type InformationItem } from '../../types/information';
 import { NAV_LABELS, ROUTES } from '../../constants/NAMING_CONSTANTS';
 import {
@@ -62,9 +63,10 @@ const TopNavigation: React.FC = () => {
   
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  // Use localStorage to persist admin mode across page changes - CRITICAL FIX
+  // Use SAFE localStorage to persist admin mode across page changes - SECURITY FIX
   const [isAdminMode, setIsAdminMode] = useState(() => {
-    const saved = localStorage.getItem('war-room-admin-mode');
+    if (!isLocalStorageAvailable()) return false;
+    const saved = safeGetItem('war-room-admin-mode', 'false');
     return saved === 'true';
   });
   const [logoClickCount, setLogoClickCount] = useState(0);
@@ -132,9 +134,11 @@ const TopNavigation: React.FC = () => {
     e.stopPropagation(); // Prevent triggering parent click handler
     console.log('🔧 [ADMIN] Exiting admin mode...');
     
-    // PERSISTENT admin mode exit - save to localStorage
+    // PERSISTENT admin mode exit - save to localStorage SAFELY
     setIsAdminMode(false);
-    localStorage.setItem('war-room-admin-mode', 'false');
+    if (isLocalStorageAvailable()) {
+      safeSetJSON('war-room-admin-mode', false, false); // Silent errors for exit
+    }
     setLogoClickCount(0); // Reset click counter
     
     // Dispatch admin mode change event
@@ -164,16 +168,22 @@ const TopNavigation: React.FC = () => {
       if (logoClickCount + 1 >= 3) {
         console.log('🔧 [TRIPLE-CLICK] Activating admin mode - GUARANTEED PERSISTENT ADMIN BUTTON DISPLAY');
         
-        // FORCE admin mode activation AND persist to localStorage - this must always work
-        setIsAdminMode(true);
-        localStorage.setItem('war-room-admin-mode', 'true');
-        
-        // Force a re-render to ensure admin button appears
-        setTimeout(() => {
-          setIsAdminMode(true); // Double-ensure admin mode is set
-          localStorage.setItem('war-room-admin-mode', 'true'); // Double-ensure persistence
-          console.log('🔧 [ADMIN-MODE] Admin mode FORCED active and PERSISTED, admin button should be visible');
-        }, 10);
+        // SECURE admin mode activation with safe localStorage handling
+        if (isLocalStorageAvailable()) {
+          setIsAdminMode(true);
+          safeSetJSON('war-room-admin-mode', true);
+          
+          // Force a re-render to ensure admin button appears
+          setTimeout(() => {
+            setIsAdminMode(true); // Double-ensure admin mode is set
+            safeSetJSON('war-room-admin-mode', true); // Double-ensure persistence
+            console.log('🔧 [ADMIN-MODE] Admin mode SECURELY activated and PERSISTED');
+          }, 10);
+        } else {
+          // Fallback for environments without localStorage
+          console.warn('🔧 [SECURITY] localStorage unavailable - admin mode session-only');
+          setIsAdminMode(true);
+        }
         
         // Dispatch admin mode change event
         const event = new CustomEvent('admin-mode-change', { 

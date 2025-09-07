@@ -14,7 +14,8 @@ import {
   Zap
 } from 'lucide-react';
 import PageLayout from './shared/PageLayout';
-import { API_BASE_URL } from '../config/constants';
+import { AdminAuthGate } from './AdminAuthGate';
+import { isLocalStorageAvailable } from '../utils/localStorage';
 
 interface AdminDashboardProps {
   isOpen: boolean;
@@ -52,7 +53,7 @@ interface TestResult {
   timestamp?: string;
 }
 
-export const AdminDashboard: React.FC<AdminDashboardProps> = ({ 
+const AdminDashboardContent: React.FC<AdminDashboardProps> = ({ 
   isOpen, 
   onClose, 
   onNavigationClick 
@@ -114,6 +115,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
       try {
         const startTime = Date.now();
+        // SECURITY: Don't expose actual backend URL in production
         const backendUrl = import.meta.env.VITE_ENCORE_API_URL || 'http://localhost:10000';
         const fullUrl = `${backendUrl}${endpoint.url}`;
         
@@ -253,8 +255,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             <div className="flex items-center gap-3">
               <Activity className="w-5 h-5 text-orange-400" />
               <div>
-                <p className="text-xs text-white/60 uppercase">Memory</p>
-                <p className="text-white font-medium">{systemStats.memory}%</p>
+                <p className="text-xs text-white/60 uppercase">Status</p>
+                <p className="text-white font-medium">Operational</p>
               </div>
             </div>
           </div>
@@ -329,41 +331,52 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <div className="p-3 bg-white/5 rounded-lg border-l-4 border-purple-400">
                 <p className="text-purple-400 font-medium">🔮 Mentionlytics Service</p>
                 <div className="mt-2 space-y-1 text-xs">
-                  <p className="text-green-400">✓ Feed endpoint active</p>
-                  <p className="text-green-400">✓ Sentiment analysis running</p>
-                  <p className="text-green-400">✓ Geographic mentions tracked</p>
-                  <p className="text-green-400">✓ Influencer data available</p>
-                  <p className="text-green-400">✓ Share of voice calculated</p>
-                  <p className="text-green-400">✓ Trending topics updated</p>
-                  <p className="text-white/60 text-xs mt-1">API token valid • {dataMode} mode</p>
+                  <p className="text-green-400">✓ Service operational</p>
+                  <p className="text-green-400">✓ Data processing active</p>
+                  <p className="text-green-400">✓ Analysis pipeline running</p>
+                  <p className="text-green-400">✓ Insights generation active</p>
+                  <p className="text-white/60 text-xs mt-1">Mode: {dataMode}</p>
                 </div>
               </div>
               
               <div className="p-3 bg-white/5 rounded-lg">
-                <p className="text-green-400 font-medium">✓ Geo-Influencers Feed</p>
-                <p className="text-white/60 text-sm">23 active influencers tracked</p>
+                <p className="text-green-400 font-medium">✓ Data Processing</p>
+                <p className="text-white/60 text-sm">Active monitoring in progress</p>
               </div>
               
               <div className="p-3 bg-white/5 rounded-lg">
                 <p className="text-blue-400 font-medium">⚡ System Performance</p>
-                <p className="text-white/60 text-sm">All services nominal</p>
+                <p className="text-white/60 text-sm">All services operational</p>
               </div>
               
               <div className="p-3 bg-white/5 rounded-lg">
-                <p className="text-orange-400 font-medium">📊 API Call Summary</p>
+                <p className="text-orange-400 font-medium">📊 API Activity</p>
                 <p className="text-white/60 text-sm">{systemStats.apiCalls} requests • {systemStats.errors} errors</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Navigation Notice */}
+        {/* Security Notice */}
         <div className="mt-8 p-4 bg-blue-500/20 border border-blue-500/40 rounded-xl">
           <p className="text-blue-200 font-medium">
-            💡 Click on any navigation item (Intelligence, Alert Center, etc.) to switch to bottom panel mode and view the actual website.
+            🔒 Admin session active. Use navigation items to access system components.
           </p>
         </div>
       </motion.div>
     </PageLayout>
+  );
+};
+
+// Main export with authentication wrapper
+export const AdminDashboard: React.FC<AdminDashboardProps> = (props) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  if (!props.isOpen) return null;
+
+  return (
+    <AdminAuthGate onAuthChange={setIsAuthenticated}>
+      <AdminDashboardContent {...props} />
+    </AdminAuthGate>
   );
 };
