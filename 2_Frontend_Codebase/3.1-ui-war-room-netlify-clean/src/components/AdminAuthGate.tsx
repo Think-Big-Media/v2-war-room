@@ -9,13 +9,15 @@ interface AdminAuthGateProps {
 }
 
 // Simple admin password - in production, this would be environment-based
-const ADMIN_PASSWORD = 'war-room-admin-2024';
+const ADMIN_PASSWORD = 'admin2025';
 const AUTH_SESSION_KEY = 'war-room-admin-session';
-const SESSION_DURATION = 2 * 60 * 60 * 1000; // 2 hours
+const SESSION_DURATION = 2 * 60 * 1000; // 2 minutes
+const INACTIVITY_CHECK_INTERVAL = 10 * 1000; // Check every 10 seconds
 
 interface AuthSession {
   timestamp: number;
   expires: number;
+  lastActivity: number;
 }
 
 export const AdminAuthGate: React.FC<AdminAuthGateProps> = ({ children, onAuthChange }) => {
@@ -26,10 +28,42 @@ export const AdminAuthGate: React.FC<AdminAuthGateProps> = ({ children, onAuthCh
   const [attempts, setAttempts] = useState(0);
   const [isBlocked, setIsBlocked] = useState(false);
 
-  // Check existing session on mount
+  // Check existing session on mount and set up activity monitoring
   useEffect(() => {
     checkExistingSession();
-  }, []);
+    
+    // Set up inactivity monitoring
+    const activityInterval = setInterval(checkInactivity, INACTIVITY_CHECK_INTERVAL);
+    
+    // Track user activity
+    const updateActivity = () => {
+      if (isAuthenticated && isLocalStorageAvailable()) {
+        const sessionData = safeGetItem(AUTH_SESSION_KEY);
+        if (sessionData) {
+          try {
+            const session: AuthSession = JSON.parse(sessionData);
+            session.lastActivity = Date.now();
+            safeSetJSON(AUTH_SESSION_KEY, session);
+          } catch (error) {
+            console.warn('🔐 [ADMIN-AUTH] Failed to update activity:', error);
+          }
+        }
+      }
+    };
+    
+    // Listen for user activity
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+    events.forEach(event => {
+      document.addEventListener(event, updateActivity, true);
+    });
+    
+    return () => {
+      clearInterval(activityInterval);
+      events.forEach(event => {
+        document.removeEventListener(event, updateActivity, true);
+      });
+    };
+  }, [isAuthenticated]);
 
   // Notify parent of auth changes
   useEffect(() => {
@@ -46,19 +80,44 @@ export const AdminAuthGate: React.FC<AdminAuthGateProps> = ({ children, onAuthCh
       const session: AuthSession = JSON.parse(sessionData);
       const now = Date.now();
       
-      if (now < session.expires) {
+      // Check both absolute expiry and inactivity
+      const isExpired = now > session.expires;
+      const isInactive = now - (session.lastActivity || session.timestamp) > SESSION_DURATION;
+      
+      if (!isExpired && !isInactive) {
         console.log('🔐 [ADMIN-AUTH] Valid session found, auto-authenticating');
         setIsAuthenticated(true);
         return;
       }
       
-      // Session expired, clean up
-      console.log('🔐 [ADMIN-AUTH] Session expired, clearing');
+      // Session expired or inactive, clean up
+      const reason = isExpired ? 'expired' : 'inactive';
+      console.log(`🔐 [ADMIN-AUTH] Session ${reason}, clearing`);
       if (isLocalStorageAvailable()) {
         safeSetJSON(AUTH_SESSION_KEY, null);
       }
     } catch (error) {
       console.warn('🔐 [ADMIN-AUTH] Session check failed:', error);
+    }
+  };
+  
+  const checkInactivity = () => {
+    if (!isAuthenticated || !isLocalStorageAvailable()) return;
+    
+    try {
+      const sessionData = safeGetItem(AUTH_SESSION_KEY);
+      if (!sessionData) return;
+      
+      const session: AuthSession = JSON.parse(sessionData);
+      const now = Date.now();
+      const timeSinceActivity = now - (session.lastActivity || session.timestamp);
+      
+      if (timeSinceActivity > SESSION_DURATION) {
+        console.log('🔐 [ADMIN-AUTH] Session inactive for 2 minutes, logging out');
+        handleLogout();
+      }
+    } catch (error) {
+      console.warn('🔐 [ADMIN-AUTH] Inactivity check failed:', error);
     }
   };
 
@@ -78,7 +137,8 @@ export const AdminAuthGate: React.FC<AdminAuthGateProps> = ({ children, onAuthCh
       const now = Date.now();
       const session: AuthSession = {
         timestamp: now,
-        expires: now + SESSION_DURATION
+        expires: now + (24 * 60 * 60 * 1000), // 24 hour absolute limit
+        lastActivity: now
       };
 
       if (isLocalStorageAvailable()) {
@@ -201,7 +261,7 @@ export const AdminAuthGate: React.FC<AdminAuthGateProps> = ({ children, onAuthCh
           </form>
 
           <div className="mt-6 text-center text-xs text-gray-500">
-            Session expires after 2 hours of inactivity
+            Session expires after 2 minutes of inactivity
           </div>
         </div>
       </motion.div>

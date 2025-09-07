@@ -335,19 +335,6 @@ const TopNavigation: React.FC = () => {
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-2 lg:space-x-4">
-            {/* Data Mode Toggle - VISIBLE ADMIN CONTROL */}
-            <button
-              onClick={() => setDataMode(dataMode === 'MOCK' ? 'LIVE' : 'MOCK')}
-              className={`px-3 py-1 rounded text-xs font-mono transition-colors ${
-                dataMode === 'MOCK' 
-                  ? 'bg-orange-500/20 text-orange-300 hover:bg-orange-500/30' 
-                  : 'bg-green-500/20 text-green-300 hover:bg-green-500/30'
-              }`}
-              title={`Currently using ${dataMode} data. Click to switch to ${dataMode === 'MOCK' ? 'LIVE' : 'MOCK'}`}
-            >
-              {dataMode}
-            </button>
-
             {/* Admin Mode Indicator (when triple-click activated) */}
             {isAdminMode && (
               <div className="hidden md:flex items-center px-2 py-1 bg-red-500/20 rounded text-xs text-red-300">

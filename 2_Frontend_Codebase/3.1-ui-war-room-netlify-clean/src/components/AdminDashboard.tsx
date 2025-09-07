@@ -23,25 +23,37 @@ interface AdminDashboardProps {
   onNavigationClick: () => void;
 }
 
-// API Endpoints for validation suite - Enhanced with comprehensive Mentionlytics testing
-const VALIDATION_ENDPOINTS = [
-  { name: 'Health Check', url: '/health', method: 'GET', category: 'System' },
-  { name: 'Analytics Summary', url: '/api/v1/analytics/summary', method: 'GET', category: 'Analytics' },
-  { name: 'Monitoring Mentions', url: '/api/v1/monitoring/mentions', method: 'GET', category: 'Monitoring' },
-  { name: 'Campaign Insights', url: '/api/v1/campaigns/insights', method: 'GET', category: 'Campaigns' },
-  { name: 'Alert Queue', url: '/api/v1/alerting/queue', method: 'GET', category: 'Alerting' },
+// Critical Data Sources that need monitoring for app functionality
+const CRITICAL_DATA_SOURCES = [
+  // Core System Health
+  { name: 'Backend Health', url: '/health', method: 'GET', category: 'System', critical: true },
+  { name: 'Database Connection', url: '/api/v1/db/health', method: 'GET', category: 'System', critical: true },
   
-  // Comprehensive Mentionlytics Service endpoints
-  { name: 'Mentionlytics Feed', url: '/api/v1/mentionlytics/feed', method: 'GET', category: 'Mentionlytics' },
-  { name: 'Mentionlytics Geo', url: '/api/v1/mentionlytics/mentions/geo', method: 'GET', category: 'Mentionlytics' },
-  { name: 'Mentionlytics Influencers', url: '/api/v1/mentionlytics/influencers', method: 'GET', category: 'Mentionlytics' },
-  { name: 'Mentionlytics Mentions', url: '/api/v1/mentionlytics/mentions', method: 'GET', category: 'Mentionlytics' },
-  { name: 'Mentionlytics Sentiment', url: '/api/v1/mentionlytics/sentiment', method: 'GET', category: 'Mentionlytics' },
-  { name: 'Mentionlytics Share of Voice', url: '/api/v1/mentionlytics/share-of-voice', method: 'GET', category: 'Mentionlytics' },
-  { name: 'Mentionlytics Trending', url: '/api/v1/mentionlytics/trending', method: 'GET', category: 'Mentionlytics' },
-  { name: 'Mentionlytics Validation', url: '/api/v1/mentionlytics/validate', method: 'GET', category: 'Mentionlytics' },
+  // Primary Data Feeds (6 main sources)
+  { name: 'Political News Feed', url: '/api/v1/information/political-news', method: 'GET', category: 'Data Sources', critical: true },
+  { name: 'Team Alerts Feed', url: '/api/v1/information/team-alerts', method: 'GET', category: 'Data Sources', critical: true },
+  { name: 'Campaign Updates Feed', url: '/api/v1/information/campaign-updates', method: 'GET', category: 'Data Sources', critical: true },
+  { name: 'Media Intelligence Feed', url: '/api/v1/information/media-intelligence', method: 'GET', category: 'Data Sources', critical: true },
+  { name: 'Strategic Insights Feed', url: '/api/v1/information/strategic-insights', method: 'GET', category: 'Data Sources', critical: true },
+  { name: 'Crisis Alerts Feed', url: '/api/v1/information/crisis-alerts', method: 'GET', category: 'Data Sources', critical: true },
   
-  { name: 'Geo-Influencers Feed', url: '/api/v1/monitoring/geo-influencers', method: 'GET', category: 'Influencers' },
+  // Mentionlytics Integration (External API)
+  { name: 'Mentionlytics API Connection', url: '/api/v1/mentionlytics/validate', method: 'GET', category: 'External APIs', critical: true },
+  { name: 'Mentionlytics Data Feed', url: '/api/v1/mentionlytics/feed', method: 'GET', category: 'External APIs', critical: false },
+  { name: 'Mentionlytics Sentiment Analysis', url: '/api/v1/mentionlytics/sentiment', method: 'GET', category: 'External APIs', critical: false },
+  
+  // Real-time Services
+  { name: 'WebSocket Connection', url: '/api/v1/ws/status', method: 'GET', category: 'Real-time', critical: true },
+  { name: 'Alert System', url: '/api/v1/alerting/status', method: 'GET', category: 'Real-time', critical: true },
+  
+  // Authentication & Security
+  { name: 'OAuth Service', url: '/api/v1/auth/status', method: 'GET', category: 'Auth', critical: true },
+  { name: 'User Session Store', url: '/api/v1/auth/sessions/health', method: 'GET', category: 'Auth', critical: true },
+  
+  // Third-party Integrations
+  { name: 'Meta Ads API', url: '/api/v1/integrations/meta/status', method: 'GET', category: 'Integrations', critical: false },
+  { name: 'Google Ads API', url: '/api/v1/integrations/google/status', method: 'GET', category: 'Integrations', critical: false },
+  { name: 'PostHog Analytics', url: '/api/v1/integrations/posthog/status', method: 'GET', category: 'Integrations', critical: false },
 ];
 
 interface TestResult {
@@ -59,11 +71,17 @@ const AdminDashboardContent: React.FC<AdminDashboardProps> = ({
   onNavigationClick 
 }) => {
   const [testResults, setTestResults] = useState<TestResult[]>(
-    VALIDATION_ENDPOINTS.map(endpoint => ({
+    CRITICAL_DATA_SOURCES.map(endpoint => ({
       name: endpoint.name,
       status: 'pending' as const,
     }))
   );
+  const [realTimeLog, setRealTimeLog] = useState<Array<{
+    timestamp: string;
+    level: 'info' | 'warning' | 'error' | 'success';
+    message: string;
+    source: string;
+  }>>([]);
   const [isRunningFullSuite, setIsRunningFullSuite] = useState(false);
   const [dataMode, setDataMode] = useState<'MOCK' | 'LIVE'>('LIVE');
   const [systemStats, setSystemStats] = useState({
@@ -71,6 +89,9 @@ const AdminDashboardContent: React.FC<AdminDashboardProps> = ({
     memory: 23,
     apiCalls: 0,
     errors: 0,
+    criticalFailures: 0,
+    dataSourcesOnline: 0,
+    lastUpdate: new Date().toLocaleTimeString(),
   });
 
   // Update system stats
@@ -99,14 +120,24 @@ const AdminDashboardContent: React.FC<AdminDashboardProps> = ({
     setIsRunningFullSuite(true);
     
     // Reset all results
-    setTestResults(VALIDATION_ENDPOINTS.map(endpoint => ({
+    setTestResults(CRITICAL_DATA_SOURCES.map(endpoint => ({
       name: endpoint.name,
       status: 'pending' as const,
     })));
+    
+    setRealTimeLog(prev => [...prev, {
+      timestamp: new Date().toLocaleTimeString(),
+      level: 'info',
+      message: 'Starting comprehensive system health check',
+      source: 'Admin Dashboard'
+    }]);
 
+    let criticalFailures = 0;
+    let dataSourcesOnline = 0;
+    
     // Run tests sequentially with visual feedback
-    for (let i = 0; i < VALIDATION_ENDPOINTS.length; i++) {
-      const endpoint = VALIDATION_ENDPOINTS[i];
+    for (let i = 0; i < CRITICAL_DATA_SOURCES.length; i++) {
+      const endpoint = CRITICAL_DATA_SOURCES[i];
       
       // Update to testing state
       setTestResults(prev => prev.map((result, index) => 
@@ -152,10 +183,29 @@ const AdminDashboardContent: React.FC<AdminDashboardProps> = ({
           } : result
         ));
         
+        const isSuccess = response.ok;
+        if (endpoint.category === 'Data Sources' && isSuccess) {
+          dataSourcesOnline++;
+        }
+        if (endpoint.critical && !isSuccess) {
+          criticalFailures++;
+        }
+        
+        // Add to real-time log
+        setRealTimeLog(prev => [...prev.slice(-20), {
+          timestamp: new Date().toLocaleTimeString(),
+          level: isSuccess ? 'success' : 'error',
+          message: `${endpoint.name}: ${isSuccess ? 'Online' : `Failed (${response.status})`}`,
+          source: endpoint.category
+        }]);
+        
         setSystemStats(prev => ({
           ...prev,
           apiCalls: prev.apiCalls + 1,
           errors: response.ok ? prev.errors : prev.errors + 1,
+          criticalFailures,
+          dataSourcesOnline,
+          lastUpdate: new Date().toLocaleTimeString(),
         }));
         
       } catch (error: any) {
@@ -168,10 +218,25 @@ const AdminDashboardContent: React.FC<AdminDashboardProps> = ({
           } : result
         ));
         
+        if (endpoint.critical) {
+          criticalFailures++;
+        }
+        
+        // Add to real-time log
+        setRealTimeLog(prev => [...prev.slice(-20), {
+          timestamp: new Date().toLocaleTimeString(),
+          level: 'error',
+          message: `${endpoint.name}: Connection failed (${error.message})`,
+          source: endpoint.category
+        }]);
+        
         setSystemStats(prev => ({
           ...prev,
           apiCalls: prev.apiCalls + 1,
           errors: prev.errors + 1,
+          criticalFailures,
+          dataSourcesOnline,
+          lastUpdate: new Date().toLocaleTimeString(),
         }));
       }
       
@@ -230,13 +295,27 @@ const AdminDashboardContent: React.FC<AdminDashboardProps> = ({
       >
 
         {/* System Overview */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mb-8">
           <div className="bg-white/5 border border-white/10 rounded-xl p-4">
             <div className="flex items-center gap-3">
-              <Wifi className={`w-5 h-5 ${connectionStatus === 'connected' ? 'text-green-400' : 'text-red-400'}`} />
+              <Database className={`w-5 h-5 ${systemStats.criticalFailures === 0 ? 'text-green-400' : 'text-red-400'}`} />
               <div>
-                <p className="text-xs text-white/60 uppercase">Connection</p>
-                <p className="text-white font-medium capitalize">{connectionStatus}</p>
+                <p className="text-xs text-white/60 uppercase">System Health</p>
+                <p className={`font-medium ${
+                  systemStats.criticalFailures === 0 ? 'text-green-400' : 'text-red-400'
+                }`}>
+                  {systemStats.criticalFailures === 0 ? 'Healthy' : `${systemStats.criticalFailures} Critical`}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+            <div className="flex items-center gap-3">
+              <Activity className="w-5 h-5 text-blue-400" />
+              <div>
+                <p className="text-xs text-white/60 uppercase">Data Sources</p>
+                <p className="text-white font-medium">{systemStats.dataSourcesOnline}/6 Online</p>
               </div>
             </div>
           </div>
@@ -245,28 +324,32 @@ const AdminDashboardContent: React.FC<AdminDashboardProps> = ({
             <div className="flex items-center gap-3">
               <Clock className="w-5 h-5 text-purple-400" />
               <div>
-                <p className="text-xs text-white/60 uppercase">Uptime</p>
-                <p className="text-white font-mono font-medium">{systemStats.uptime}</p>
+                <p className="text-xs text-white/60 uppercase">Last Update</p>
+                <p className="text-white font-mono text-sm">{systemStats.lastUpdate}</p>
               </div>
             </div>
           </div>
           
           <div className="bg-white/5 border border-white/10 rounded-xl p-4">
             <div className="flex items-center gap-3">
-              <Activity className="w-5 h-5 text-orange-400" />
-              <div>
-                <p className="text-xs text-white/60 uppercase">Status</p>
-                <p className="text-white font-medium">Operational</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-            <div className="flex items-center gap-3">
-              <BarChart3 className="w-5 h-5 text-blue-400" />
+              <BarChart3 className="w-5 h-5 text-orange-400" />
               <div>
                 <p className="text-xs text-white/60 uppercase">API Calls</p>
                 <p className="text-white font-medium">{systemStats.apiCalls}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+            <div className="flex items-center gap-3">
+              <AlertCircle className={`w-5 h-5 ${systemStats.errors === 0 ? 'text-green-400' : 'text-yellow-400'}`} />
+              <div>
+                <p className="text-xs text-white/60 uppercase">Errors</p>
+                <p className={`font-medium ${
+                  systemStats.errors === 0 ? 'text-green-400' : 'text-yellow-400'
+                }`}>
+                  {systemStats.errors}
+                </p>
               </div>
             </div>
           </div>
@@ -295,73 +378,154 @@ const AdminDashboardContent: React.FC<AdminDashboardProps> = ({
           </button>
         </div>
 
-        {/* Validation Results */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Validation Results & Real-time Monitoring */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h2 className="text-lg font-semibold text-white mb-4">Endpoint Validation</h2>
-            <div className="space-y-3">
-              {testResults.map((result, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    {getStatusIcon(result.status)}
-                    <div>
-                      <p className="text-white font-medium">{result.name}</p>
-                      {result.error && (
-                        <p className="text-red-400 text-xs">{result.error}</p>
+            <h2 className="text-lg font-semibold text-white mb-4">Critical Data Sources</h2>
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {testResults.filter((_, index) => CRITICAL_DATA_SOURCES[index]?.critical).map((result, index) => {
+                const endpoint = CRITICAL_DATA_SOURCES.find(ep => ep.name === result.name);
+                return (
+                  <div key={index} className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      {getStatusIcon(result.status)}
+                      <div>
+                        <p className="text-white text-sm font-medium">{result.name}</p>
+                        <p className="text-white/60 text-xs">{endpoint?.category}</p>
+                        {result.error && (
+                          <p className="text-red-400 text-xs">{result.error}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className={`text-xs font-medium ${getStatusColor(result.status)}`}>
+                        {result.status.toUpperCase()}
+                      </p>
+                      {result.duration && (
+                        <p className="text-xs text-white/60">{result.duration}ms</p>
                       )}
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className={`text-sm font-medium ${getStatusColor(result.status)}`}>
-                      {result.status.toUpperCase()}
-                    </p>
-                    {result.duration && (
-                      <p className="text-xs text-white/60">{result.duration}ms</p>
-                    )}
+                );
+              })}
+            </div>
+          </div>
+          
+          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-white mb-4">All System Components</h2>
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {testResults.map((result, index) => {
+                const endpoint = CRITICAL_DATA_SOURCES[index];
+                return (
+                  <div key={index} className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
+                    <div className="flex items-center gap-2">
+                      {getStatusIcon(result.status)}
+                      <div>
+                        <p className="text-white text-sm">{result.name}</p>
+                        <p className="text-white/60 text-xs">{endpoint?.category}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className={`text-xs ${getStatusColor(result.status)}`}>
+                        {result.status.toUpperCase()}
+                      </p>
+                      {result.duration && (
+                        <p className="text-xs text-white/60">{result.duration}ms</p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
           <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-            <h2 className="text-lg font-semibold text-white mb-4">Runtime Results</h2>
-            <div className="space-y-4">
-              {/* Mentionlytics Service Status */}
-              <div className="p-3 bg-white/5 rounded-lg border-l-4 border-purple-400">
-                <p className="text-purple-400 font-medium">🔮 Mentionlytics Service</p>
-                <div className="mt-2 space-y-1 text-xs">
-                  <p className="text-green-400">✓ Service operational</p>
-                  <p className="text-green-400">✓ Data processing active</p>
-                  <p className="text-green-400">✓ Analysis pipeline running</p>
-                  <p className="text-green-400">✓ Insights generation active</p>
-                  <p className="text-white/60 text-xs mt-1">Mode: {dataMode}</p>
+            <h2 className="text-lg font-semibold text-white mb-4">Real-Time Activity Feed</h2>
+            <div className="space-y-2 max-h-96 overflow-y-auto">
+              {realTimeLog.length === 0 ? (
+                <div className="p-4 text-center text-white/60">
+                  No activity yet. Run system validation to see real-time updates.
                 </div>
-              </div>
-              
-              <div className="p-3 bg-white/5 rounded-lg">
-                <p className="text-green-400 font-medium">✓ Data Processing</p>
-                <p className="text-white/60 text-sm">Active monitoring in progress</p>
-              </div>
-              
-              <div className="p-3 bg-white/5 rounded-lg">
-                <p className="text-blue-400 font-medium">⚡ System Performance</p>
-                <p className="text-white/60 text-sm">All services operational</p>
-              </div>
-              
-              <div className="p-3 bg-white/5 rounded-lg">
-                <p className="text-orange-400 font-medium">📊 API Activity</p>
-                <p className="text-white/60 text-sm">{systemStats.apiCalls} requests • {systemStats.errors} errors</p>
+              ) : (
+                realTimeLog.slice().reverse().map((log, index) => (
+                  <div key={index} className={`p-2 rounded-lg border-l-2 ${
+                    log.level === 'success' ? 'bg-green-500/10 border-green-400' :
+                    log.level === 'error' ? 'bg-red-500/10 border-red-400' :
+                    log.level === 'warning' ? 'bg-yellow-500/10 border-yellow-400' :
+                    'bg-blue-500/10 border-blue-400'
+                  }`}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${
+                          log.level === 'success' ? 'bg-green-400' :
+                          log.level === 'error' ? 'bg-red-400' :
+                          log.level === 'warning' ? 'bg-yellow-400' :
+                          'bg-blue-400'
+                        }`} />
+                        <p className="text-white text-sm">{log.message}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-white/60 text-xs">{log.timestamp}</p>
+                        <p className="text-white/40 text-xs">{log.source}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+            
+            {/* Quick Stats Summary */}
+            <div className="mt-4 pt-4 border-t border-white/10">
+              <div className="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <p className="text-white/60">Data Mode</p>
+                  <p className={`font-medium ${
+                    dataMode === 'LIVE' ? 'text-green-400' : 'text-orange-400'
+                  }`}>{dataMode}</p>
+                </div>
+                <div>
+                  <p className="text-white/60">System Status</p>
+                  <p className={`font-medium ${
+                    systemStats.criticalFailures === 0 ? 'text-green-400' : 'text-red-400'
+                  }`}>
+                    {systemStats.criticalFailures === 0 ? 'All Systems Go' : 'Issues Detected'}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Security Notice */}
+        {/* Admin Instructions */}
         <div className="mt-8 p-4 bg-blue-500/20 border border-blue-500/40 rounded-xl">
-          <p className="text-blue-200 font-medium">
-            🔒 Admin session active. Use navigation items to access system components.
-          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p className="text-blue-200 font-medium mb-2">
+                🔍 What This Dashboard Monitors:
+              </p>
+              <ul className="text-blue-200 text-sm space-y-1">
+                <li>• 6 Core data sources feeding the main application</li>
+                <li>• Mentionlytics API integration and data processing</li>
+                <li>• Authentication system and user sessions</li>
+                <li>• Real-time WebSocket connections</li>
+                <li>• Third-party integrations (Meta, Google, PostHog)</li>
+                <li>• Database connectivity and system health</li>
+              </ul>
+            </div>
+            <div>
+              <p className="text-blue-200 font-medium mb-2">
+                🛠️ Admin Actions Available:
+              </p>
+              <ul className="text-blue-200 text-sm space-y-1">
+                <li>• Run comprehensive system health checks</li>
+                <li>• Monitor real-time activity and error logs</li>
+                <li>• Switch between MOCK and LIVE data modes</li>
+                <li>• Identify failing components and services</li>
+                <li>• Track API response times and error rates</li>
+                <li>• Session expires after 2 minutes of inactivity</li>
+              </ul>
+            </div>
+          </div>
         </div>
       </motion.div>
     </PageLayout>
