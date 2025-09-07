@@ -38,7 +38,8 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import TickerTape from './components/TickerTape';
 import { NotificationProvider } from './components/shared/NotificationSystem';
 import FloatingChatBar from './components/FloatingChatBar';
-import { DebugSidecar, useDebugTrigger } from './components/DebugSidecar';
+import { DebugSidecar } from './components/DebugSidecar';
+import { useDebugTrigger } from './hooks/useDebugTrigger';
 
 // Context Providers
 import { SupabaseAuthProvider } from './contexts/SupabaseAuthContext';
@@ -128,9 +129,11 @@ function AppContent() {
 
       {/* Global Components */}
       <TickerTape />
+      {/* Only show FloatingChatBar when NOT on admin dashboard (PageLayout handles it there) */}
+      {location.pathname !== '/admin-dashboard' && <FloatingChatBar />}
       
-      {/* 🏛️ Marcus Aurelius - Floating Health Indicator */}
-      <MarcusAureliusFloatingIndicator />
+      {/* 🏛️ Marcus Aurelius - Floating Health Indicator - DISABLED temporarily */}
+      {/* {location.pathname !== '/admin-dashboard' && <MarcusAureliusFloatingIndicator />} */}
       
       {/* Admin System - Debug Sidecar (Bottom Panel Mode) */}
       {location.pathname !== '/admin-dashboard' && (

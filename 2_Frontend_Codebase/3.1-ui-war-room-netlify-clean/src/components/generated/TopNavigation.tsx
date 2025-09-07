@@ -329,18 +329,14 @@ const TopNavigation: React.FC = () => {
               >
                 <item.icon className="w-4 h-4 lg:w-5 lg:h-5 mr-1 lg:mr-2" />
                 <span className="hidden md:inline">{item.label}</span>
+                {/* Removed red notification badge - no longer needed */}
               </button>
             ))}
           </div>
 
           {/* Right Side Actions */}
           <div className="flex items-center space-x-2 lg:space-x-4">
-            {/* Admin Mode Indicator (when triple-click activated) */}
-            {isAdminMode && (
-              <div className="hidden md:flex items-center px-2 py-1 bg-red-500/20 rounded text-xs text-red-300">
-                ADMIN
-              </div>
-            )}
+            {/* Admin Mode Indicator - REMOVED (ugly text) */}
 
             {/* Notifications */}
             <div className="relative" ref={notificationsRef}>

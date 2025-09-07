@@ -118,21 +118,22 @@ export default function MarcusAureliusFloatingIndicator() {
                   {/* Service Status Grid */}
                   <div className="grid grid-cols-3 gap-2">
                     <div className="text-center">
-                      <div className="text-lg mb-1" title="Backend">
-                        {healthData.backend}
-                      </div>
+                      <div className={`w-3 h-3 rounded-full mx-auto mb-1 ${
+                        healthData.backend === '✅' ? 'bg-green-400' : 'bg-red-400'
+                      }`} title="Backend"></div>
                       <div className="text-xs text-white/60">Backend</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg mb-1" title="Mentionlytics">
-                        {healthData.mentionlytics}
-                      </div>
+                      <div className={`w-3 h-3 rounded-full mx-auto mb-1 ${
+                        healthData.mentionlytics === '✅' ? 'bg-green-400' : 
+                        healthData.mentionlytics === '⚠️' ? 'bg-yellow-400' : 'bg-red-400'
+                      }`} title="Mentionlytics"></div>
                       <div className="text-xs text-white/60">Social</div>
                     </div>
                     <div className="text-center">
-                      <div className="text-lg mb-1" title="Authentication">
-                        {healthData.auth}
-                      </div>
+                      <div className={`w-3 h-3 rounded-full mx-auto mb-1 ${
+                        healthData.auth === '✅' ? 'bg-green-400' : 'bg-red-400'
+                      }`} title="Authentication"></div>
                       <div className="text-xs text-white/60">Auth</div>
                     </div>
                   </div>

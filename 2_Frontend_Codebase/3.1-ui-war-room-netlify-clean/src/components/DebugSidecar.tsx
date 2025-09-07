@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 import {
   Bug,
   X,
@@ -16,6 +17,7 @@ import {
   Move,
   TrendingUp,
   TrendingDown,
+  MapPin,
 } from 'lucide-react';
 import { safeParseJSON, safeSetJSON, isLocalStorageAvailable } from '../utils/localStorage';
 import { useDataMode } from '../hooks/useDataMode';
@@ -102,6 +104,7 @@ export const DebugSidecar: React.FC<DebugSidecarProps> = ({ isOpen, onClose }) =
   const { isLive, toggleMode, dataMode } = useDataMode();
   const { sentiment, loading, error, dataMode: hookDataMode } = useMentionlyticsDashboard();
   const [startTime] = useState(Date.now());
+  const location = useLocation();
 
   // All API endpoints from backend
   const API_ENDPOINTS = [
@@ -212,6 +215,77 @@ export const DebugSidecar: React.FC<DebugSidecarProps> = ({ isOpen, onClose }) =
     setEndpointTestResult(null);
     safeSetJSON('debug-panel-settings', DEFAULT_DEBUG_SETTINGS);
     addLog('info', 'Debug panel settings reset to defaults');
+  };
+
+  // 🔍 Page-Specific Admin Details
+  const getPageSpecificInfo = () => {
+    const path = location.pathname;
+    const currentTime = new Date().toLocaleTimeString();
+    
+    const pageInfo: { [key: string]: { name: string; components: string[]; apis: string[]; features: string[] } } = {
+      '/': {
+        name: 'Dashboard',
+        components: ['SWOT Radar', 'Activity Feed', 'Quick Stats', 'Navigation'],
+        apis: ['/api/v1/analytics/summary', '/api/v1/monitoring/mentions', '/health'],
+        features: ['Real-time metrics', 'SWOT analysis', 'Activity tracking']
+      },
+      '/command-center': {
+        name: 'Command Center', 
+        components: ['Command Panel', 'System Status', 'Action Buttons'],
+        apis: ['/api/v1/command/status', '/api/v1/system/health'],
+        features: ['System control', 'Command execution', 'Status monitoring']
+      },
+      '/real-time-monitoring': {
+        name: 'Live Monitoring',
+        components: ['Live Feed', 'Metrics Dashboard', 'Alert Panel'], 
+        apis: ['/api/v1/monitoring/mentions', '/api/v1/monitoring/sentiment', '/api/v1/monitoring/trends'],
+        features: ['Real-time data', 'Sentiment analysis', 'Trend detection']
+      },
+      '/campaign-control': {
+        name: 'War Room',
+        components: ['Campaign Manager', 'Performance Metrics', 'Control Panel'],
+        apis: ['/api/v1/campaigns/active', '/api/v1/analytics/performance'],
+        features: ['Campaign management', 'Performance tracking', 'Control operations']
+      },
+      '/intelligence-hub': {
+        name: 'Intelligence Hub',
+        components: ['Intel Feed', 'Analysis Tools', 'Report Generator'],
+        apis: ['/api/v1/intelligence/reports', '/api/v1/analytics/intelligence'],
+        features: ['Intelligence gathering', 'Data analysis', 'Report generation']
+      },
+      '/alert-center': {
+        name: 'Alert Center',
+        components: ['Alert List', 'Notification Panel', 'Priority Queue'],
+        apis: ['/api/v1/alerts/active', '/api/v1/notifications/status'],
+        features: ['Alert management', 'Notification system', 'Priority handling']
+      },
+      '/settings': {
+        name: 'Settings',
+        components: ['Configuration Panel', 'User Preferences', 'System Settings'],
+        apis: ['/api/v1/config/user', '/api/v1/system/settings'],
+        features: ['User configuration', 'System settings', 'Preference management']
+      },
+      '/admin-dashboard': {
+        name: 'Admin Dashboard',
+        components: ['Admin Controls', 'System Overview', 'Management Tools'],
+        apis: ['/api/v1/admin/stats', '/api/v1/system/overview', '/health'],
+        features: ['System administration', 'User management', 'System monitoring']
+      }
+    };
+
+    const currentPage = pageInfo[path] || {
+      name: 'Unknown Page',
+      components: ['Standard Layout', 'Navigation'],
+      apis: ['/health'],
+      features: ['Basic functionality']
+    };
+
+    return {
+      ...currentPage,
+      path,
+      timestamp: currentTime,
+      dataMode: dataMode
+    };
   };
 
   // Simulate debug logs
@@ -485,6 +559,50 @@ export const DebugSidecar: React.FC<DebugSidecarProps> = ({ isOpen, onClose }) =
                   </div>
                 </div>
 
+                {/* 🔍 Page-Specific Admin Details - NEW SECTION */}
+                <div className="pt-3 border-t border-white/10 mb-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <MapPin className="w-4 h-4 text-blue-400" />
+                    <span className="text-xs text-white/60 font-barlow uppercase">Current Page</span>
+                  </div>
+                  <div className="bg-black/30 rounded-lg p-3">
+                    {(() => {
+                      const pageInfo = getPageSpecificInfo();
+                      return (
+                        <>
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-bold text-white">{pageInfo.name}</span>
+                            <span className="text-xs text-blue-400 font-mono">{pageInfo.path}</span>
+                          </div>
+                          <div className="grid grid-cols-1 gap-2 text-xs">
+                            <div>
+                              <span className="text-white/50">Components:</span>
+                              <div className="text-green-400 font-mono">
+                                {pageInfo.components.join(' • ')}
+                              </div>
+                            </div>
+                            <div>
+                              <span className="text-white/50">Key APIs:</span>
+                              <div className="text-yellow-400 font-mono">
+                                {pageInfo.apis.join(' • ')}
+                              </div>
+                            </div>
+                            <div>
+                              <span className="text-white/50">Features:</span>
+                              <div className="text-purple-400 font-mono">
+                                {pageInfo.features.join(' • ')}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-xs text-white/30 mt-2 font-mono">
+                            Last updated: {pageInfo.timestamp} • Mode: {pageInfo.dataMode}
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+                </div>
+
                 {/* Mentionlytics Status - PROMINENT */}
                 <div className="flex items-center justify-between pt-3 border-t border-white/10 mb-4">
                   <span className="text-xs text-white/60 font-barlow uppercase">Mentionlytics</span>
@@ -733,65 +851,5 @@ export const DebugSidecar: React.FC<DebugSidecarProps> = ({ isOpen, onClose }) =
   );
 };
 
-// Global debug trigger (double-click bottom-right corner + triple-click logo)
-export const useDebugTrigger = () => {
-  const [isDebugOpen, setIsDebugOpen] = useState(false);
-  
-  // 🔍 DIAGNOSTIC: Hook mounted
-  console.log('🔍 [DIAGNOSTIC] useDebugTrigger hook mounted');
-
-  useEffect(() => {
-    let clickCount = 0;
-    let clickTimer: NodeJS.Timeout;
-
-    const handleDoubleClick = (e: MouseEvent) => {
-      // Only trigger in bottom-right 100px square
-      if (e.clientX > window.innerWidth - 100 && e.clientY > window.innerHeight - 100) {
-        clickCount++;
-
-        if (clickCount === 1) {
-          clickTimer = setTimeout(() => {
-            clickCount = 0;
-          }, 300);
-        } else if (clickCount === 2) {
-          clearTimeout(clickTimer);
-          clickCount = 0;
-          setIsDebugOpen(true);
-        }
-      }
-    };
-
-    // Also allow Option+Command+D (Cmd+Alt+D on Mac)
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.metaKey && e.altKey && e.key === 'D') {
-        e.preventDefault();
-        setIsDebugOpen(true);
-      }
-    };
-
-    // Listen for triple-click logo admin activation
-    const handleDebugSidecarToggle = (e: CustomEvent) => {
-      console.log('🔍 [DIAGNOSTIC] DebugSidecar received debug-sidecar-toggle event!', e.detail);
-      const { isOpen } = e.detail;
-      console.log('🔍 [DIAGNOSTIC] Setting debug state to:', isOpen);
-      setIsDebugOpen(isOpen);
-    };
-
-    window.addEventListener('click', handleDoubleClick);
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('debug-sidecar-toggle', handleDebugSidecarToggle as EventListener);
-
-    return () => {
-      window.removeEventListener('click', handleDoubleClick);
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('debug-sidecar-toggle', handleDebugSidecarToggle as EventListener);
-      if (clickTimer) clearTimeout(clickTimer);
-    };
-  }, []);
-
-  return {
-    isDebugOpen,
-    openDebug: () => setIsDebugOpen(true),
-    closeDebug: () => setIsDebugOpen(false),
-  };
-};
+// 🔧 [MOVED] useDebugTrigger has been moved to /src/hooks/useDebugTrigger.ts
+// This resolves React Fast Refresh compatibility issues

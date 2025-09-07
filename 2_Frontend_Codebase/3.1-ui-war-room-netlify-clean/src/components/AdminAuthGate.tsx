@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Eye, EyeOff, AlertTriangle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Shield, Eye, EyeOff, AlertTriangle, ArrowLeft } from 'lucide-react';
 import { safeGetItem, safeSetJSON, isLocalStorageAvailable } from '../utils/localStorage';
 
 interface AdminAuthGateProps {
@@ -11,7 +12,7 @@ interface AdminAuthGateProps {
 // Simple admin password - in production, this would be environment-based
 const ADMIN_PASSWORD = 'admin2025';
 const AUTH_SESSION_KEY = 'war-room-admin-session';
-const SESSION_DURATION = 2 * 60 * 1000; // 2 minutes
+const SESSION_DURATION = 2 * 60 * 60 * 1000; // 2 hours
 const INACTIVITY_CHECK_INTERVAL = 10 * 1000; // Check every 10 seconds
 
 interface AuthSession {
@@ -21,6 +22,7 @@ interface AuthSession {
 }
 
 export const AdminAuthGate: React.FC<AdminAuthGateProps> = ({ children, onAuthChange }) => {
+  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -180,15 +182,7 @@ export const AdminAuthGate: React.FC<AdminAuthGateProps> = ({ children, onAuthCh
   if (isAuthenticated) {
     return (
       <div className="relative">
-        {/* Logout button in top-right */}
-        <button
-          onClick={handleLogout}
-          className="fixed top-4 right-4 z-50 px-3 py-2 bg-red-600/20 text-red-400 rounded-lg text-sm hover:bg-red-600/30 transition-colors flex items-center gap-2"
-          title="Logout Admin Session"
-        >
-          <Shield className="w-4 h-4" />
-          Logout
-        </button>
+        {/* Logout button removed - user requested removal */}
         {children}
       </div>
     );
@@ -202,6 +196,15 @@ export const AdminAuthGate: React.FC<AdminAuthGateProps> = ({ children, onAuthCh
         className="w-full max-w-md"
       >
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
+          {/* Back Button */}
+          <button
+            onClick={() => navigate('/')}
+            className="mb-6 flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </button>
+          
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Shield className="w-8 h-8 text-blue-400" />
