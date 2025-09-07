@@ -480,6 +480,34 @@ const AdminDashboardContent: React.FC<AdminDashboardProps> = ({
           </div>
         </div>
 
+        {/* PROMINENT Data Mode Indicator */}
+        <div className="mb-8 p-6 bg-white/10 border-2 border-white/20 rounded-2xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className={`w-6 h-6 rounded-full animate-pulse ${dataMode === 'LIVE' ? 'bg-green-400' : 'bg-yellow-400'}`} />
+              <div>
+                <h2 className="text-2xl font-bold text-white">{dataMode} DATA MODE</h2>
+                <p className="text-gray-300">
+                  {dataMode === 'LIVE' 
+                    ? 'Connected to production backend APIs and real data sources' 
+                    : 'Using mock data for testing and demonstration purposes'
+                  }
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleDataModeToggle}
+              className={`px-8 py-4 rounded-xl font-bold text-lg transition-all transform hover:scale-105 ${
+                dataMode === 'LIVE' 
+                  ? 'bg-yellow-500 hover:bg-yellow-600 text-black shadow-lg shadow-yellow-500/20' 
+                  : 'bg-green-500 hover:bg-green-600 text-white shadow-lg shadow-green-500/20'
+              }`}
+            >
+              Switch to {dataMode === 'LIVE' ? 'MOCK' : 'LIVE'} MODE
+            </button>
+          </div>
+        </div>
+
         {/* Controls */}
         <div className="flex items-center gap-4 mb-6">
           <button
@@ -489,17 +517,6 @@ const AdminDashboardContent: React.FC<AdminDashboardProps> = ({
           >
             <Zap className="w-4 h-4" />
             {isRunningFullSuite ? 'Running Full Suite...' : 'Run Full Validation Suite'}
-          </button>
-          
-          <button
-            onClick={handleDataModeToggle}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              dataMode === 'LIVE' 
-                ? 'bg-green-600 hover:bg-green-700 text-white' 
-                : 'bg-orange-600 hover:bg-orange-700 text-white'
-            }`}
-          >
-            Switch to {dataMode === 'LIVE' ? 'MOCK' : 'LIVE'}
           </button>
         </div>
 

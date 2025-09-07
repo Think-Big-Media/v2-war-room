@@ -62,7 +62,12 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children, pageTitle, placeholde
 
         {/* Fixed Bottom Elements */}
         <div className="fixed bottom-16 left-0 right-0 z-50 px-4 lg:px-6">
-          <FloatingChatBar onSendMessage={handleSendMessage} placeholder={placeholder} />
+          <FloatingChatBar 
+            onSendMessage={handleSendMessage} 
+            placeholder={placeholder}
+            isAdminMode={true}
+            pageContext={pageTitle}
+          />
         </div>
       </div>
     </div>

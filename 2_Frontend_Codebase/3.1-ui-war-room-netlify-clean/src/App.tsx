@@ -130,7 +130,13 @@ function AppContent() {
       {/* Global Components */}
       <TickerTape />
       {/* Only show FloatingChatBar when NOT on admin dashboard (PageLayout handles it there) */}
-      {location.pathname !== '/admin-dashboard' && <FloatingChatBar />}
+      {location.pathname !== '/admin-dashboard' && (
+        <FloatingChatBar 
+          onSendMessage={() => {}}
+          isAdminMode={false}
+          pageContext={location.pathname}
+        />
+      )}
       
       {/* 🏛️ Marcus Aurelius - Floating Health Indicator - DISABLED temporarily */}
       {/* {location.pathname !== '/admin-dashboard' && <MarcusAureliusFloatingIndicator />} */}

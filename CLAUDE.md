@@ -126,6 +126,10 @@ Agreed to keep Napoleon focused on: [current scope + critical additions]?
 
 ---
 
+## ⚡ NO "SMOKE AND MIRRORS"
+
+When creating features and documenting them, ensure they aren't merely smoke and mirrors or fake features that fail to deliver genuine functionality. It's crucial to beware of AI's tendency to develop features that are merely for show, lacking true utility. Avoid designing features that function solely with mock data, as this undermines their authenticity and reliability. Fundamentally, our goal is to always develop features that truly work, with complete operational capability using real data sourced from APIs, the user, and other authentic channels. This approach ensures that our features are reliable, practical, and genuinely meet the users' needs.
+
 ## ⚡ CRITICAL WORKFLOWS
 
 ### **Graphite First Rule**
