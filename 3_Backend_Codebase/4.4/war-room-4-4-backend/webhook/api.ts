@@ -12,7 +12,8 @@ interface WebhookPayload {
   mentions?: any[];
   sentiment?: any;
   project?: any;
-  [key: string]: any; // Accept any Zapier payload structure
+  // Remove index signature - Encore doesn't support it
+  data?: any; // Generic field for any additional data
 }
 
 // Webhook endpoint to receive BrandMentions data from Zapier
