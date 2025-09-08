@@ -39,9 +39,11 @@ export const platformAdminApi = createApi({
     }),
     getOrganizations: builder.query<any[], void>({
       query: () => 'organizations',
+      transformResponse: (response: { organizations: any[] }) => response.organizations,
     }),
     getFeatureFlags: builder.query<any[], void>({
       query: () => 'feature-flags',
+      transformResponse: (response: { flags: any[] }) => response.flags,
     }),
   }),
 });

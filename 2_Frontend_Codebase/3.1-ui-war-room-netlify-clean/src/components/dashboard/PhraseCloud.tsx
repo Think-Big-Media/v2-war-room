@@ -39,21 +39,45 @@ export const PhraseCloud: React.FC = () => {
         setTrendingPhrases(realPhrases);
         
         // Extract keywords from actual mentions for brand monitoring
+        console.log('🔍 [PhraseCloud] Extracting keywords from real BrandMentions data...');
         const keywordSet = new Set<string>();
+        const phraseFirstLetters = new Set<string>();
+        
         response.mentions.forEach((mention: any) => {
           if (mention.text) {
+            console.log('📝 [PhraseCloud] Processing mention:', mention.text);
+            
             // Extract meaningful keywords from mention text
             const words = mention.text
               .toLowerCase()
               .split(/\W+/)
               .filter((word: string) => word.length > 4 && !['that', 'this', 'with', 'from', 'they', 'were', 'been', 'have', 'will', 'would', 'could', 'should'].includes(word));
+            
+            // Take first characters from phrases as user requested
+            const phrases = mention.text.split(/[.!?]+/).filter(phrase => phrase.trim().length > 10);
+            phrases.forEach(phrase => {
+              const trimmed = phrase.trim();
+              if (trimmed.length > 0) {
+                const firstChars = trimmed.substring(0, Math.min(6, trimmed.length)); // First 6 characters
+                phraseFirstLetters.add(firstChars);
+              }
+            });
+            
             words.slice(0, 3).forEach((word: string) => keywordSet.add(word));
           }
         });
         
         if (keywordSet.size > 0 && !parsedCampaignData?.keywords) {
           const extractedKeywords = Array.from(keywordSet).slice(0, 3);
-          setTopKeywords(extractedKeywords.map(k => k.charAt(0).toUpperCase() + k.slice(1)));
+          const phraseStarters = Array.from(phraseFirstLetters).slice(0, 2); // Add 2 phrase starters
+          
+          const allKeywords = [
+            ...extractedKeywords.map(k => k.charAt(0).toUpperCase() + k.slice(1)),
+            ...phraseStarters.map(p => p.charAt(0).toUpperCase() + p.slice(1) + '...')
+          ].slice(0, 3);
+          
+          console.log('🎯 [PhraseCloud] Extracted keywords from real data:', allKeywords);
+          setTopKeywords(allKeywords);
         }
       } else {
         // Fallback to trending topics if no real mentions

@@ -155,50 +155,39 @@ class MentionlyticsService {
       return [...newMentions, ...mockMentionsFeed].slice(0, limit);
     }
 
-    // LIVE DATA: Call BrandMentions API directly
+    // LIVE DATA: Call our backend which has BrandMentions data from Slack webhook
     try {
-      const apiKey = import.meta.env.VITE_BRANDMENTIONS_API_KEY;
-      const projectId = import.meta.env.VITE_BRANDMENTIONS_PROJECT_ID;
+      console.log('🚀 [getMentionsFeed] CALLING BACKEND WITH REAL BRANDMENTIONS DATA');
+      console.log('   - Backend URL:', this.endpoints.data.mentionlytics.feed);
+      console.log('   - Request limit:', limit);
       
-      if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
-        console.warn('⚠️ [getMentionsFeed] BrandMentions API key not set, using mock');
-        return mockMentionsFeed.slice(0, limit);
-      }
-
-      console.log('🚀 [getMentionsFeed] CALLING BRANDMENTIONS API FOR MENTIONS FEED');
-      
-      const response = await axios.get('https://api.brandmentions.com/command.php', {
-        params: {
-          api_key: apiKey,
-          command: 'GetMentions',
-          project_id: projectId,
-          limit: limit
-        },
+      const response = await axios.get(this.endpoints.data.mentionlytics.feed, {
+        params: { limit },
         timeout: 10000,
       });
       
-      console.log('✅ [getMentionsFeed] BrandMentions raw response:', response.data);
+      console.log('✅ [getMentionsFeed] Backend response:', response.data);
       
-      // Convert BrandMentions format to our MentionlyticsMention format
-      const brandMentions = response.data.mentions || [];
-      const mentions: MentionlyticsMention[] = brandMentions.map((mention: any, index: number) => ({
-        id: mention.id || String(index + 1),
-        text: mention.text || mention.content || 'No content available',
-        author: mention.author || mention.source || 'Unknown',
-        platform: this.mapPlatform(mention.platform || mention.source_type),
+      // Backend returns data in the correct format already
+      const backendData = response.data;
+      const mentions: MentionlyticsMention[] = (backendData.mentions || []).map((mention: any) => ({
+        id: mention.id,
+        text: mention.text,
+        author: mention.author,
+        platform: this.mapPlatform(mention.platform),
         sentiment: mention.sentiment || 'neutral',
-        reach: mention.reach || mention.followers || 0,
+        reach: mention.reach || 0,
         engagement: mention.engagement || 0,
-        timestamp: mention.timestamp || mention.date || new Date().toISOString(),
+        timestamp: mention.timestamp,
         url: mention.url || '#',
         location: mention.location || ''
       }));
       
-      console.log('🎯 [getMentionsFeed] LIVE BRANDMENTIONS MENTIONS:', mentions);
+      console.log('🎯 [getMentionsFeed] REAL BRANDMENTIONS DATA FROM BACKEND:', mentions);
       return mentions.slice(0, limit);
       
     } catch (error) {
-      console.error('❌ [getMentionsFeed] BrandMentions API error:', error);
+      console.error('❌ [getMentionsFeed] Backend API error:', error);
       console.log('🔄 [getMentionsFeed] Using mock data as fallback');
       return mockMentionsFeed.slice(0, limit);
     }
