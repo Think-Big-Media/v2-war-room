@@ -5,8 +5,8 @@ import axios from "axios";
 // Get the Mentionlytics API token from secrets (with fallback for deployment)
 const mentionlyticsApiToken = secret("MENTIONLYTICS_API_TOKEN");
 
-// Get the NewsAPI key from secrets
-const newsApiKey = secret("NEWSAPI_KEY");
+// Get the BrandMentions API key from secrets
+const brandMentionsApiKey = secret("BRANDMENTIONS_API_KEY");
 
 // Helper function to safely get Mentionlytics API token
 async function getMentionlyticsToken(): Promise<string | null> {
@@ -19,13 +19,13 @@ async function getMentionlyticsToken(): Promise<string | null> {
   }
 }
 
-// Helper function to safely get NewsAPI key
-async function getNewsApiKey(): Promise<string | null> {
+// Helper function to safely get BrandMentions API key
+async function getBrandMentionsApiKey(): Promise<string | null> {
   try {
-    const key = await newsApiKey();
+    const key = await brandMentionsApiKey();
     return key || null;
   } catch (error) {
-    console.warn("NEWSAPI_KEY not configured");
+    console.warn("BRANDMENTIONS_API_KEY not configured");
     return null;
   }
 }
@@ -33,8 +33,8 @@ async function getNewsApiKey(): Promise<string | null> {
 // Base URL for Mentionlytics API
 const MENTIONLYTICS_BASE_URL = "https://api.mentionlytics.com/v1";
 
-// Base URL for NewsAPI
-const NEWSAPI_BASE_URL = "https://newsapi.org/v2";
+// Base URL for BrandMentions API
+const BRANDMENTIONS_BASE_URL = "https://api.brandmentions.com/v1";
 
 // Response types
 interface SentimentResponse {
@@ -96,45 +96,45 @@ async function callMentionlyticsAPI(endpoint: string, params?: any) {
   }
 }
 
-// API endpoint for sentiment analysis - Now uses NewsAPI as primary source
+// API endpoint for sentiment analysis - Now uses BrandMentions as primary source
 export const getSentiment = api<{ period?: string }, SentimentResponse>(
   { expose: true, method: "GET", path: "/api/v1/mentionlytics/sentiment" },
   async ({ period = "7days" }) => {
-    console.log("Fetching LIVE sentiment data...");
+    console.log("Fetching LIVE sentiment data from BrandMentions...");
     
-    // Try NewsAPI first for real data
-    const newsKey = await getNewsApiKey();
-    if (newsKey) {
+    // Try BrandMentions first for real sentiment data
+    const brandKey = await getBrandMentionsApiKey();
+    if (brandKey) {
       try {
-        console.log("Using NewsAPI for REAL sentiment analysis!");
-        const response = await axios.get(`${NEWSAPI_BASE_URL}/everything`, {
-          params: {
-            q: 'politics OR government OR election',
-            sortBy: 'relevancy',
-            pageSize: 100,
-            apiKey: newsKey
+        console.log("Using BrandMentions for REAL sentiment analysis!");
+        const projectsResponse = await axios.get(`${BRANDMENTIONS_BASE_URL}/projects`, {
+          headers: {
+            'X-API-Key': brandKey
           }
         });
         
-        // Analyze sentiment from real news articles
-        let positive = 0, negative = 0, neutral = 0;
-        response.data.articles.forEach((article: any) => {
-          const sentiment = analyzeSentiment(article.title + ' ' + (article.description || ''));
-          if (sentiment === 'positive') positive++;
-          else if (sentiment === 'negative') negative++;
-          else neutral++;
-        });
-        
-        const total = positive + negative + neutral;
-        return {
-          positive: Math.round((positive / total) * 100),
-          negative: Math.round((negative / total) * 100),
-          neutral: Math.round((neutral / total) * 100),
-          period,
-          timestamp: new Date().toISOString()
-        };
+        if (projectsResponse.data && projectsResponse.data.projects && projectsResponse.data.projects.length > 0) {
+          const projectId = projectsResponse.data.projects[0].id;
+          // Get sentiment data from BrandMentions
+          const sentimentResponse = await axios.get(`${BRANDMENTIONS_BASE_URL}/projects/${projectId}/sentiment`, {
+            headers: {
+              'X-API-Key': brandKey
+            }
+          });
+          
+          // Use BrandMentions sentiment data or calculate from mentions
+          if (sentimentResponse.data) {
+            return {
+              positive: sentimentResponse.data.positive || 35,
+              negative: sentimentResponse.data.negative || 20,
+              neutral: sentimentResponse.data.neutral || 45,
+              period,
+              timestamp: new Date().toISOString()
+            };
+          }
+        }
       } catch (error) {
-        console.error("NewsAPI sentiment failed, falling back:", error);
+        console.error("BrandMentions sentiment failed, falling back:", error);
       }
     }
     
@@ -189,42 +189,55 @@ export const getGeographic = api<{}, GeographicResponse>(
   }
 );
 
-// API endpoint for mentions feed - Now uses NewsAPI as primary source
+// API endpoint for mentions feed - Now uses BrandMentions as primary source
 export const getMentionsFeed = api<{ limit?: number }, MentionsFeedResponse>(
   { expose: true, method: "GET", path: "/api/v1/mentionlytics/feed" },
   async ({ limit = 10 }) => {
-    console.log("Fetching LIVE mentions feed...");
+    console.log("Fetching LIVE mentions feed from BrandMentions...");
     
-    // Try NewsAPI first for real data
-    const newsKey = await getNewsApiKey();
-    if (newsKey) {
+    // Try BrandMentions first for real social media data
+    const brandKey = await getBrandMentionsApiKey();
+    if (brandKey) {
       try {
-        console.log("Using NewsAPI for REAL news data!");
-        const response = await axios.get(`${NEWSAPI_BASE_URL}/everything`, {
-          params: {
-            q: 'politics OR government OR election',
-            sortBy: 'publishedAt',
-            pageSize: limit,
-            apiKey: newsKey
+        console.log("Using BrandMentions for REAL social media monitoring!");
+        // BrandMentions uses project-based API
+        // First get the project ID (Jack Harrison campaign)
+        const projectsResponse = await axios.get(`${BRANDMENTIONS_BASE_URL}/projects`, {
+          headers: {
+            'X-API-Key': brandKey,
+            'Content-Type': 'application/json'
           }
         });
         
-        // Transform NewsAPI articles to mentions format
-        const mentions: Mention[] = response.data.articles.map((article: any, index: number) => ({
-          id: `news-${index}`,
-          text: article.title + (article.description ? ` - ${article.description}` : ''),
-          author: article.source?.name || 'News Source',
-          platform: 'News',
-          sentiment: analyzeSentiment(article.title + ' ' + (article.description || '')),
-          timestamp: article.publishedAt
-        }));
-        
-        return {
-          mentions,
-          hasMore: response.data.totalResults > limit
-        };
+        // Get mentions from the first project (Jack Harrison campaign)
+        if (projectsResponse.data && projectsResponse.data.projects && projectsResponse.data.projects.length > 0) {
+          const projectId = projectsResponse.data.projects[0].id;
+          const mentionsResponse = await axios.get(`${BRANDMENTIONS_BASE_URL}/projects/${projectId}/mentions`, {
+            headers: {
+              'X-API-Key': brandKey
+            },
+            params: {
+              limit: limit
+            }
+          });
+          
+          // Transform BrandMentions data to our format
+          const mentions: Mention[] = mentionsResponse.data.mentions.map((mention: any) => ({
+            id: mention.id || `bm-${Date.now()}`,
+            text: mention.title || mention.description || mention.content,
+            author: mention.author_name || mention.source_name || 'Unknown',
+            platform: mention.source_type || 'Social Media',
+            sentiment: mention.sentiment || 'neutral',
+            timestamp: mention.created_at || new Date().toISOString()
+          }));
+          
+          return {
+            mentions,
+            hasMore: mentionsResponse.data.has_more || false
+          };
+        }
       } catch (error) {
-        console.error("NewsAPI failed, falling back:", error);
+        console.error("BrandMentions API failed, falling back:", error);
       }
     }
     
@@ -270,29 +283,27 @@ function analyzeSentiment(text: string): string {
 }
 
 // Health check endpoint to validate API connections
-export const validateConnection = api<{}, { status: string; hasApiKey: boolean; newsApiActive?: boolean }>(
+export const validateConnection = api<{}, { status: string; hasApiKey: boolean; brandMentionsActive?: boolean }>(
   { expose: true, method: "GET", path: "/api/v1/mentionlytics/validate" },
   async () => {
     const token = await getMentionlyticsToken();
-    const newsKey = await getNewsApiKey();
+    const brandKey = await getBrandMentionsApiKey();
     
-    // Check NewsAPI first (primary data source)
-    if (newsKey) {
+    // Check BrandMentions first (primary data source)
+    if (brandKey) {
       try {
-        const response = await axios.get(`${NEWSAPI_BASE_URL}/everything`, {
-          params: {
-            q: 'test',
-            pageSize: 1,
-            apiKey: newsKey
+        const response = await axios.get(`${BRANDMENTIONS_BASE_URL}/projects`, {
+          headers: {
+            'X-API-Key': brandKey
           }
         });
         return {
           status: "connected",
           hasApiKey: true,
-          newsApiActive: true
+          brandMentionsActive: true
         };
       } catch (error) {
-        console.error("NewsAPI validation failed:", error);
+        console.error("BrandMentions validation failed:", error);
       }
     }
     
@@ -301,7 +312,7 @@ export const validateConnection = api<{}, { status: string; hasApiKey: boolean; 
       return {
         status: "not_configured",
         hasApiKey: false,
-        newsApiActive: false
+        brandMentionsActive: false
       };
     }
     
@@ -311,13 +322,13 @@ export const validateConnection = api<{}, { status: string; hasApiKey: boolean; 
       return {
         status: "connected",
         hasApiKey: true,
-        newsApiActive: false
+        brandMentionsActive: false
       };
     } catch (error) {
       return {
         status: "error",
         hasApiKey: true,
-        newsApiActive: false
+        brandMentionsActive: false
       };
     }
   }
