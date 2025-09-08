@@ -5,6 +5,9 @@ import axios from "axios";
 // Get the Mentionlytics API token from secrets (with fallback for deployment)
 const mentionlyticsApiToken = secret("MENTIONLYTICS_API_TOKEN");
 
+// Get the NewsAPI key from secrets
+const newsApiKey = secret("NEWSAPI_KEY");
+
 // Helper function to safely get Mentionlytics API token
 async function getMentionlyticsToken(): Promise<string | null> {
   try {
@@ -16,8 +19,22 @@ async function getMentionlyticsToken(): Promise<string | null> {
   }
 }
 
+// Helper function to safely get NewsAPI key
+async function getNewsApiKey(): Promise<string | null> {
+  try {
+    const key = await newsApiKey();
+    return key || null;
+  } catch (error) {
+    console.warn("NEWSAPI_KEY not configured");
+    return null;
+  }
+}
+
 // Base URL for Mentionlytics API
 const MENTIONLYTICS_BASE_URL = "https://api.mentionlytics.com/v1";
+
+// Base URL for NewsAPI
+const NEWSAPI_BASE_URL = "https://newsapi.org/v2";
 
 // Response types
 interface SentimentResponse {
@@ -79,12 +96,49 @@ async function callMentionlyticsAPI(endpoint: string, params?: any) {
   }
 }
 
-// API endpoint for sentiment analysis
+// API endpoint for sentiment analysis - Now uses NewsAPI as primary source
 export const getSentiment = api<{ period?: string }, SentimentResponse>(
   { expose: true, method: "GET", path: "/api/v1/mentionlytics/sentiment" },
   async ({ period = "7days" }) => {
-    console.log("Fetching LIVE sentiment data from Mentionlytics...");
+    console.log("Fetching LIVE sentiment data...");
     
+    // Try NewsAPI first for real data
+    const newsKey = await getNewsApiKey();
+    if (newsKey) {
+      try {
+        console.log("Using NewsAPI for REAL sentiment analysis!");
+        const response = await axios.get(`${NEWSAPI_BASE_URL}/everything`, {
+          params: {
+            q: 'politics OR government OR election',
+            sortBy: 'relevancy',
+            pageSize: 100,
+            apiKey: newsKey
+          }
+        });
+        
+        // Analyze sentiment from real news articles
+        let positive = 0, negative = 0, neutral = 0;
+        response.data.articles.forEach((article: any) => {
+          const sentiment = analyzeSentiment(article.title + ' ' + (article.description || ''));
+          if (sentiment === 'positive') positive++;
+          else if (sentiment === 'negative') negative++;
+          else neutral++;
+        });
+        
+        const total = positive + negative + neutral;
+        return {
+          positive: Math.round((positive / total) * 100),
+          negative: Math.round((negative / total) * 100),
+          neutral: Math.round((neutral / total) * 100),
+          period,
+          timestamp: new Date().toISOString()
+        };
+      } catch (error) {
+        console.error("NewsAPI sentiment failed, falling back:", error);
+      }
+    }
+    
+    // Fallback to Mentionlytics if NewsAPI fails
     try {
       const data = await callMentionlyticsAPI("/sentiment", { period });
       return {
@@ -95,8 +149,8 @@ export const getSentiment = api<{ period?: string }, SentimentResponse>(
         timestamp: new Date().toISOString()
       };
     } catch (error) {
-      // Return default data if API fails
-      console.error("Sentiment API failed, returning defaults:", error);
+      // Return default data if all APIs fail
+      console.error("All APIs failed, returning defaults:", error);
       return {
         positive: 45,
         negative: 25,
@@ -135,12 +189,46 @@ export const getGeographic = api<{}, GeographicResponse>(
   }
 );
 
-// API endpoint for mentions feed
+// API endpoint for mentions feed - Now uses NewsAPI as primary source
 export const getMentionsFeed = api<{ limit?: number }, MentionsFeedResponse>(
   { expose: true, method: "GET", path: "/api/v1/mentionlytics/feed" },
   async ({ limit = 10 }) => {
-    console.log("Fetching LIVE mentions feed from Mentionlytics...");
+    console.log("Fetching LIVE mentions feed...");
     
+    // Try NewsAPI first for real data
+    const newsKey = await getNewsApiKey();
+    if (newsKey) {
+      try {
+        console.log("Using NewsAPI for REAL news data!");
+        const response = await axios.get(`${NEWSAPI_BASE_URL}/everything`, {
+          params: {
+            q: 'politics OR government OR election',
+            sortBy: 'publishedAt',
+            pageSize: limit,
+            apiKey: newsKey
+          }
+        });
+        
+        // Transform NewsAPI articles to mentions format
+        const mentions: Mention[] = response.data.articles.map((article: any, index: number) => ({
+          id: `news-${index}`,
+          text: article.title + (article.description ? ` - ${article.description}` : ''),
+          author: article.source?.name || 'News Source',
+          platform: 'News',
+          sentiment: analyzeSentiment(article.title + ' ' + (article.description || '')),
+          timestamp: article.publishedAt
+        }));
+        
+        return {
+          mentions,
+          hasMore: response.data.totalResults > limit
+        };
+      } catch (error) {
+        console.error("NewsAPI failed, falling back:", error);
+      }
+    }
+    
+    // Fallback to Mentionlytics if NewsAPI fails
     try {
       const data = await callMentionlyticsAPI("/mentions", { limit });
       return {
@@ -148,8 +236,8 @@ export const getMentionsFeed = api<{ limit?: number }, MentionsFeedResponse>(
         hasMore: data.hasMore || false
       };
     } catch (error) {
-      // Return sample data if API fails
-      console.error("Mentions feed API failed, returning sample data:", error);
+      // Return sample data if all APIs fail
+      console.error("All APIs failed, returning sample data:", error);
       return {
         mentions: [
           {
@@ -167,16 +255,53 @@ export const getMentionsFeed = api<{ limit?: number }, MentionsFeedResponse>(
   }
 );
 
-// Health check endpoint to validate Mentionlytics connection
-export const validateConnection = api<{}, { status: string; hasApiKey: boolean }>(
+// Simple sentiment analyzer for news titles
+function analyzeSentiment(text: string): string {
+  const positive = ['success', 'win', 'great', 'good', 'positive', 'growth', 'improve', 'better', 'victory'];
+  const negative = ['fail', 'loss', 'bad', 'negative', 'crisis', 'decline', 'worse', 'defeat', 'scandal'];
+  
+  const lowerText = text.toLowerCase();
+  const hasPositive = positive.some(word => lowerText.includes(word));
+  const hasNegative = negative.some(word => lowerText.includes(word));
+  
+  if (hasPositive && !hasNegative) return 'positive';
+  if (hasNegative && !hasPositive) return 'negative';
+  return 'neutral';
+}
+
+// Health check endpoint to validate API connections
+export const validateConnection = api<{}, { status: string; hasApiKey: boolean; newsApiActive?: boolean }>(
   { expose: true, method: "GET", path: "/api/v1/mentionlytics/validate" },
   async () => {
     const token = await getMentionlyticsToken();
+    const newsKey = await getNewsApiKey();
     
+    // Check NewsAPI first (primary data source)
+    if (newsKey) {
+      try {
+        const response = await axios.get(`${NEWSAPI_BASE_URL}/everything`, {
+          params: {
+            q: 'test',
+            pageSize: 1,
+            apiKey: newsKey
+          }
+        });
+        return {
+          status: "connected",
+          hasApiKey: true,
+          newsApiActive: true
+        };
+      } catch (error) {
+        console.error("NewsAPI validation failed:", error);
+      }
+    }
+    
+    // Fallback to Mentionlytics check
     if (!token) {
       return {
         status: "not_configured",
-        hasApiKey: false
+        hasApiKey: false,
+        newsApiActive: false
       };
     }
     
@@ -185,12 +310,14 @@ export const validateConnection = api<{}, { status: string; hasApiKey: boolean }
       await callMentionlyticsAPI("/account");
       return {
         status: "connected",
-        hasApiKey: true
+        hasApiKey: true,
+        newsApiActive: false
       };
     } catch (error) {
       return {
         status: "error",
-        hasApiKey: true
+        hasApiKey: true,
+        newsApiActive: false
       };
     }
   }
