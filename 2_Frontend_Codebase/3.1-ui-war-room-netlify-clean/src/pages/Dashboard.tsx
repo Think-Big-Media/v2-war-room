@@ -200,7 +200,7 @@ export default function Dashboard() {
               ></div>
             </div>
             <div className="text-2xl font-bold text-sky-400 mb-1 font-condensed" style={{fontWeight: 500}}>
-              {sentimentData ? sentimentData.total.toLocaleString() : '1,039'}
+              {sentimentData?.total?.toLocaleString() || '1,039'}
             </div>
             <div className="text-xs text-white/60 font-jetbrains">24h volume • +12% vs yesterday</div>
           </Card>
@@ -332,19 +332,19 @@ export default function Dashboard() {
                       <div>
                         <div className="text-white/60 mb-1">Total Spend</div>
                         <div className="font-jetbrains font-bold text-white">
-                          {campaignLoading ? '...' : `$${metaCampaigns.data?.totalSpend.toLocaleString() || '0'}`}
+                          {campaignLoading ? '...' : `$${metaCampaigns.data?.totalSpend?.toLocaleString() || '0'}`}
                         </div>
                       </div>
                       <div>
                         <div className="text-white/60 mb-1">Impressions</div>
                         <div className="font-jetbrains font-bold text-sky-400">
-                          {campaignLoading ? '...' : (metaCampaigns.data?.totalImpressions.toLocaleString() || '0')}
+                          {campaignLoading ? '...' : (metaCampaigns.data?.totalImpressions?.toLocaleString() || '0')}
                         </div>
                       </div>
                       <div>
                         <div className="text-white/60 mb-1">Conversions</div>
                         <div className="font-jetbrains font-bold text-emerald-400">
-                          {campaignLoading ? '...' : (metaCampaigns.data?.totalConversions.toLocaleString() || '0')}
+                          {campaignLoading ? '...' : (metaCampaigns.data?.totalConversions?.toLocaleString() || '0')}
                         </div>
                       </div>
                       <div>
@@ -369,19 +369,19 @@ export default function Dashboard() {
                       <div>
                         <div className="text-white/60 mb-1">Total Cost</div>
                         <div className="font-jetbrains font-bold text-white">
-                          {campaignLoading ? '...' : `$${googleCampaigns.data?.totalCost.toLocaleString() || '0'}`}
+                          {campaignLoading ? '...' : `$${googleCampaigns.data?.totalCost?.toLocaleString() || '0'}`}
                         </div>
                       </div>
                       <div>
                         <div className="text-white/60 mb-1">Impressions</div>
                         <div className="font-jetbrains font-bold text-sky-400">
-                          {campaignLoading ? '...' : (googleCampaigns.data?.totalImpressions.toLocaleString() || '0')}
+                          {campaignLoading ? '...' : (googleCampaigns.data?.totalImpressions?.toLocaleString() || '0')}
                         </div>
                       </div>
                       <div>
                         <div className="text-white/60 mb-1">Conversions</div>
                         <div className="font-jetbrains font-bold text-emerald-400">
-                          {campaignLoading ? '...' : (googleCampaigns.data?.totalConversions.toLocaleString() || '0')}
+                          {campaignLoading ? '...' : (googleCampaigns.data?.totalConversions?.toLocaleString() || '0')}
                         </div>
                       </div>
                       <div>

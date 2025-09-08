@@ -15,6 +15,7 @@ Mentionlytics API Token
 
 #### Meta/Facebook Business API
 - **App ID**: `917316510623086`
+- **Access Token**: `EAAYVfF8z1t0BO0fNVY97AiWOY1njQSBrEBx0m58jCMRTJFXmMaZAFQAaJOlD28L3F8z3rxMq7iCbD38BXdl2K4vCdAF4UbXx9gGJdPSsZBDEHvQSZC8JJLvK3nZBxwqgLQoAjYfnO0J8NMtx6Yg1gKU5RZCq0K8Gat19m9D5fGNnI9CwL1PJJ39eFcX7YqJGaEXRcZD`
 - **Environment**: Production
 - **Permissions**: `ads_management,ads_read,business_management,pages_read_engagement`
 - **Status**: ✅ Active

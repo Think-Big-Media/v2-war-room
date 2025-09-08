@@ -29,12 +29,15 @@ export const LiveIntelligence: React.FC = memo(() => {
   useEffect(() => {
     const loadPosts = async () => {
       try {
+        console.log('[LiveIntelligence] Fetching mentions...');
         const mentions = await mentionlyticsService.getMentionsFeed(10);
+        console.log('[LiveIntelligence] Received mentions:', mentions);
         const enhancedPosts = mentions.map((mention, index) => ({
           ...mention,
           isBreaking: index === 0 && mention.sentiment === 'positive', // Mark first positive as breaking
           imageUrl: imageUrls[index % imageUrls.length],
         }));
+        console.log('[LiveIntelligence] Enhanced posts:', enhancedPosts);
         setPosts(enhancedPosts);
       } catch (error) {
         console.error('Error loading Live Intelligence posts:', error);

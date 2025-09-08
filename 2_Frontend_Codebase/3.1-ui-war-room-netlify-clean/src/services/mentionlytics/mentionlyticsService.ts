@@ -30,11 +30,14 @@ class MentionlyticsService {
   constructor() {
     this.config = getEnvironmentConfig();
     this.endpoints = getAPIEndpoints();
-    // Check if we're in mock mode from localStorage or env
-    this.isMockMode =
-      localStorage.getItem('VITE_USE_MOCK_DATA') === 'true' ||
-      this.config.features.mockMode ||
-      !this.config.mentionlytics.apiToken;
+    // Check localStorage first, then fall back to config
+    const localStorageMode = localStorage.getItem('VITE_USE_MOCK_DATA');
+    if (localStorageMode !== null) {
+      this.isMockMode = localStorageMode === 'true';
+    } else {
+      // Only check config if localStorage is not set
+      this.isMockMode = this.config.features.mockMode || !this.config.mentionlytics.apiToken;
+    }
   }
 
   // Toggle between mock and live data
@@ -93,7 +96,10 @@ class MentionlyticsService {
 
   // Live Mentions Feed
   async getMentionsFeed(limit: number = 10): Promise<MentionlyticsMention[]> {
+    console.log('[MentionlyticsService] getMentionsFeed - Mode:', this.isMockMode ? 'MOCK' : 'LIVE', 'URL:', this.endpoints.data.mentionlytics.feed);
+    
     if (this.isMockMode) {
+      console.log('[MentionlyticsService] Returning MOCK data');
       // Mix existing mock data with newly generated mentions
       const newMentions = Array(2)
         .fill(null)
@@ -102,6 +108,7 @@ class MentionlyticsService {
     }
 
     try {
+      console.log('[MentionlyticsService] Fetching from API:', this.endpoints.data.mentionlytics.feed);
       const response = await axios.get(this.endpoints.data.mentionlytics.feed, {
         params: { limit },
       });
