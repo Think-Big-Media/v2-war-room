@@ -4,7 +4,7 @@
  */
 
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Core Pages - Builder Export
@@ -109,12 +109,11 @@ function App() {
         <SupabaseAuthProvider>
           <BackgroundThemeProvider>
             <NotificationProvider>
-              <Router>
-                <ErrorBoundary>
+              <ErrorBoundary>
+                {console.log('🗺️ [ROUTES] Rendering routes, current path:', window.location.pathname)}
                 <Routes>
                 {/* Command Center - Fresh 30-Aug with SWOT radar */}
                 <Route path="/" element={<Dashboard />} />
-                <Route path="/command-center" element={<Dashboard />} />
                 <Route path="/dashboard" element={<Dashboard />} />{' '}
                 {/* Legacy route for compatibility */}
                 {/* Core Navigation Routes */}
@@ -125,7 +124,15 @@ function App() {
                 <Route path="/alert-center" element={<AlertCenter />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 {/* Platform Admin Dashboard - Triple-click logo to access */}
-                <Route path="/platform-admin" element={<PlatformAdminDashboard />} />
+                <Route 
+                  path="/platform-admin" 
+                  element={
+                    (() => {
+                      console.log('🎆 [ROUTE MATCH] /platform-admin route matched!');
+                      return <PlatformAdminDashboard />;
+                    })()
+                  } 
+                />
                 {/* Brand Monitoring Dashboard - Triple-click logo to access with sentiment analysis */}
                 <Route path="/brand-monitoring" element={<BrandMonitoringDashboard />} />
                 {/* Additional Dashboard Routes - Temporarily disabled
@@ -153,7 +160,6 @@ function App() {
               {/* Global Components */}
               <TickerTape />
               </ErrorBoundary>
-            </Router>
           </NotificationProvider>
         </BackgroundThemeProvider>
       </SupabaseAuthProvider>

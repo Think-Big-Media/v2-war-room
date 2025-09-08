@@ -153,6 +153,12 @@ const TopNavigation: React.FC = () => {
   const handleLogoClick = () => {
     const now = Date.now();
     
+    console.log('🖱️ [LOGO CLICK DEBUG]', {
+      clickCount: clickCount,
+      timeSinceLastClick: now - lastClickTime,
+      currentPath: location.pathname
+    });
+    
     // Clear any existing timer
     if (clickResetTimer.current) {
       clearTimeout(clickResetTimer.current);
@@ -164,10 +170,14 @@ const TopNavigation: React.FC = () => {
       setClickCount(newClickCount);
       setLastClickTime(now);
       
-      // Triple-click detected - navigate to brand monitoring dashboard 
+      console.log('🔢 [MULTI-CLICK]', { newClickCount, willNavigate: newClickCount === 3 });
+      
+      // Triple-click detected - navigate to platform admin dashboard 
       if (newClickCount === 3) {
-        console.log('🔐 Brand monitoring dashboard activated');
-        navigate('/brand-monitoring');
+        console.log('🔐 [TRIPLE-CLICK] Platform admin dashboard activated');
+        console.log('🚀 [NAVIGATION] Attempting to navigate to /platform-admin');
+        navigate('/platform-admin');
+        console.log('✅ [NAVIGATION] navigate() called successfully');
         setClickCount(0);
         return;
       }
@@ -239,7 +249,7 @@ const TopNavigation: React.FC = () => {
           <button
             onClick={handleLogoClick}
             className="flex items-center ml-[25px] hover:opacity-80 transition-opacity duration-200 cursor-pointer"
-            title="Click to dashboard, triple-click for brand monitoring"
+            title="Click to dashboard, triple-click for admin panel"
           >
             {/* Full logo for large screens - increased size */}
             <img

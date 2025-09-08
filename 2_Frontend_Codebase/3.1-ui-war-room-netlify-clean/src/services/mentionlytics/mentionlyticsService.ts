@@ -187,7 +187,7 @@ class MentionlyticsService {
       }));
       
       console.log('🎯 [getMentionsFeed] REAL BRANDMENTIONS DATA FROM BACKEND:', mentions);
-      return mentions.slice(0, limit);
+      return { mentions: mentions.slice(0, limit), hasMore: backendData.hasMore };
       
     } catch (error) {
       console.error('❌ [getMentionsFeed] Backend API error:', error);

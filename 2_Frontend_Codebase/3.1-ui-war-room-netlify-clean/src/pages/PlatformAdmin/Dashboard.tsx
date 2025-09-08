@@ -14,9 +14,8 @@ import {
   Cpu,
   Shield,
 } from 'lucide-react';
-import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { analytics } from '../../services/posthog';
-import { platformAdminApi } from '../../api/platformAdmin';
+import { API_BASE_URL } from '../../config/constants';
 
 interface MetricCard {
   title: string;
@@ -27,14 +26,21 @@ interface MetricCard {
 }
 
 export const PlatformAdminDashboard: React.FC = () => {
-  const dispatch = useAppDispatch();
+  console.log('🎯 [ADMIN DASHBOARD] Component rendering');
+  
   const [metrics, setMetrics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [healthStatus, setHealthStatus] = useState<any>(null);
 
   useEffect(() => {
+    console.log('🔄 [ADMIN DASHBOARD] useEffect running');
     // Track page view
-    analytics.trackPageView('platform_admin_dashboard');
+    try {
+      analytics.trackPageView('platform_admin_dashboard');
+      console.log('✅ [ADMIN DASHBOARD] Analytics tracked');
+    } catch (error) {
+      console.error('❌ [ADMIN DASHBOARD] Analytics error:', error);
+    }
 
     // Load metrics
     loadDashboardData();
@@ -44,19 +50,30 @@ export const PlatformAdminDashboard: React.FC = () => {
     try {
       setLoading(true);
 
-      // Fetch platform metrics
-      const [metricsData, healthData] = await Promise.all([
-        platformAdminApi.endpoints.getPlatformMetrics.initiate(),
-        platformAdminApi.endpoints.getSystemHealth.initiate(),
+      // Fetch platform metrics using direct fetch
+      const token = localStorage.getItem('access_token');
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const [metricsResponse, healthResponse] = await Promise.all([
+        fetch(`${API_BASE_URL}/api/platform-admin/metrics`, { headers }),
+        fetch(`${API_BASE_URL}/api/platform-admin/health`, { headers }),
       ]);
+
+      const metricsData = await metricsResponse.json();
+      const healthData = await healthResponse.json();
 
       setMetrics(metricsData);
       setHealthStatus(healthData);
 
       // Track successful load
       analytics.track('platform_metrics_loaded', {
-        org_count: (metricsData as any).data?.totalOrganizations || 0,
-        user_count: (metricsData as any).data?.totalUsers || 0,
+        org_count: metricsData?.totalOrganizations || 0,
+        user_count: metricsData?.totalUsers || 0,
       });
     } catch (error) {
       console.error('Failed to load dashboard data:', error);

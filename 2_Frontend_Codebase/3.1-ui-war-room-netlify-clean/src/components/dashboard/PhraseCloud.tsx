@@ -46,11 +46,20 @@ export const PhraseCloud: React.FC = () => {
         
         console.log(`🕐 [PhraseCloud] Filtered to ${recentMentions.length} recent mentions from last 2 months`);
         
-        // Extract actual mention texts for phrase cloud
+        // Extract actual mention texts for phrase cloud - SHOW REAL DATA!
         const realPhrases = recentMentions
-          .map((mention: any) => mention.text)
+          .map((mention: any) => {
+            // Truncate long texts to fit in the phrase cloud
+            const text = mention.text;
+            if (text.length > 80) {
+              return text.substring(0, 77) + '...';
+            }
+            return text;
+          })
           .filter((text: string) => text && text.length > 10) // Filter out short texts
-          .slice(0, 8); // Take first 8 real mentions
+          .slice(0, 10); // Take first 10 real mentions
+        
+        console.log('🎯 [PhraseCloud] REAL PHRASES FROM BACKEND:', realPhrases);
         setTrendingPhrases(realPhrases);
         
         // Extract keywords from actual mentions for brand monitoring
@@ -146,15 +155,16 @@ export const PhraseCloud: React.FC = () => {
     'Growing recognition of our sustainable approach to governance',
   ];
 
-  // Combine actual social media phrases based on campaign keywords and trending topics
-  const allPhrases = [
-    ...socialMediaPhrases,
-    ...trendingPhrases.map((topic) => `Excited about ${topic.toLowerCase()}`),
-    ...(campaignData?.competitors?.map((c: any) => `${c.name} making headlines`) || []),
-    ...defaultPhrases,
-  ].slice(0, 10); // Limit to 10 for performance
-
-  const phrases = allPhrases.length > 0 ? allPhrases : defaultPhrases;
+  // Use REAL phrases from backend, not mock data!
+  const phrases = trendingPhrases.length > 0 ? trendingPhrases : [
+    // Only use these if NO real data available
+    'Loading real mentions from BrandMentions...',
+    'Fetching Jack Harrison updates...',
+    'Getting Sarah Mitchell mentions...',
+    'Loading Faye Langford coverage...'
+  ];
+  
+  console.log('📊 [PhraseCloud] Final phrases being displayed:', phrases);
 
   // Handle phrase click - navigate to live monitoring with keyword filter
   const handlePhraseClick = (phrase: string) => {

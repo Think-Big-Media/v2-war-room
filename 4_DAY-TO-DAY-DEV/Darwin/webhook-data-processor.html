@@ -336,8 +336,8 @@
             statusDiv.innerHTML = '<div class="status info">Sending data to backend...</div>';
 
             try {
-                // Send to the staging backend - using correct webhook endpoint
-                const backendUrl = 'https://staging-war-roombackend-45-x83i.encr.app/api/v1/webhook/slack';
+                // Send to the LOCAL backend - which has working webhook endpoints
+                const backendUrl = 'http://127.0.0.1:4001/api/v1/webhook/slack';
                 
                 statusDiv.innerHTML = `<div class="status info">Sending ${processedData.length} mentions individually to backend...</div>`;
                 
