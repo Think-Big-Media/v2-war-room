@@ -16,38 +16,9 @@ interface WebhookPayload {
   data?: any; // Generic field for any additional data
 }
 
-// Webhook endpoint to receive BrandMentions data from Zapier
-// COMPLETELY REMOVABLE: Just delete this webhook folder when Mentionlytics is ready
-export const receiveBrandMentions = api<WebhookPayload, { success: boolean; message: string }>(
-  { expose: true, method: "POST", path: "/api/v1/webhook/brandmentions" },
-  async (payload) => {
-    console.log("Received BrandMentions data via webhook");
-    
-    try {
-      // Store the data in cache
-      if (payload.mentions) {
-        mentionsCache.mentions = payload.mentions;
-      }
-      
-      if (payload.sentiment) {
-        mentionsCache.sentiment = payload.sentiment;
-      }
-      
-      mentionsCache.lastUpdated = new Date().toISOString();
-      
-      return {
-        success: true,
-        message: `Received ${payload.mentions?.length || 0} mentions`
-      };
-    } catch (error) {
-      console.error("Error processing webhook:", error);
-      return {
-        success: false,
-        message: "Error processing webhook data"
-      };
-    }
-  }
-);
+// BrandMentions webhook REMOVED - Now using Slack integration
+// All mentions come through Slack #war-room-mentions channel
+// This eliminates the compilation error with the duplicate file
 
 // Get cached mentions (called by the mentionlytics service)
 export const getCachedMentions = api<{}, { mentions: any[]; lastUpdated: string | null }>(
