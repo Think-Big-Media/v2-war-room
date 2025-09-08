@@ -197,7 +197,8 @@ export const getMentionsFeed = api<{ limit?: number }, MentionsFeedResponse>(
     
     // FIRST: Check webhook cache for REAL BrandMentions data from Zapier
     try {
-      const cacheResponse = await axios.get(`http://webhook:4000/webhook/cache/mentions`);
+      // Use public endpoint since internal service calls might not work
+      const cacheResponse = await axios.get(`https://staging-war-roombackend-45-x83i.encr.app/api/v1/webhook/cache/mentions`);
       if (cacheResponse.data && cacheResponse.data.mentions && cacheResponse.data.mentions.length > 0) {
         console.log("Using REAL BrandMentions data from webhook cache!");
         const mentions = cacheResponse.data.mentions.slice(0, limit).map((m: any) => ({

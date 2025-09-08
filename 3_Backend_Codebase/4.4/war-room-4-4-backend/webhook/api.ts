@@ -51,7 +51,7 @@ export const receiveBrandMentions = api<WebhookPayload, { success: boolean; mess
 
 // Get cached mentions (called by the mentionlytics service)
 export const getCachedMentions = api<{}, { mentions: any[]; lastUpdated: string | null }>(
-  { expose: false, method: "GET", path: "/webhook/cache/mentions" },
+  { expose: true, method: "GET", path: "/api/v1/webhook/cache/mentions" },
   async () => {
     return {
       mentions: mentionsCache.mentions,
@@ -62,7 +62,7 @@ export const getCachedMentions = api<{}, { mentions: any[]; lastUpdated: string 
 
 // Get cached sentiment (called by the mentionlytics service)
 export const getCachedSentiment = api<{}, { sentiment: any; lastUpdated: string | null }>(
-  { expose: false, method: "GET", path: "/webhook/cache/sentiment" },
+  { expose: true, method: "GET", path: "/api/v1/webhook/cache/sentiment" },
   async () => {
     return {
       sentiment: mentionsCache.sentiment,
