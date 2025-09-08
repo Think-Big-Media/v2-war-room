@@ -189,13 +189,35 @@ export const getGeographic = api<{}, GeographicResponse>(
   }
 );
 
-// API endpoint for mentions feed - Now uses BrandMentions as primary source
+// API endpoint for mentions feed - Now checks webhook cache first
 export const getMentionsFeed = api<{ limit?: number }, MentionsFeedResponse>(
   { expose: true, method: "GET", path: "/api/v1/mentionlytics/feed" },
   async ({ limit = 10 }) => {
-    console.log("Fetching LIVE mentions feed from BrandMentions...");
+    console.log("Fetching mentions feed...");
     
-    // Try BrandMentions first for real social media data
+    // FIRST: Check webhook cache for REAL BrandMentions data from Zapier
+    try {
+      const cacheResponse = await axios.get(`http://webhook:4000/webhook/cache/mentions`);
+      if (cacheResponse.data && cacheResponse.data.mentions && cacheResponse.data.mentions.length > 0) {
+        console.log("Using REAL BrandMentions data from webhook cache!");
+        const mentions = cacheResponse.data.mentions.slice(0, limit).map((m: any) => ({
+          id: m.id || `bm-${Date.now()}`,
+          text: m.title || m.description || m.content || m.text,
+          author: m.author || m.source || 'Unknown',
+          platform: m.platform || m.source_type || 'Social Media',
+          sentiment: m.sentiment || 'neutral',
+          timestamp: m.created_at || m.timestamp || new Date().toISOString()
+        }));
+        return {
+          mentions,
+          hasMore: cacheResponse.data.mentions.length > limit
+        };
+      }
+    } catch (error) {
+      console.log("Webhook cache not available, falling back to API");
+    }
+    
+    // SECOND: Try BrandMentions API directly
     const brandKey = await getBrandMentionsApiKey();
     if (brandKey) {
       try {
