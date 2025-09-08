@@ -7,7 +7,7 @@
 // In development, use direct Encore URL for testing
 const inferredHost = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
 export const API_BASE_URL = inferredHost === 'localhost' 
-  ? (import.meta.env.VITE_ENCORE_API_URL ?? 'http://localhost:10000')
+  ? (import.meta.env.VITE_ENCORE_API_URL ?? 'http://localhost:4002')
   : ''; // Empty string = relative URLs, Netlify proxies to Encore backend
 export const API_VERSION = '/api/v1';
 

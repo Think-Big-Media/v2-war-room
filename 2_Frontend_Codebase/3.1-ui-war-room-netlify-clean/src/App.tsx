@@ -128,8 +128,8 @@ function App() {
                 <Route path="/platform-admin" element={<PlatformAdminDashboard />} />
                 {/* Brand Monitoring Dashboard - Triple-click logo to access with sentiment analysis */}
                 <Route path="/brand-monitoring" element={<BrandMonitoringDashboard />} />
-                {/* Additional Dashboard Routes - Temporarily disabled */}
-                {/* <Route path="/analytics" element={<AnalyticsDashboard />} />
+                {/* Additional Dashboard Routes - Temporarily disabled
+                <Route path="/analytics" element={<AnalyticsDashboard />} />
                 <Route path="/automation" element={<AutomationDashboard />} />
                 <Route path="/documents" element={<DocumentIntelligence />} />
                 <Route path="/information-center" element={<InformationCenter />} />

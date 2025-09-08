@@ -160,6 +160,7 @@ class MentionlyticsService {
       console.log('🚀 [getMentionsFeed] CALLING BACKEND WITH REAL BRANDMENTIONS DATA');
       console.log('   - Backend URL:', this.endpoints.data.mentionlytics.feed);
       console.log('   - Request limit:', limit);
+      console.log('   - Current data mode:', this.getDataMode());
       
       const response = await axios.get(this.endpoints.data.mentionlytics.feed, {
         params: { limit },
@@ -167,6 +168,8 @@ class MentionlyticsService {
       });
       
       console.log('✅ [getMentionsFeed] Backend response:', response.data);
+      console.log('   - Mentions count:', response.data.mentions?.length || 0);
+      console.log('   - Has more data:', response.data.hasMore);
       
       // Backend returns data in the correct format already
       const backendData = response.data;

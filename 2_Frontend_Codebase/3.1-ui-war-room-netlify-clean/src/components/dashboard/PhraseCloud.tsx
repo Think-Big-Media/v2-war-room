@@ -30,9 +30,24 @@ export const PhraseCloud: React.FC = () => {
 
     // Load actual mentions from the feed (BrandMentions from Slack)
     mentionlyticsService.getMentionsFeed().then((response) => {
+      console.log('🔍 [PhraseCloud] Raw response from backend:', response);
+      
       if (response?.mentions && response.mentions.length > 0) {
+        // Filter to only recent mentions (last 2 months)
+        const twoMonthsAgo = new Date();
+        twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+        
+        const recentMentions = response.mentions.filter((mention: any) => {
+          const mentionDate = new Date(mention.timestamp);
+          const isRecent = mentionDate >= twoMonthsAgo;
+          console.log(`📅 [PhraseCloud] Mention date: ${mentionDate.toLocaleDateString()}, Recent: ${isRecent}`);
+          return isRecent;
+        });
+        
+        console.log(`🕐 [PhraseCloud] Filtered to ${recentMentions.length} recent mentions from last 2 months`);
+        
         // Extract actual mention texts for phrase cloud
-        const realPhrases = response.mentions
+        const realPhrases = recentMentions
           .map((mention: any) => mention.text)
           .filter((text: string) => text && text.length > 10) // Filter out short texts
           .slice(0, 8); // Take first 8 real mentions
@@ -43,7 +58,7 @@ export const PhraseCloud: React.FC = () => {
         const keywordSet = new Set<string>();
         const phraseFirstLetters = new Set<string>();
         
-        response.mentions.forEach((mention: any) => {
+        recentMentions.forEach((mention: any) => {
           if (mention.text) {
             console.log('📝 [PhraseCloud] Processing mention:', mention.text);
             

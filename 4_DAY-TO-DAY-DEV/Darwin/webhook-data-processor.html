@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrandMentions Webhook Data Processor</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #0a0a0a;
+            color: #fff;
+        }
+        .container {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #333;
+        }
+        h1 {
+            color: #00ff88;
+            margin-bottom: 24px;
+        }
+        .step {
+            background: #111;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            border-left: 4px solid #00ff88;
+        }
+        .webhook-url {
+            background: #000;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: mono;
+            word-break: break-all;
+            border: 1px solid #333;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: #000;
+            color: #fff;
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: mono;
+            font-size: 12px;
+        }
+        button {
+            background: #00ff88;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-right: 12px;
+        }
+        button:hover {
+            background: #00cc6a;
+        }
+        .status {
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 12px;
+        }
+        .success { background: #1a4d1a; border: 1px solid #00ff88; }
+        .error { background: #4d1a1a; border: 1px solid #ff4444; }
+        .info { background: #1a1a4d; border: 1px solid #4488ff; }
+        .mention-item {
+            background: #222;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border-left: 3px solid #00ff88;
+        }
+        .mention-meta {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 BrandMentions → Backend Data Processor</h1>
+        
+        <div class="step">
+            <h3>Step 1: Get Webhook URL</h3>
+            <p>Go to <a href="https://webhook.site" target="_blank" style="color: #00ff88;">webhook.site</a> and copy your unique webhook URL:</p>
+            <div class="webhook-url" id="webhookUrl">
+                https://webhook.site/your-unique-id-here
+            </div>
+            <button onclick="setWebhookUrl()">Set Webhook URL</button>
+        </div>
+
+        <div class="step">
+            <h3>Step 2: Configure BrandMentions</h3>
+            <p>In BrandMentions, set up a webhook to send data to your webhook.site URL above.</p>
+            <div class="status info">
+                <strong>Webhook Format:</strong> POST requests with JSON data containing mention details
+            </div>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Fetch Webhook Data</h3>
+            <button onclick="fetchWebhookData()">Fetch Latest Webhook Data</button>
+            <button onclick="clearData()">Clear Data</button>
+            <div id="fetchStatus"></div>
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Process & Filter Data</h3>
+            <p>Raw webhook data (last 50 requests):</p>
+            <textarea id="rawData" placeholder="Webhook data will appear here..."></textarea>
+            <br><br>
+            <label>
+                <input type="checkbox" id="filterRecent" checked> Only show mentions from last 2 months
+            </label>
+            <br><br>
+            <button onclick="processData()">Process & Extract Mentions</button>
+        </div>
+
+        <div class="step">
+            <h3>Step 5: Processed Mentions</h3>
+            <div id="processedMentions"></div>
+            <button onclick="sendToBackend()" id="sendButton" disabled>Send to Backend API</button>
+            <div id="sendStatus"></div>
+        </div>
+    </div>
+
+    <script>
+        let webhookUrl = '';
+        let processedData = [];
+
+        function setWebhookUrl() {
+            const url = prompt('Enter your webhook.site URL:');
+            if (url) {
+                webhookUrl = url;
+                document.getElementById('webhookUrl').textContent = url;
+                localStorage.setItem('webhookUrl', url);
+            }
+        }
+
+        // Load saved webhook URL or set your specific URL
+        window.onload = function() {
+            const saved = localStorage.getItem('webhookUrl');
+            const specificWebhookUrl = 'https://webhook.site/633e82b3-f2ba-45a4-b3df-3ba1cae62aa2';
+            
+            if (saved) {
+                webhookUrl = saved;
+                document.getElementById('webhookUrl').textContent = saved;
+            } else {
+                // Pre-populate with your specific webhook URL
+                webhookUrl = specificWebhookUrl;
+                document.getElementById('webhookUrl').textContent = specificWebhookUrl;
+                localStorage.setItem('webhookUrl', specificWebhookUrl);
+            }
+        }
+
+        async function fetchWebhookData() {
+            if (!webhookUrl) {
+                alert('Please set webhook URL first');
+                return;
+            }
+
+            const statusDiv = document.getElementById('fetchStatus');
+            statusDiv.innerHTML = '<div class="status info">Fetching data from webhook.site...</div>';
+
+            try {
+                // Extract webhook ID from URL
+                const webhookId = webhookUrl.split('/').pop();
+                const apiUrl = `https://webhook.site/token/${webhookId}/requests`;
+
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                document.getElementById('rawData').value = JSON.stringify(data, null, 2);
+                statusDiv.innerHTML = `<div class="status success">✅ Fetched ${data.data?.length || 0} webhook requests</div>`;
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ Error: ${error.message}</div>`;
+            }
+        }
+
+        function processData() {
+            const rawData = document.getElementById('rawData').value;
+            const filterRecent = document.getElementById('filterRecent').checked;
+            
+            if (!rawData) {
+                alert('No webhook data to process');
+                return;
+            }
+
+            try {
+                const webhookData = JSON.parse(rawData);
+                const mentions = [];
+                const twoMonthsAgo = new Date();
+                twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+
+                // Process webhook requests
+                if (webhookData.data) {
+                    webhookData.data.forEach((request, index) => {
+                        try {
+                            let content = request.content;
+                            if (typeof content === 'string') {
+                                content = JSON.parse(content);
+                            }
+
+                            // Extract mention data from various possible formats
+                            const mention = extractMentionData(content, request);
+                            if (mention) {
+                                const mentionDate = new Date(mention.timestamp);
+                                
+                                // Apply date filter if enabled
+                                if (!filterRecent || mentionDate >= twoMonthsAgo) {
+                                    mentions.push(mention);
+                                }
+                            }
+                        } catch (e) {
+                            console.log('Could not process request:', e);
+                        }
+                    });
+                }
+
+                processedData = mentions;
+                displayProcessedMentions(mentions);
+                document.getElementById('sendButton').disabled = mentions.length === 0;
+
+            } catch (error) {
+                alert('Error processing data: ' + error.message);
+            }
+        }
+
+        function extractMentionData(content, request) {
+            // Enhanced BrandMentions data extraction based on the project tracking:
+            // - Jack Harrison, Sarah Mitchell, Faye Langford
+            // - Sources: Reddit, news, forums, story sites
+            let mention = null;
+
+            // Format 1: Direct mention object
+            if (content.text || content.content || content.message) {
+                const text = content.text || content.content || content.message;
+                const author = content.author || content.source || content.user || content.website || 'BrandMentions';
+                
+                // Detect platform from BrandMentions data
+                let platform = content.platform || content.source_type || 'Web';
+                if (text.includes('reddit.com') || author.includes('reddit')) platform = 'Reddit';
+                else if (text.includes('CBS News') || author.includes('news')) platform = 'News';
+                else if (text.includes('forum') || text.includes('Q&A')) platform = 'Forum';
+                else if (text.includes('story') || text.includes('novel')) platform = 'Story';
+                
+                // Enhanced sentiment detection for political content
+                let sentiment = content.sentiment || detectPoliticalSentiment(text);
+                
+                mention = {
+                    id: content.id || content.mention_id || `brandmentions_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+                    text: text.trim(),
+                    author: author,
+                    platform: platform,
+                    sentiment: sentiment,
+                    timestamp: content.timestamp || content.published_date || content.date || request.created_at || new Date().toISOString(),
+                    url: content.url || content.link || content.source_url || '#',
+                    reach: content.reach || content.estimated_reach || 0,
+                    engagement: content.engagement || content.interactions || 0
+                };
+            }
+
+            // Format 2: Nested mention data
+            else if (content.mention || content.data) {
+                const mentionData = content.mention || content.data;
+                mention = {
+                    id: mentionData.id || `webhook_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+                    text: mentionData.text || mentionData.content,
+                    author: mentionData.author || mentionData.source,
+                    platform: mentionData.platform || 'Web',
+                    sentiment: mentionData.sentiment || 'neutral',
+                    timestamp: mentionData.timestamp || request.created_at,
+                    url: mentionData.url || '#'
+                };
+            }
+
+            // Format 3: Raw text content
+            else if (typeof content === 'string' && content.length > 10) {
+                mention = {
+                    id: `webhook_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+                    text: content,
+                    author: 'BrandMentions',
+                    platform: 'Web',
+                    sentiment: 'neutral',
+                    timestamp: request.created_at || new Date().toISOString(),
+                    url: '#'
+                };
+            }
+
+            return mention;
+        }
+
+        function displayProcessedMentions(mentions) {
+            const container = document.getElementById('processedMentions');
+            
+            if (mentions.length === 0) {
+                container.innerHTML = '<div class="status error">No mentions found in webhook data</div>';
+                return;
+            }
+
+            let html = `<div class="status success">✅ Extracted ${mentions.length} mentions</div>`;
+            
+            mentions.slice(0, 10).forEach((mention, index) => {
+                html += `
+                    <div class="mention-item">
+                        <div class="mention-meta">
+                            ${mention.author} • ${mention.platform} • ${new Date(mention.timestamp).toLocaleDateString()}
+                        </div>
+                        <div>${mention.text.substring(0, 200)}${mention.text.length > 200 ? '...' : ''}</div>
+                    </div>
+                `;
+            });
+
+            if (mentions.length > 10) {
+                html += `<div class="status info">Showing first 10 of ${mentions.length} mentions</div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        async function sendToBackend() {
+            if (processedData.length === 0) {
+                alert('No processed data to send');
+                return;
+            }
+
+            const statusDiv = document.getElementById('sendStatus');
+            statusDiv.innerHTML = '<div class="status info">Sending data to backend...</div>';
+
+            try {
+                // Send to the staging backend - using correct webhook endpoint
+                const backendUrl = 'https://staging-war-roombackend-45-x83i.encr.app/api/v1/webhook/slack';
+                
+                statusDiv.innerHTML = `<div class="status info">Sending ${processedData.length} mentions individually to backend...</div>`;
+                
+                let successCount = 0;
+                let failCount = 0;
+                
+                // Send each mention individually since the webhook expects single mentions
+                for (let i = 0; i < processedData.length; i++) {
+                    const mention = processedData[i];
+                    
+                    try {
+                        const response = await fetch(backendUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                text: mention.text,
+                                channel: 'brandmentions-webhook',
+                                timestamp: mention.timestamp,
+                                user: mention.author
+                            })
+                        });
+
+                        if (response.ok) {
+                            successCount++;
+                            console.log(`✅ Sent mention ${i + 1}/${processedData.length}: ${mention.text.substring(0, 50)}...`);
+                        } else {
+                            failCount++;
+                            console.error(`❌ Failed to send mention ${i + 1}: ${response.status}`);
+                        }
+                        
+                        // Update progress
+                        statusDiv.innerHTML = `<div class="status info">Sending... ${i + 1}/${processedData.length} (✅${successCount} ❌${failCount})</div>`;
+                        
+                        // Small delay to avoid overwhelming the server
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        
+                    } catch (mentionError) {
+                        failCount++;
+                        console.error(`❌ Error sending mention ${i + 1}:`, mentionError);
+                    }
+                }
+
+                if (successCount > 0) {
+                    statusDiv.innerHTML = `<div class="status success">✅ Successfully sent ${successCount}/${processedData.length} mentions to backend! ${failCount > 0 ? `(${failCount} failed)` : ''}</div>`;
+                } else {
+                    throw new Error(`Failed to send all ${processedData.length} mentions`);
+                }
+
+            } catch (error) {
+                statusDiv.innerHTML = `<div class="status error">❌ Error sending to backend: ${error.message}</div>`;
+                
+                // Fallback: Show curl command for manual execution
+                const curlCommand = `curl -X POST https://staging-war-roombackend-45-x83i.encr.app/api/v1/webhook/slack \\
+-H "Content-Type: application/json" \\
+-d '${JSON.stringify({mentions: processedData.slice(0, 5), source: 'manual'}, null, 2)}'`;
+                
+                statusDiv.innerHTML += `
+                    <div class="status info">
+                        <strong>Alternative:</strong> Run this curl command manually:<br>
+                        <textarea style="height: 120px; margin-top: 8px;">${curlCommand}</textarea>
+                    </div>
+                `;
+            }
+        }
+
+        // Enhanced sentiment detection for political content
+        function detectPoliticalSentiment(text) {
+            const lowText = text.toLowerCase();
+            
+            // Political positive indicators
+            const politicalPositive = [
+                'progress', 'momentum', 'gains', 'endorses', 'support', 'promise', 'leader', 
+                'initiatives', 'healthcare plan', 'education', 'community', 'collaboration'
+            ];
+            
+            // Political negative indicators  
+            const politicalNegative = [
+                'lacks', 'scam', 'fraud', 'controversy', 'scandal', 'fails', 'disaster',
+                'crisis', 'oppose', 'criticism', 'investigation'
+            ];
+            
+            // Neutral political terms
+            const politicalNeutral = [
+                'policy', 'statement', 'announcement', 'meeting', 'campaign', 'election',
+                'candidate', 'vote', 'government', 'administration'
+            ];
+            
+            let positiveScore = 0;
+            let negativeScore = 0;
+            let neutralScore = 0;
+            
+            politicalPositive.forEach(word => {
+                if (lowText.includes(word)) positiveScore += 2;
+            });
+            
+            politicalNegative.forEach(word => {
+                if (lowText.includes(word)) negativeScore += 2;
+            });
+            
+            politicalNeutral.forEach(word => {
+                if (lowText.includes(word)) neutralScore += 1;
+            });
+            
+            // Determine sentiment
+            if (positiveScore > negativeScore && positiveScore > neutralScore) return 'positive';
+            if (negativeScore > positiveScore && negativeScore > neutralScore) return 'negative';
+            return 'neutral';
+        }
+
+        function clearData() {
+            document.getElementById('rawData').value = '';
+            document.getElementById('processedMentions').innerHTML = '';
+            document.getElementById('fetchStatus').innerHTML = '';
+            document.getElementById('sendStatus').innerHTML = '';
+            processedData = [];
+            document.getElementById('sendButton').disabled = true;
+        }
+    </script>
+</body>
+</html>
