@@ -11,6 +11,7 @@ import { AlertCenter } from './AlertCenter';
 import { SentimentGauge } from './SentimentGauge';
 import { useDashboardWebSocket } from '../../hooks/useDashboardWebSocket';
 import { useDashboardStore } from '../../store/dashboardStore';
+import { useSentimentData } from '../../hooks/useSentimentData';
 
 // Dashboard header with connection status
 const DashboardHeader = memo(() => {
@@ -105,6 +106,9 @@ PerformanceMetrics.displayName = 'PerformanceMetrics';
 
 // Main Dashboard component
 export const Dashboard: React.FC = memo(() => {
+  // 🔍 Sentiment Data Integration - Critical for fixing "void with n8n, NaN" errors
+  useSentimentData();
+
   // Initialize WebSocket connection
   const { error } = useDashboardWebSocket({
     autoConnect: true,

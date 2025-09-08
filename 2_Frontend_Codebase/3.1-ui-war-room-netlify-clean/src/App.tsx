@@ -5,6 +5,7 @@
 
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Core Pages - Builder Export
 import Dashboard from './pages/Dashboard'; // Fresh 30Aug Dashboard with SWOT radar
@@ -14,6 +15,8 @@ import CampaignControl from './pages/CampaignControl';
 import IntelligenceHub from './pages/IntelligenceHub';
 import AlertCenter from './pages/AlertCenter';
 import SettingsPage from './pages/SettingsPage';
+import { PlatformAdminDashboard } from './pages/PlatformAdmin/Dashboard';
+import { Dashboard as BrandMonitoringDashboard } from './components/dashboard/Dashboard';
 
 // Additional Dashboard Routes - Temporarily commented out to avoid missing dependencies
 // import AnalyticsDashboard from './pages/AnalyticsDashboard';
@@ -33,13 +36,22 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import TickerTape from './components/TickerTape';
 import { NotificationProvider } from './components/shared/NotificationSystem';
 import FloatingChatBar from './components/FloatingChatBar';
-
 // Context Providers
 import { SupabaseAuthProvider } from './contexts/SupabaseAuthContext';
 import { BackgroundThemeProvider } from './contexts/BackgroundThemeContext';
 
 // Styles
 import './warroom.css';
+
+// Create a client for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
 function App() {
   console.log('%c[DIAGNOSTIC] 5. App.tsx component function is executing.', 'color: yellow;');
@@ -93,12 +105,13 @@ function App() {
   }, []);
   return (
     <>
-      <SupabaseAuthProvider>
-        <BackgroundThemeProvider>
-          <NotificationProvider>
-            <Router>
-              <ErrorBoundary>
-              <Routes>
+      <QueryClientProvider client={queryClient}>
+        <SupabaseAuthProvider>
+          <BackgroundThemeProvider>
+            <NotificationProvider>
+              <Router>
+                <ErrorBoundary>
+                <Routes>
                 {/* Command Center - Fresh 30-Aug with SWOT radar */}
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/command-center" element={<Dashboard />} />
@@ -111,6 +124,10 @@ function App() {
                 <Route path="/intelligence-hub" element={<IntelligenceHub />} />
                 <Route path="/alert-center" element={<AlertCenter />} />
                 <Route path="/settings" element={<SettingsPage />} />
+                {/* Platform Admin Dashboard - Triple-click logo to access */}
+                <Route path="/platform-admin" element={<PlatformAdminDashboard />} />
+                {/* Brand Monitoring Dashboard - Triple-click logo to access with sentiment analysis */}
+                <Route path="/brand-monitoring" element={<BrandMonitoringDashboard />} />
                 {/* Additional Dashboard Routes - Temporarily disabled */}
                 {/* <Route path="/analytics" element={<AnalyticsDashboard />} />
                 <Route path="/automation" element={<AutomationDashboard />} />
@@ -140,6 +157,7 @@ function App() {
           </NotificationProvider>
         </BackgroundThemeProvider>
       </SupabaseAuthProvider>
+    </QueryClientProvider>
     </>
   );
 }

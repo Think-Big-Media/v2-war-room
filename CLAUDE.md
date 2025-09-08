@@ -45,6 +45,27 @@
 
 ---
 
+## 🔄 MOCK/LIVE DATA SYSTEM
+
+### **War Room Platform Data Modes:**
+The platform operates with dual data modes for flexibility in development, testing, and production:
+
+- **MOCK MODE** 🔧: Sample data for demos, testing, and offline development
+- **LIVE MODE** 🚀: Real-time connection to backend APIs and actual data
+
+### **Toggle Methods:**
+1. **Visual Toggle Button** (Top-right corner + bottom status bar)
+2. **Browser Console**: `localStorage.setItem('VITE_USE_MOCK_DATA', 'true/false')`
+3. **Automatic Detection**: Falls back to mock if API unavailable
+
+### **Usage Guidelines:**
+- **Always start in MOCK** for new feature development
+- **Switch to LIVE** for integration testing and production
+- **Main goal is LIVE data** - Mock is fallback/testing only
+- **All services respect** the data mode setting
+
+---
+
 ## 🎯 FOCUS DISCIPLINE - CRITICAL SUCCESS FACTOR
 
 ### **FEATURE QUEUE & IDEA MANAGEMENT (MANDATORY)**

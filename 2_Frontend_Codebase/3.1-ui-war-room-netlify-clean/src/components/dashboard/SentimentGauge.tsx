@@ -285,14 +285,18 @@ export const SentimentGauge: React.FC = memo(() => {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600 dark:text-gray-400">Mentionlytics</span>
-                <span className="font-semibold">{sentiment.mentionlyticsScore.toFixed(1)}</span>
+                <span className="font-semibold">
+                  {isNaN(sentiment.mentionlyticsScore) ? '0.0' : sentiment.mentionlyticsScore.toFixed(1)}
+                </span>
               </div>
 
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600 dark:text-gray-400">
                   Mentionlytics (40%)
                 </span>
-                <span className="font-semibold">{sentiment.mentionlyticsScore.toFixed(1)}</span>
+                <span className="font-semibold">
+                  {isNaN(sentiment.mentionlyticsScore) ? '0.0' : sentiment.mentionlyticsScore.toFixed(1)}
+                </span>
               </div>
 
               <div className="pt-3 border-t border-gray-200 dark:border-gray-700">

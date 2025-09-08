@@ -7,7 +7,7 @@ import Card from '../components/shared/Card';
 import { WidgetErrorBoundary } from '../components/shared/ErrorBoundary';
 import { SWOTRadarDashboard } from '../components/generated/SWOTRadarDashboard';
 import CommandStatusBar from '../components/dashboard/CommandStatusBar';
-import MentionlyticsPoliticalMap from '../components/political/MentionlyticsPoliticalMap';
+import RealFECPoliticalMap from '../components/political/RealFECPoliticalMap';
 import { DualPieCharts } from '../components/dashboard/DualPieCharts';
 import { PlatformDominanceGrid } from '../components/dashboard/PlatformDominanceGrid';
 import { PhraseCloud } from '../components/dashboard/PhraseCloud';
@@ -20,6 +20,7 @@ import {
   useCrisisAlerts,
 } from '../hooks/useMentionlytics';
 import { useCampaignSummary } from '../hooks/useCampaignData';
+import { useSentimentData } from '../hooks/useSentimentData';
 import { Zap, Radio, PenTool, TrendingUp, Smartphone, AlertTriangle, Settings } from 'lucide-react';
 import '../main-dashboard.css';
 
@@ -175,9 +176,32 @@ export default function Dashboard() {
               ></div>
             </div>
             <div className="text-2xl font-bold text-emerald-400 mb-1 font-condensed" style={{fontWeight: 500}}>
-              {sentimentData
-                ? `+${Math.round((sentimentData.positive / sentimentData.total) * 100)}%`
-                : '+33%'}
+              {(() => {
+                // Check sentimentData if available
+                if (!sentimentData) {
+                  return '+20%'; // Default fallback
+                }
+                
+                const positive = Number(sentimentData.positive) || 0;
+                const negative = Number(sentimentData.negative) || 0;
+                const neutral = Number(sentimentData.neutral) || 0;
+                const total = positive + negative + neutral;
+                
+                if (total === 0) {
+                  return '+0%';
+                }
+                
+                // Calculate sentiment score: (positive - negative) / total * 100
+                const score = ((positive - negative) / total) * 100;
+                const rounded = Math.round(score);
+                
+                // Ensure we never show NaN
+                if (isNaN(rounded)) {
+                  return '+20%';
+                }
+                
+                return rounded >= 0 ? `+${rounded}%` : `${rounded}%`;
+              })()}
             </div>
             <div className="text-xs text-white/60">
               <span className="font-jetbrains">{sentimentData?.positive || 342}</span> positive • <span className="font-jetbrains">{sentimentData?.negative || 503}</span> negative
@@ -265,7 +289,7 @@ export default function Dashboard() {
           <div className="left-column">
             {/* Political Map */}
             <Card variant="glass" padding="md" className="political-map hoverable">
-              <MentionlyticsPoliticalMap />
+              <RealFECPoliticalMap />
             </Card>
 
             {/* Live Intelligence - Moved to top, made taller */}

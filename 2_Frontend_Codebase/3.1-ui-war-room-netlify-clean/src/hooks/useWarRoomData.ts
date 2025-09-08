@@ -181,7 +181,9 @@ export function useDashboardData() {
 
 // Hook for checking if using mock data
 export function useDataMode() {
-  const isMock = import.meta.env.VITE_USE_MOCK_DATA === 'true';
+  // Check localStorage at runtime, not build time!
+  const localStorageValue = localStorage.getItem('VITE_USE_MOCK_DATA');
+  const isMock = localStorageValue === 'true';
 
   return {
     isMock,

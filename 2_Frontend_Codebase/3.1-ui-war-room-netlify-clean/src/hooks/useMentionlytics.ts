@@ -44,7 +44,28 @@ function useMentionlyticsData<T>(fetchFunction: () => Promise<T>, dependencies: 
 
 // Sentiment Analysis Hook
 export function useSentimentAnalysis(period: string = '7days') {
-  return useMentionlyticsData(() => mentionlyticsService.getSentimentAnalysis(period), [period]);
+  const result = useMentionlyticsData(async () => {
+    console.log('🔍 [useSentimentAnalysis] Calling getSentimentAnalysis with period:', period);
+    const data = await mentionlyticsService.getSentimentAnalysis(period);
+    console.log('🔍 [useSentimentAnalysis] Raw sentiment data received:', JSON.stringify(data));
+    console.log('🔍 [useSentimentAnalysis] Data properties:', {
+      positive: data?.positive,
+      negative: data?.negative, 
+      neutral: data?.neutral,
+      total: data?.total,
+      type: typeof data
+    });
+    return data;
+  }, [period]);
+  
+  console.log('🔍 [useSentimentAnalysis] Hook returning:', {
+    data: result.data,
+    dataMode: result.dataMode,
+    loading: result.loading,
+    error: result.error
+  });
+  
+  return result;
 }
 
 // Geographic Mentions Hook

@@ -35,9 +35,20 @@ class MentionlyticsService {
     if (localStorageMode !== null) {
       this.isMockMode = localStorageMode === 'true';
     } else {
-      // Only check config if localStorage is not set
-      this.isMockMode = this.config.features.mockMode || !this.config.mentionlytics.apiToken;
+      // Default to LIVE mode if localStorage not set
+      // Only use mock if explicitly set in config
+      this.isMockMode = this.config.features.mockMode === true;
+      // Set localStorage to prevent flip-flopping
+      localStorage.setItem('VITE_USE_MOCK_DATA', 'false');
     }
+    
+    // 🔍 DIAGNOSTIC: Log the actual mode being used
+    console.log('🔍 [DIAGNOSTIC] MentionlyticsService initialized:');
+    console.log('   - localStorage VITE_USE_MOCK_DATA:', localStorageMode);
+    console.log('   - Final isMockMode:', this.isMockMode);
+    console.log('   - Backend URL:', this.endpoints.data.mentionlytics.feed);
+    console.log('   - Config mockMode:', this.config.features.mockMode);
+    console.log('   - API Token exists:', !!this.config.mentionlytics.apiToken);
   }
 
   // Toggle between mock and live data
@@ -50,28 +61,66 @@ class MentionlyticsService {
     return this.isMockMode ? 'MOCK' : 'LIVE';
   }
 
-  // Sentiment Analysis
+  // Sentiment Analysis - NOW CALLS BRANDMENTIONS DIRECTLY
   async getSentimentAnalysis(period: string = '7days'): Promise<MentionlyticsSentiment> {
     if (this.isMockMode) {
-      // Return mock data with slight variations to simulate real-time changes
-      const variance = Math.random() * 10 - 5; // ±5 variation
+      console.log('🔍 [getSentimentAnalysis] Returning mock data:', mockSentimentData);
       return {
         ...mockSentimentData,
-        positive: Math.round(mockSentimentData.positive + variance),
-        negative: Math.round(mockSentimentData.negative - variance),
         period,
       };
     }
 
+    // LIVE DATA: Call BrandMentions API directly
     try {
-      const response = await axios.get(this.endpoints.data.mentionlytics.sentiment, {
-        params: { period },
+      const apiKey = import.meta.env.VITE_BRANDMENTIONS_API_KEY;
+      const projectId = import.meta.env.VITE_BRANDMENTIONS_PROJECT_ID;
+      
+      if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
+        console.warn('⚠️ [getSentimentAnalysis] BrandMentions API key not set, using mock');
+        return mockSentimentData;
+      }
+
+      console.log('🚀 [getSentimentAnalysis] CALLING BRANDMENTIONS API DIRECTLY');
+      console.log('   - Project ID:', projectId);
+      
+      const response = await axios.get('https://api.brandmentions.com/command.php', {
+        params: {
+          api_key: apiKey,
+          command: 'GetMentions',
+          project_id: projectId,
+          limit: 100
+        },
+        timeout: 10000,
       });
-      return response.data;
+      
+      console.log('✅ [getSentimentAnalysis] BrandMentions raw response:', response.data);
+      
+      // Parse BrandMentions response into our format
+      const mentions = response.data.mentions || [];
+      const positive = mentions.filter((m: any) => m.sentiment === 'positive').length;
+      const negative = mentions.filter((m: any) => m.sentiment === 'negative').length;
+      const neutral = mentions.filter((m: any) => m.sentiment === 'neutral').length;
+      const total = mentions.length;
+      
+      const sentimentData = {
+        positive,
+        negative,
+        neutral,
+        total,
+        period,
+      };
+      
+      console.log('🎯 [getSentimentAnalysis] LIVE BRANDMENTIONS DATA:', sentimentData);
+      return sentimentData;
+      
     } catch (error) {
-      console.error('Error fetching sentiment data:', error);
-      // Fallback to mock data if API fails
-      return mockSentimentData;
+      console.error('❌ [getSentimentAnalysis] BrandMentions API error:', error);
+      console.log('🔄 [getSentimentAnalysis] Using mock data as fallback');
+      return {
+        ...mockSentimentData,
+        period,
+      };
     }
   }
 
@@ -96,27 +145,77 @@ class MentionlyticsService {
 
   // Live Mentions Feed
   async getMentionsFeed(limit: number = 10): Promise<MentionlyticsMention[]> {
-    console.log('[MentionlyticsService] getMentionsFeed - Mode:', this.isMockMode ? 'MOCK' : 'LIVE', 'URL:', this.endpoints.data.mentionlytics.feed);
+    console.log('[MentionlyticsService] getMentionsFeed - Mode:', this.isMockMode ? 'MOCK' : 'LIVE');
     
     if (this.isMockMode) {
       console.log('[MentionlyticsService] Returning MOCK data');
-      // Mix existing mock data with newly generated mentions
       const newMentions = Array(2)
         .fill(null)
         .map(() => generateLiveMention());
       return [...newMentions, ...mockMentionsFeed].slice(0, limit);
     }
 
+    // LIVE DATA: Call BrandMentions API directly
     try {
-      console.log('[MentionlyticsService] Fetching from API:', this.endpoints.data.mentionlytics.feed);
-      const response = await axios.get(this.endpoints.data.mentionlytics.feed, {
-        params: { limit },
+      const apiKey = import.meta.env.VITE_BRANDMENTIONS_API_KEY;
+      const projectId = import.meta.env.VITE_BRANDMENTIONS_PROJECT_ID;
+      
+      if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
+        console.warn('⚠️ [getMentionsFeed] BrandMentions API key not set, using mock');
+        return mockMentionsFeed.slice(0, limit);
+      }
+
+      console.log('🚀 [getMentionsFeed] CALLING BRANDMENTIONS API FOR MENTIONS FEED');
+      
+      const response = await axios.get('https://api.brandmentions.com/command.php', {
+        params: {
+          api_key: apiKey,
+          command: 'GetMentions',
+          project_id: projectId,
+          limit: limit
+        },
+        timeout: 10000,
       });
-      return response.data;
+      
+      console.log('✅ [getMentionsFeed] BrandMentions raw response:', response.data);
+      
+      // Convert BrandMentions format to our MentionlyticsMention format
+      const brandMentions = response.data.mentions || [];
+      const mentions: MentionlyticsMention[] = brandMentions.map((mention: any, index: number) => ({
+        id: mention.id || String(index + 1),
+        text: mention.text || mention.content || 'No content available',
+        author: mention.author || mention.source || 'Unknown',
+        platform: this.mapPlatform(mention.platform || mention.source_type),
+        sentiment: mention.sentiment || 'neutral',
+        reach: mention.reach || mention.followers || 0,
+        engagement: mention.engagement || 0,
+        timestamp: mention.timestamp || mention.date || new Date().toISOString(),
+        url: mention.url || '#',
+        location: mention.location || ''
+      }));
+      
+      console.log('🎯 [getMentionsFeed] LIVE BRANDMENTIONS MENTIONS:', mentions);
+      return mentions.slice(0, limit);
+      
     } catch (error) {
-      console.error('Error fetching mentions feed:', error);
+      console.error('❌ [getMentionsFeed] BrandMentions API error:', error);
+      console.log('🔄 [getMentionsFeed] Using mock data as fallback');
       return mockMentionsFeed.slice(0, limit);
     }
+  }
+
+  private mapPlatform(platform: string): 'twitter' | 'facebook' | 'instagram' | 'news' | 'blog' {
+    const platformMap: { [key: string]: 'twitter' | 'facebook' | 'instagram' | 'news' | 'blog' } = {
+      'twitter': 'twitter',
+      'x': 'twitter', 
+      'facebook': 'facebook',
+      'instagram': 'instagram',
+      'news': 'news',
+      'blog': 'blog',
+      'web': 'news',
+      'reddit': 'blog'
+    };
+    return platformMap[platform?.toLowerCase()] || 'news';
   }
 
   // Influencers
@@ -178,11 +277,11 @@ class MentionlyticsService {
   async getTrendingTopics(period: string = '24hours'): Promise<any> {
     if (this.isMockMode) {
       return [
-        { topic: 'Healthcare Reform', mentions: 342, sentiment: 'positive', growth: '+23%' },
-        { topic: 'Economic Policy', mentions: 289, sentiment: 'neutral', growth: '+12%' },
-        { topic: 'Infrastructure', mentions: 267, sentiment: 'positive', growth: '+45%' },
-        { topic: 'Education', mentions: 198, sentiment: 'negative', growth: '-8%' },
-        { topic: 'Climate', mentions: 176, sentiment: 'neutral', growth: '+5%' },
+        { topic: 'War Room Platform', mentions: 342, sentiment: 'positive', growth: '+23%' },
+        { topic: 'Campaign Management', mentions: 289, sentiment: 'neutral', growth: '+12%' },
+        { topic: 'Political Technology', mentions: 267, sentiment: 'positive', growth: '+45%' },
+        { topic: 'Real-time Analytics', mentions: 198, sentiment: 'positive', growth: '+18%' },
+        { topic: 'Strategy Tools', mentions: 176, sentiment: 'neutral', growth: '+5%' },
       ];
     }
 
@@ -201,21 +300,21 @@ class MentionlyticsService {
   async getAvailableKeywords(): Promise<string[]> {
     if (this.isMockMode) {
       return [
-        'Healthcare Reform',
-        'Economic Policy',
-        'Infrastructure',
-        'Education',
-        'Climate Change',
-        'Immigration',
-        'Public Safety',
-        'Tax Reform',
-        'Social Security',
-        'Veterans Affairs',
-        'Technology',
-        'Rural Development',
-        'Urban Planning',
-        'Energy Policy',
-        'Foreign Policy',
+        'War Room Platform',
+        'Campaign Management',
+        'Political Technology',
+        'Real-time Analytics',
+        'Strategy Tools',
+        'Campaign Intelligence',
+        'Political Dashboard',
+        'Voter Analytics',
+        'Campaign Strategy',
+        'Political Software',
+        'Election Technology',
+        'Digital Campaigns',
+        'Data Visualization',
+        'Political Consulting',
+        'Campaign Optimization',
       ];
     }
 

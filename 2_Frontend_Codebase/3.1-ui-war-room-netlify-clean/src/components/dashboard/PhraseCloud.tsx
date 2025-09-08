@@ -28,51 +28,83 @@ export const PhraseCloud: React.FC = () => {
       }
     }
 
-    // Load trending topics from mentionlytics service
-    mentionlyticsService.getTrendingTopics().then((topics) => {
-      const phrases = topics.map((t: any) => t.topic);
-      setTrendingPhrases(phrases);
-      
-      // If no campaign keywords, use trending topics as fallback
-      if (!parsedCampaignData?.keywords && topics.length > 0) {
-        const fallbackKeywords = topics.slice(0, 3).map((t: any) => t.topic);
-        setTopKeywords(fallbackKeywords);
+    // Load actual mentions from the feed (BrandMentions from Slack)
+    mentionlyticsService.getMentionsFeed().then((response) => {
+      if (response?.mentions && response.mentions.length > 0) {
+        // Extract actual mention texts for phrase cloud
+        const realPhrases = response.mentions
+          .map((mention: any) => mention.text)
+          .filter((text: string) => text && text.length > 10) // Filter out short texts
+          .slice(0, 8); // Take first 8 real mentions
+        setTrendingPhrases(realPhrases);
+        
+        // Extract keywords from actual mentions for brand monitoring
+        const keywordSet = new Set<string>();
+        response.mentions.forEach((mention: any) => {
+          if (mention.text) {
+            // Extract meaningful keywords from mention text
+            const words = mention.text
+              .toLowerCase()
+              .split(/\W+/)
+              .filter((word: string) => word.length > 4 && !['that', 'this', 'with', 'from', 'they', 'were', 'been', 'have', 'will', 'would', 'could', 'should'].includes(word));
+            words.slice(0, 3).forEach((word: string) => keywordSet.add(word));
+          }
+        });
+        
+        if (keywordSet.size > 0 && !parsedCampaignData?.keywords) {
+          const extractedKeywords = Array.from(keywordSet).slice(0, 3);
+          setTopKeywords(extractedKeywords.map(k => k.charAt(0).toUpperCase() + k.slice(1)));
+        }
+      } else {
+        // Fallback to trending topics if no real mentions
+        return mentionlyticsService.getTrendingTopics();
+      }
+    }).then((topics) => {
+      if (topics && trendingPhrases.length === 0) {
+        const phrases = topics.map((t: any) => t.topic);
+        setTrendingPhrases(phrases);
+        
+        // If no campaign keywords, use trending topics as fallback
+        if (!parsedCampaignData?.keywords && topics.length > 0) {
+          const fallbackKeywords = topics.slice(0, 3).map((t: any) => t.topic);
+          setTopKeywords(fallbackKeywords);
+        }
       }
     }).catch(err => {
       console.log('Using fallback keywords due to:', err);
-      // Fallback keywords if Mentionlytics fails
+      // Fallback keywords if everything fails
       if (!parsedCampaignData?.keywords) {
-        setTopKeywords(['Campaign Focus', 'Key Issues', 'Public Policy']);
+        setTopKeywords(['Brand Mentions', 'Social Media', 'Public Sentiment']);
       }
     });
-  }, []);
+  }, [trendingPhrases.length]);
 
-  // Actual social media phrases related to client/campaign
+  // BrandMentions-style fallback phrases (when no real mentions available)
   const defaultPhrases = [
-    'Strong leadership on healthcare',
-    'New Jersey families deserve better',
-    'Infrastructure investment is key',
-    'Education funding breakthrough',
-    'Economy moving in right direction',
-    'Working families need solutions',
-    'Public safety remains priority',
-    'Healthcare reform now',
-    'Jobs and opportunity for all',
-    'Building a stronger tomorrow',
+    'Great progress on recent initiatives',
+    'Positive momentum in public sentiment',
+    'Strong community engagement trends',
+    'Meaningful dialogue on key issues',
+    'Building bridges across communities',
+    'Focused leadership delivering results',
+    'Innovation driving positive change',
+    'Collaborative approach shows promise',
+    'Transparent communication builds trust',
+    'Commitment to sustainable solutions',
   ];
 
-  // Social media phrases based on trending topics and campaign activity
+  // BrandMentions-style social media phrases 
   const socialMediaPhrases = [
-    'New Jersey families are finally seeing real progress on infrastructure investments',
-    'Healthcare reform initiatives are gaining momentum across suburban districts',
-    'Economic development policies are making a tangible difference for working families',
-    'Education funding breakthrough represents a major victory for students statewide',
-    'Climate action initiatives show promising results in environmental protection',
-    'Working class families are getting the support they deserve after years of neglect',
-    'Public safety improvements remain a top priority for community leaders',
-    'Tax reform measures are delivering real benefits to middle class households',
-    'Social Security protection measures ensure retirement security for seniors',
-    'Veterans advocacy programs demonstrate our commitment to those who served',
+    'Excited to see positive coverage of our recent community outreach efforts',
+    'Grateful for the supportive response to our transparency initiatives',
+    'Encouraging feedback on our approach to stakeholder engagement',
+    'Meaningful dialogue emerging around our policy framework',
+    'Strong public support for our collaborative leadership style',
+    'Positive sentiment growing around our innovation initiatives',
+    'Community leaders praising our commitment to inclusive solutions',
+    'Media highlighting our track record of delivering results',
+    'Public appreciation for our evidence-based decision making',
+    'Growing recognition of our sustainable approach to governance',
   ];
 
   // Combine actual social media phrases based on campaign keywords and trending topics

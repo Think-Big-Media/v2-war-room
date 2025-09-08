@@ -13,15 +13,14 @@
 4. README.md (root) - Project overview
 
 # FOR ENCORE WORK - ALWAYS CHECK THESE FIRST:
-5. 1_Project_Documents/3_Execution_and_Protocols/encore-docs/ - Official docs
-6. 1_Project_Documents/3_Execution_and_Protocols/EncoreNuggets/ - Hard-won lessons
+5. /encore-docs/ - Official docs
+6. /EncoreNuggets.md
 ```
 
 ### 2. Identify Current Phase
 ```bash
-# Look for these codenames in 4_DAY-TO-DAY-DEV/:
-- Napoleon/ = Backend P0 (completed)
-- Cleopatra/ = OAuth Authentication (current/latest)
+# Look for latest codename by date in 4_DAY-TO-DAY-DEV/:
+For example in early September it was "Winston". Check codenames.md for likely next or read dates in folder. All work and notes goes in here - never the root etc.
 - Next historical name = Future work
 ```
 

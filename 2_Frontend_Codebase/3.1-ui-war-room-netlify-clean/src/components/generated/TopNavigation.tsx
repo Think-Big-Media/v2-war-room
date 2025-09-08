@@ -33,9 +33,12 @@ const TopNavigation: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [teamAlerts, setTeamAlerts] = useState<InformationItem[]>([]);
+  const [clickCount, setClickCount] = useState(0);
+  const [lastClickTime, setLastClickTime] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
   const notificationsRef = useRef<HTMLDivElement>(null);
+  const clickResetTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Get current section theme
   const currentTheme = getSectionTheme(location.pathname);
@@ -147,6 +150,51 @@ const TopNavigation: React.FC = () => {
     navigate(path);
   };
 
+  const handleLogoClick = () => {
+    const now = Date.now();
+    
+    // Clear any existing timer
+    if (clickResetTimer.current) {
+      clearTimeout(clickResetTimer.current);
+    }
+    
+    // Check if this click is within 500ms of the last click (for multi-clicks)
+    if (now - lastClickTime < 500 && clickCount > 0) {
+      const newClickCount = clickCount + 1;
+      setClickCount(newClickCount);
+      setLastClickTime(now);
+      
+      // Triple-click detected - navigate to brand monitoring dashboard 
+      if (newClickCount === 3) {
+        console.log('🔐 Brand monitoring dashboard activated');
+        navigate('/brand-monitoring');
+        setClickCount(0);
+        return;
+      }
+    } else {
+      // First click or reset after timeout
+      setClickCount(1);
+      setLastClickTime(now);
+      
+      // Navigate to dashboard on first click (after a short delay to allow for potential multi-clicks)
+      clickResetTimer.current = setTimeout(() => {
+        if (clickCount === 1) {
+          navigate('/');
+        }
+        setClickCount(0);
+        setLastClickTime(0);
+      }, 600); // Wait 600ms to see if more clicks come
+      
+      return; // Don't navigate immediately
+    }
+    
+    // Reset click count after 1 second of no more clicks
+    clickResetTimer.current = setTimeout(() => {
+      setClickCount(0);
+      setLastClickTime(0);
+    }, 1000);
+  };
+
   const handleNotificationClick = (alert: InformationItem) => {
     informationService.markAsRead(alert.id);
     setShowNotifications(false);
@@ -187,10 +235,11 @@ const TopNavigation: React.FC = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-black/20 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-4 lg:px-6">
         <div className="flex items-center justify-between h-16">
-          {/* Logo/Brand - Responsive - Click to go to Dashboard */}
+          {/* Logo/Brand - Responsive - Click to go to Dashboard, Triple-click for Admin */}
           <button
-            onClick={() => handleNavigation('/')}
+            onClick={handleLogoClick}
             className="flex items-center ml-[25px] hover:opacity-80 transition-opacity duration-200 cursor-pointer"
+            title="Click to dashboard, triple-click for brand monitoring"
           >
             {/* Full logo for large screens - increased size */}
             <img

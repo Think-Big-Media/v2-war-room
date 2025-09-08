@@ -9,7 +9,15 @@
 import { mockVolunteers, mockEvents, mockDonations, mockUsers } from './mock-data';
 
 // Environment configuration
-const USE_MOCK = import.meta.env.VITE_USE_MOCK_DATA === 'true';
+// Check localStorage at runtime, not build time!
+const getUseMock = () => {
+  const localStorageValue = localStorage.getItem('VITE_USE_MOCK_DATA');
+  if (localStorageValue !== null) {
+    return localStorageValue === 'true';
+  }
+  // Default to LIVE mode
+  return false;
+};
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const MOCK_DELAY = 300; // Simulate network latency
 
@@ -306,7 +314,7 @@ class ApiDataService extends BaseDataService {
  * Export the appropriate service based on environment
  * This is the ONLY export that components should use
  */
-export const dataService: BaseDataService = USE_MOCK ? new MockDataService() : new ApiDataService();
+export const dataService: BaseDataService = getUseMock() ? new MockDataService() : new ApiDataService();
 
 /**
  * Hook for React components to use the data service
@@ -315,7 +323,7 @@ export const dataService: BaseDataService = USE_MOCK ? new MockDataService() : n
 export function useDataService() {
   return {
     dataService,
-    isUsingMockData: USE_MOCK,
+    isUsingMockData: getUseMock(),
     apiBaseUrl: API_BASE_URL,
   };
 }

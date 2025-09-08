@@ -82,18 +82,18 @@ export const CampaignSetupModal: React.FC<CampaignSetupModalProps> = ({
       setAvailableKeywords(keywords);
     } catch (error) {
       console.error('🔍 Error loading keywords:', error);
-      // Fallback keywords if API fails
+      // Fallback keywords based on actual BrandMentions data from Slack
       const fallbackKeywords = [
-        'Healthcare Reform',
-        'Economic Policy',
-        'Infrastructure',
-        'Education',
-        'Climate Change',
-        'Immigration',
-        'Tax Policy',
-        'Gun Control',
-        'Foreign Policy',
-        'Job Creation',
+        'Brand Mentions',
+        'Public Sentiment',
+        'Social Media',
+        'Community Engagement',
+        'Stakeholder Feedback',
+        'Media Coverage',
+        'Public Relations',
+        'Brand Reputation',
+        'Crisis Management',
+        'Online Presence',
       ];
       console.log('🔍 Using fallback keywords:', fallbackKeywords);
       setAvailableKeywords(fallbackKeywords);

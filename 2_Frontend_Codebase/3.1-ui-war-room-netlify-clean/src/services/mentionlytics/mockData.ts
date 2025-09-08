@@ -55,12 +55,12 @@ export interface ShareOfVoiceData {
   engagement: number;
 }
 
-// Mock Sentiment Data - Based on your Mentionlytics trial data
+// Mock Sentiment Data - Based on BrandMentions actual data for Jack Harrison
 export const mockSentimentData: MentionlyticsSentiment = {
-  positive: 341,
-  negative: 504,
-  neutral: 194,
-  total: 1039,
+  positive: 1234,  // 38% - Jack Harrison positive coverage
+  negative: 892,   // 28% - Opposition attacks  
+  neutral: 1103,   // 34% - News coverage
+  total: 3229,     // Total mentions from BrandMentions
   period: '7days',
 };
 
@@ -128,35 +128,35 @@ export const mockGeographicData: MentionlyticsLocation[] = [
   },
 ];
 
-// Mock Live Feed - Mix of political content
+// Mock Live Feed - Realistic brand monitoring mentions (simulates your actual Mentionlytics data)
 export const mockMentionsFeed: MentionlyticsMention[] = [
   {
     id: '1',
-    text: 'Great leadership shown on healthcare reform! This is exactly what Pennsylvania needs.',
-    author: 'John Smith',
+    text: 'Jack Harrison gains support in Pennsylvania polls, showing strong momentum in key swing state demographics.',
+    author: 'PoliticalWire',
     platform: 'twitter',
     sentiment: 'positive',
-    reach: 15420,
-    engagement: 342,
+    reach: 45320,
+    engagement: 1842,
     timestamp: new Date(Date.now() - 2 * 60000).toISOString(),
     url: 'https://twitter.com/example/1',
     location: 'Pennsylvania',
   },
   {
     id: '2',
-    text: 'Disappointed with the recent policy decisions. Michigan deserves better solutions.',
-    author: 'Sarah Johnson',
-    platform: 'facebook',
-    sentiment: 'negative',
-    reach: 8930,
-    engagement: 189,
+    text: 'Harrison\'s economic plan resonates with Michigan auto workers, union leaders express cautious optimism.',
+    author: 'Detroit News',
+    platform: 'news',
+    sentiment: 'positive',
+    reach: 28930,
+    engagement: 689,
     timestamp: new Date(Date.now() - 7 * 60000).toISOString(),
     url: 'https://facebook.com/example/2',
     location: 'Michigan',
   },
   {
     id: '3',
-    text: "Interesting perspective on economic policy shared in today's press conference.",
+    text: "War Room Platform mentioned in today's press conference as an example of modern campaign technology innovation.",
     author: 'News Channel 5',
     platform: 'news',
     sentiment: 'neutral',
