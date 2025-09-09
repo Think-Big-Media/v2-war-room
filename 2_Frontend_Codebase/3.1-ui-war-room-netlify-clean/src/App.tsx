@@ -144,8 +144,12 @@ function AppContent() {
       {/* Admin System - Debug Sidecar (Bottom Panel Mode) */}
       {location.pathname !== '/admin-dashboard' && (
         <div>
-          {console.log('🔍 [DIAGNOSTIC] Rendering DebugSidecar with isOpen:', isDebugOpen)}
-          <DebugSidecar isOpen={isDebugOpen} onClose={closeDebug} />
+          {console.log('🔍 [DIAGNOSTIC] Rendering DebugSidecar with isOpen:', isDebugOpen, 'on page:', location.pathname)}
+          <DebugSidecar 
+            isOpen={isDebugOpen} 
+            onClose={closeDebug}
+            currentPage={location.pathname}
+          />
         </div>
       )}
     </>

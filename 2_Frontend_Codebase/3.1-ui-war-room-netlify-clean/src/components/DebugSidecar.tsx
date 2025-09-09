@@ -26,6 +26,7 @@ import { API_BASE_URL } from '../config/constants';
 interface DebugSidecarProps {
   isOpen: boolean;
   onClose: () => void;
+  currentPage?: string;
 }
 
 interface DebugPanelSettings {
@@ -42,7 +43,112 @@ const DEFAULT_DEBUG_SETTINGS: DebugPanelSettings = {
   preferredDataMode: 'MOCK',
 };
 
-export const DebugSidecar: React.FC<DebugSidecarProps> = ({ isOpen, onClose }) => {
+// Page-specific endpoint mappings
+const PAGE_ENDPOINTS: Record<string, { name: string; endpoints: string[]; description: string }> = {
+  '/': {
+    name: 'Dashboard',
+    description: 'Main dashboard with SWOT analysis',
+    endpoints: [
+      '/api/v1/analytics/summary',
+      '/api/v1/monitoring/mentions',
+      '/api/v1/mentionlytics/sentiment',
+      '/api/v1/mentionlytics/trending'
+    ]
+  },
+  '/dashboard': {
+    name: 'Dashboard',
+    description: 'Main dashboard with SWOT analysis',
+    endpoints: [
+      '/api/v1/analytics/summary',
+      '/api/v1/monitoring/mentions',
+      '/api/v1/mentionlytics/sentiment',
+      '/api/v1/mentionlytics/trending'
+    ]
+  },
+  '/real-time-monitoring': {
+    name: 'Real-Time Monitoring',
+    description: 'Live social media monitoring',
+    endpoints: [
+      '/api/v1/monitoring/mentions',
+      '/api/v1/mentionlytics/feed',
+      '/api/v1/mentionlytics/influencers',
+      '/api/v1/monitoring/geo-influencers'
+    ]
+  },
+  '/campaign-control': {
+    name: 'Campaign Control',
+    description: 'Campaign management and metrics',
+    endpoints: [
+      '/api/v1/campaigns/insights',
+      '/api/v1/campaigns/metrics',
+      '/api/v1/analytics/performance'
+    ]
+  },
+  '/intelligence-hub': {
+    name: 'Intelligence Hub',
+    description: 'Strategic intelligence and insights',
+    endpoints: [
+      '/api/v1/mentionlytics/sentiment',
+      '/api/v1/mentionlytics/share-of-voice',
+      '/api/v1/intelligence/competitors',
+      '/api/v1/intelligence/trends'
+    ]
+  },
+  '/alert-center': {
+    name: 'Alert Center',
+    description: 'Crisis alerts and notifications',
+    endpoints: [
+      '/api/v1/alerting/queue',
+      '/api/v1/alerting/critical',
+      '/api/v1/monitoring/mentions'
+    ]
+  },
+  '/settings': {
+    name: 'Settings',
+    description: 'Platform configuration',
+    endpoints: [
+      '/api/v1/settings/user',
+      '/api/v1/settings/preferences'
+    ]
+  }
+};
+
+export const DebugSidecar: React.FC<DebugSidecarProps> = ({ isOpen, onClose, currentPage = '/' }) => {
+  // Endpoint health status tracking
+  const [endpointHealth, setEndpointHealth] = useState<Record<string, 'testing' | 'healthy' | 'error' | 'unknown'>>({});
+  
+  // Test endpoint health
+  const testEndpoint = async (endpoint: string) => {
+    setEndpointHealth(prev => ({ ...prev, [endpoint]: 'testing' }));
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        method: 'GET',
+        headers: { 'Accept': 'application/json' },
+        signal: AbortSignal.timeout(5000)
+      });
+      
+      setEndpointHealth(prev => ({ 
+        ...prev, 
+        [endpoint]: response.ok ? 'healthy' : 'error' 
+      }));
+    } catch (error) {
+      setEndpointHealth(prev => ({ ...prev, [endpoint]: 'error' }));
+    }
+  };
+
+  // Test all endpoints for current page
+  const testPageEndpoints = () => {
+    const endpoints = PAGE_ENDPOINTS[currentPage]?.endpoints || [];
+    endpoints.forEach(endpoint => testEndpoint(endpoint));
+  };
+
+  // Auto-test endpoints when page changes
+  useEffect(() => {
+    if (isOpen && PAGE_ENDPOINTS[currentPage]) {
+      testPageEndpoints();
+    }
+  }, [currentPage, isOpen]);
   
   // Custom close handler that exits admin mode completely
   const handleAdminExit = () => {
@@ -621,8 +727,77 @@ export const DebugSidecar: React.FC<DebugSidecarProps> = ({ isOpen, onClose }) =
                 </div>
               </div>
 
-              {/* Middle Panel - Mentionlytics Status & Data Preview */}
-              <div className="flex-1 p-4 border-r border-white/10">
+              {/* Middle Panel - Page-Specific Endpoints & Status */}
+              <div className="flex-1 p-4 border-r border-white/10 overflow-y-auto">
+                {/* Current Page Info */}
+                <div className="mb-4 pb-3 border-b border-white/10">
+                  <h3 className="text-xs text-white/60 font-barlow uppercase mb-2">Current Page</h3>
+                  <div className="bg-blue-500/10 rounded-lg p-2 border border-blue-500/20">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-bold text-blue-400">
+                        {PAGE_ENDPOINTS[currentPage]?.name || 'Unknown Page'}
+                      </span>
+                      <span className="text-xs text-white/50">{currentPage}</span>
+                    </div>
+                    <p className="text-xs text-white/70">
+                      {PAGE_ENDPOINTS[currentPage]?.description || 'No description available'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Active Endpoints for Current Page */}
+                <div className="mb-4 pb-3 border-b border-white/10">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-xs text-white/60 font-barlow uppercase">Active Endpoints</h3>
+                    <button
+                      onClick={testPageEndpoints}
+                      className="px-2 py-1 text-xs bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded transition-colors"
+                    >
+                      Test All
+                    </button>
+                  </div>
+                  <div className="space-y-1">
+                    {PAGE_ENDPOINTS[currentPage]?.endpoints.map((endpoint, idx) => {
+                      const health = endpointHealth[endpoint] || 'unknown';
+                      return (
+                        <div key={idx} className="flex items-center justify-between bg-black/30 rounded px-2 py-1">
+                          <span className="text-xs font-mono text-white/80 truncate flex-1 mr-2">{endpoint}</span>
+                          <div className="flex items-center gap-2">
+                            <span className={`text-xs px-1.5 py-0.5 rounded font-bold ${
+                              isLive ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
+                            }`}>
+                              {isLive ? 'LIVE' : 'MOCK'}
+                            </span>
+                            <div className={`w-2 h-2 rounded-full ${
+                              health === 'testing' ? 'bg-blue-400 animate-pulse' :
+                              health === 'healthy' ? 'bg-green-400' :
+                              health === 'error' ? 'bg-red-400' :
+                              'bg-gray-400'
+                            }`} title={health} />
+                          </div>
+                        </div>
+                      );
+                    }) || (
+                      <div className="text-xs text-white/40 italic">No endpoints configured for this page</div>
+                    )}
+                  </div>
+                  {/* Health Legend */}
+                  <div className="flex items-center gap-3 mt-2 text-[10px] text-white/40">
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-green-400" />
+                      <span>Healthy</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-red-400" />
+                      <span>Error</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 rounded-full bg-gray-400" />
+                      <span>Unknown</span>
+                    </div>
+                  </div>
+                </div>
+
                 <h3 className="text-xs text-white/60 font-barlow uppercase mb-2">Mentionlytics Status</h3>
                 <div className="bg-black/30 rounded-lg p-3 mb-3">
                   <div className="flex items-center justify-between mb-2">
