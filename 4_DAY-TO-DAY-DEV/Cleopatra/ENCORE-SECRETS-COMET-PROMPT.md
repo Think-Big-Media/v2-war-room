@@ -2,7 +2,7 @@
 
 ## Copy this entire prompt to Comet:
 
-Go to https://app.encore.cloud/war-room-4-4-backend-twpi/settings/secrets and add these secrets for the staging environment:
+Go to https://app.encore.cloud/war-roombackend-45-x83i/settings/secrets and add these secrets for the staging environment:
 
 ```
 MENTIONLYTICS_API_TOKEN = 0X44tHi275ZqqK2psB4U-Ph-dw2xRkq7T4QVkSBlUz32V0ZcgkXt2dQSni52-fhB7WZyZOoGBPcR23O9oND_h1DE
@@ -42,9 +42,9 @@ After adding all secrets, trigger a new deployment or restart the staging enviro
 ---
 
 ## Once Done, The Staging URL Should Be:
-`https://staging-war-room-4-4-backend-twpi.encr.app`
+`https://staging-war-roombackend-45-x83i.encr.app`
 
 Test with:
 ```bash
-curl https://staging-war-room-4-4-backend-twpi.encr.app/health
+curl https://staging-war-roombackend-45-x83i.encr.app/health
 ```

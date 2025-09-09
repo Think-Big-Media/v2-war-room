@@ -209,7 +209,7 @@ export const getAPIEndpoints = () => {
         geo: `${backendURL}/api/v1/mentionlytics/mentions/geo`,
         influencers: `${backendURL}/api/v1/mentionlytics/influencers`,
         trending: `${backendURL}/api/v1/mentionlytics/trending`,
-        shareOfVoice: `${backendURL}/api/v1/mentionlytics/share-of-voice`,
+        shareOfVoice: `${backendURL}/api/v1/mentionlytics/shareOfVoice`,
         feed: `${backendURL}/api/v1/mentionlytics/feed`,
       },
     },

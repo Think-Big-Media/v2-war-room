@@ -4,7 +4,7 @@ Copy this ENTIRE message to Comet:
 
 ---
 
-Go to the Encore dashboard at https://app.encore.cloud/war-room-4-4-backend-twpi/settings/secrets
+Go to the Encore dashboard at https://app.encore.cloud/war-roombackend-45-x83i/settings/secrets
 
 Add these secrets to the STAGING environment:
 
@@ -83,4 +83,4 @@ Add these secrets to the STAGING environment:
 After adding all 12 secrets, the deployment should automatically restart with the secrets available.
 
 Then confirm the staging URL is working by visiting:
-https://staging-war-room-4-4-backend-twpi.encr.app/health
+https://staging-war-roombackend-45-x83i.encr.app/health

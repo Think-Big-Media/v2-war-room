@@ -241,7 +241,8 @@ class MentionlyticsService {
 
     try {
       const response = await axios.get(this.endpoints.data.mentionlytics.shareOfVoice);
-      return response.data;
+      // Backend returns {data: ShareOfVoiceItem[]}, we need ShareOfVoiceData[]
+      return response.data.data || response.data;
     } catch (error) {
       console.error('Error fetching share of voice:', error);
       return mockShareOfVoice;

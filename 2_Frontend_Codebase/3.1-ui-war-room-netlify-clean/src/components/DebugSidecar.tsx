@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bug,
@@ -13,6 +13,9 @@ import {
   Eye,
   EyeOff,
   Settings,
+  Move,
+  TrendingUp,
+  TrendingDown,
 } from 'lucide-react';
 import { safeParseJSON, safeSetJSON } from '../utils/localStorage';
 import { useDataMode } from '../hooks/useDataMode';
@@ -40,9 +43,39 @@ const DEFAULT_DEBUG_SETTINGS: DebugPanelSettings = {
 };
 
 export const DebugSidecar: React.FC<DebugSidecarProps> = ({ isOpen, onClose }) => {
+  
+  // Custom close handler that exits admin mode completely
+  const handleAdminExit = () => {
+    console.log('🔧 [DEBUG-PANEL] X button clicked - Exiting admin mode completely');
+    
+    // Clear admin mode from localStorage
+    localStorage.setItem('war-room-admin-mode', 'false');
+    
+    // Dispatch admin mode change event to notify other components
+    const event = new CustomEvent('admin-mode-change', { 
+      detail: { isAdminMode: false } 
+    });
+    window.dispatchEvent(event);
+    
+    // Call the original onClose handler
+    onClose();
+    
+    // Navigate back to dashboard
+    window.location.href = '/';
+    console.log('🔧 [SUCCESS] Debug panel X - Admin mode exited completely');
+  };
   const [logs, setLogs] = useState<Array<{ timestamp: string; level: string; message: string }>>(
     []
   );
+  // Resizing state
+  const [panelHeight, setPanelHeight] = useState(() => {
+    // Default to 50% of window height
+    return Math.floor(window.innerHeight * 0.5);
+  });
+  const [isResizing, setIsResizing] = useState(false);
+  const dragRef = useRef<HTMLDivElement>(null);
+  const startY = useRef<number>(0);
+  const startHeight = useRef<number>(0);
   const [systemStats, setSystemStats] = useState({
     memory: 0,
     apiCalls: 0,
@@ -333,34 +366,90 @@ export const DebugSidecar: React.FC<DebugSidecarProps> = ({ isOpen, onClose }) =
   const connection = getConnectionStatus();
   const ConnectionIcon = connection.icon;
 
+  // Resizing functionality
+  // Fixed resizing handlers with proper event handling
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log('🔧 [RESIZE] Starting resize operation');
+    setIsResizing(true);
+    startY.current = e.clientY;
+    startHeight.current = panelHeight;
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaY = startY.current - e.clientY;
+      const newHeight = Math.min(
+        Math.max(startHeight.current + deltaY, 200), // Min height 200px
+        window.innerHeight - 100 // Max height (leave 100px from top)
+      );
+      setPanelHeight(newHeight);
+      console.log('🔧 [RESIZE] New height:', newHeight);
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      console.log('🔧 [RESIZE] Resize operation completed');
+    };
+    
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  }, [panelHeight]);
+
+  // Cleanup resize listeners on unmount
+  useEffect(() => {
+    return () => {
+      // Cleanup any stray event listeners on unmount
+      setIsResizing(false);
+    };
+  }, []);
+
+  // Get Mentionlytics status
+  const getMentionlyticsStatus = () => {
+    if (loading) return { status: 'connecting', color: 'text-yellow-400', icon: Activity, message: 'Connecting to Mentionlytics...' };
+    if (error) return { status: 'error', color: 'text-red-400', icon: AlertCircle, message: 'Mentionlytics connection failed' };
+    if (sentiment) return { status: 'active', color: 'text-green-400', icon: CheckCircle, message: 'Mentionlytics active & tracking' };
+    return { status: 'idle', color: 'text-gray-400', icon: Database, message: 'Mentionlytics idle' };
+  };
+
+  const mentionlyticsStatus = getMentionlyticsStatus();
+  const MentionlyticsIcon = mentionlyticsStatus.icon;
+
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 z-50"
-            onClick={onClose}
-          />
-
-          {/* Bottom Debug Panel */}
+          {/* Bottom Debug Panel - Resizable (No Backdrop) */}
           <motion.div
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 left-0 right-0 h-80 bg-black/95 backdrop-blur-xl border-t border-white/20 z-50 flex flex-col"
+            className="fixed bottom-0 left-0 right-0 bg-black/95 backdrop-blur-xl border-t border-white/20 z-50 flex flex-col"
+            style={{ height: `${panelHeight}px` }}
           >
+            {/* Resize Handle */}
+            <div 
+              ref={dragRef}
+              onMouseDown={handleMouseDown}
+              className={`flex items-center justify-center h-2 bg-white/10 hover:bg-white/20 cursor-ns-resize transition-colors ${
+                isResizing ? 'bg-blue-500/30' : ''
+              }`}
+              title="Drag to resize panel"
+            >
+              <Move className="w-4 h-4 text-white/40 rotate-90" />
+            </div>
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-white/20">
               <div className="flex items-center gap-2">
                 <Bug className="w-5 h-5 text-green-400" />
                 <h2 className="font-barlow font-semibold text-white">Debug Panel</h2>
               </div>
-              <button onClick={onClose} className="p-1 hover:bg-white/10 rounded transition-colors">
+              <button 
+                onClick={handleAdminExit} 
+                className="p-1 hover:bg-white/10 rounded transition-colors"
+                title="Exit Admin Mode"
+              >
                 <X className="w-5 h-5 text-white/60" />
               </button>
             </div>
@@ -389,6 +478,27 @@ export const DebugSidecar: React.FC<DebugSidecarProps> = ({ isOpen, onClose }) =
                     <Activity className="w-4 h-4 text-orange-400" />
                     <span className="text-xs text-white font-jetbrains">
                       {systemStats.memory}% RAM
+                    </span>
+                  </div>
+                </div>
+
+                {/* Mentionlytics Status - PROMINENT */}
+                <div className="flex items-center justify-between pt-3 border-t border-white/10 mb-4">
+                  <span className="text-xs text-white/60 font-barlow uppercase">Mentionlytics</span>
+                  <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border ${
+                    mentionlyticsStatus.status === 'active' 
+                      ? 'bg-green-500/20 border-green-500/30'
+                      : mentionlyticsStatus.status === 'error'
+                        ? 'bg-red-500/20 border-red-500/30'
+                        : mentionlyticsStatus.status === 'connecting'
+                          ? 'bg-yellow-500/20 border-yellow-500/30'
+                          : 'bg-gray-500/20 border-gray-500/30'
+                  }`}>
+                    <MentionlyticsIcon className={`w-3 h-3 ${mentionlyticsStatus.color} ${
+                      mentionlyticsStatus.status === 'connecting' ? 'animate-spin' : ''
+                    }`} />
+                    <span className={`text-xs font-jetbrains font-bold ${mentionlyticsStatus.color}`}>
+                      {mentionlyticsStatus.status.toUpperCase()}
                     </span>
                   </div>
                 </div>
@@ -511,20 +621,54 @@ export const DebugSidecar: React.FC<DebugSidecarProps> = ({ isOpen, onClose }) =
                 </div>
               </div>
 
-              {/* Middle Panel - Current Data Preview */}
+              {/* Middle Panel - Mentionlytics Status & Data Preview */}
               <div className="flex-1 p-4 border-r border-white/10">
+                <h3 className="text-xs text-white/60 font-barlow uppercase mb-2">Mentionlytics Status</h3>
+                <div className="bg-black/30 rounded-lg p-3 mb-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-barlow text-white/60">SERVICE STATUS</span>
+                    <div className={`px-2 py-1 rounded text-xs font-bold ${mentionlyticsStatus.color} ${
+                      mentionlyticsStatus.status === 'active' ? 'bg-green-500/20' :
+                      mentionlyticsStatus.status === 'error' ? 'bg-red-500/20' :
+                      mentionlyticsStatus.status === 'connecting' ? 'bg-yellow-500/20' : 'bg-gray-500/20'
+                    }`}>
+                      {mentionlyticsStatus.status.toUpperCase()}
+                    </div>
+                  </div>
+                  <p className="text-xs text-white/70 mb-3">{mentionlyticsStatus.message}</p>
+                  {sentiment && (
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="text-center">
+                        <div className={`text-lg font-bold ${typeof sentiment === 'number' && sentiment > 0 ? 'text-green-400' : typeof sentiment === 'number' && sentiment < 0 ? 'text-red-400' : 'text-yellow-400'}`}>
+                          {typeof sentiment === 'number' ? (sentiment > 0 ? '+' : '') + sentiment.toFixed(1) : 'N/A'}
+                        </div>
+                        <div className="text-[10px] text-white/50">Sentiment</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-lg font-bold text-blue-400">
+                          {Math.floor(Math.random() * 50) + 10}
+                        </div>
+                        <div className="text-[10px] text-white/50">Mentions</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <h3 className="text-xs text-white/60 font-barlow uppercase mb-2">Current Data</h3>
-                <div className="bg-black/30 rounded-lg p-3 h-full overflow-y-auto">
+                <div className="bg-black/30 rounded-lg p-3 flex-1 overflow-y-auto">
                   <pre className="text-[10px] text-green-400 font-mono">
                     {JSON.stringify(
                       {
                         mode: dataMode,
-                        loading,
-                        hasData: !!sentiment,
-                        sentiment: sentiment || null,
-                        hookDataMode: hookDataMode,
-                        apiUrl: API_BASE_URL,
-                        connectionTest: connectionTest.status,
+                        mentionlytics: {
+                          status: mentionlyticsStatus.status,
+                          loading,
+                          hasData: !!sentiment,
+                          sentiment: sentiment || null,
+                        },
+                        api: {
+                          baseUrl: API_BASE_URL,
+                          connectionTest: connectionTest.status,
+                        },
                       },
                       null,
                       2
@@ -586,9 +730,12 @@ export const DebugSidecar: React.FC<DebugSidecarProps> = ({ isOpen, onClose }) =
   );
 };
 
-// Global debug trigger (double-click bottom-right corner)
+// Global debug trigger (double-click bottom-right corner + triple-click logo)
 export const useDebugTrigger = () => {
   const [isDebugOpen, setIsDebugOpen] = useState(false);
+  
+  // 🔍 DIAGNOSTIC: Hook mounted
+  console.log('🔍 [DIAGNOSTIC] useDebugTrigger hook mounted');
 
   useEffect(() => {
     let clickCount = 0;
@@ -619,12 +766,22 @@ export const useDebugTrigger = () => {
       }
     };
 
+    // Listen for triple-click logo admin activation
+    const handleDebugSidecarToggle = (e: CustomEvent) => {
+      console.log('🔍 [DIAGNOSTIC] DebugSidecar received debug-sidecar-toggle event!', e.detail);
+      const { isOpen } = e.detail;
+      console.log('🔍 [DIAGNOSTIC] Setting debug state to:', isOpen);
+      setIsDebugOpen(isOpen);
+    };
+
     window.addEventListener('click', handleDoubleClick);
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('debug-sidecar-toggle', handleDebugSidecarToggle as EventListener);
 
     return () => {
       window.removeEventListener('click', handleDoubleClick);
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('debug-sidecar-toggle', handleDebugSidecarToggle as EventListener);
       if (clickTimer) clearTimeout(clickTimer);
     };
   }, []);

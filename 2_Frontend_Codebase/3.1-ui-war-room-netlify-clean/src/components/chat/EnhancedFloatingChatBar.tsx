@@ -7,8 +7,7 @@ import type React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import { Send, Mic, Paperclip, MessageCircle, X, Clock, Bot } from 'lucide-react';
 import { perfectCardShadow } from '../../lib/utils';
-import { useSendChatMessageMutation } from '../../services/openaiApi';
-import type { ChatMessage as OpenAIChatMessage } from '../../services/openaiApi';
+// Removed OpenAI direct imports - now using backend endpoint
 
 interface ChatMessage {
   id: string;
@@ -46,8 +45,8 @@ const EnhancedFloatingChatBar: React.FC<EnhancedFloatingChatBarProps> = ({
   const expandedRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // OpenAI chat mutation
-  const [sendChatMessage, { isLoading: isAIThinking }] = useSendChatMessageMutation();
+  // AI thinking state
+  const [isAIThinking, setIsAIThinking] = useState(false);
 
   // Mock chat history data (keep for chat history functionality)
   const [chatHistory] = useState<ChatSession[]>([
@@ -137,16 +136,57 @@ const EnhancedFloatingChatBar: React.FC<EnhancedFloatingChatBarProps> = ({
       setMessage('');
 
       try {
-        // Send message to OpenAI
-        const aiResponse = await sendChatMessage({
+        // Set AI thinking state
+        setIsAIThinking(true);
+        
+        // COMPREHENSIVE LOGGING: Track everything
+        const backendUrl = import.meta.env.VITE_API_URL || 'MISSING_API_URL';
+        const fullUrl = `${backendUrl}/api/v1/intelligence/chat/message`;
+        
+        console.log('🔍 [CHAT ANALYSIS] ===================');
+        console.log('🔍 [CHAT ANALYSIS] Backend URL:', backendUrl);
+        console.log('🔍 [CHAT ANALYSIS] Full URL:', fullUrl);
+        console.log('🔍 [CHAT ANALYSIS] User Message:', userMessageText);
+        console.log('🔍 [CHAT ANALYSIS] Request timestamp:', new Date().toISOString());
+        
+        const requestBody = {
           message: userMessageText,
           context: context || window.location.pathname
-        }).unwrap();
+        };
+        console.log('🔍 [CHAT ANALYSIS] Request body:', requestBody);
+        
+        // Send message to backend
+        const response = await fetch(fullUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody)
+        });
 
-        // Add AI response
+        console.log('🔍 [CHAT ANALYSIS] Response status:', response.status);
+        console.log('🔍 [CHAT ANALYSIS] Response headers:', Object.fromEntries(response.headers.entries()));
+        console.log('🔍 [CHAT ANALYSIS] Response URL:', response.url);
+
+        if (!response.ok) {
+          console.error('🔍 [CHAT ANALYSIS] Response not OK:', response.status, response.statusText);
+          throw new Error(`Chat request failed: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log('🔍 [CHAT ANALYSIS] Raw response data:', data);
+        console.log('🔍 [CHAT ANALYSIS] Response type:', typeof data);
+        console.log('🔍 [CHAT ANALYSIS] Response keys:', Object.keys(data));
+        console.log('🔍 [CHAT ANALYSIS] data.response:', data.response);
+        console.log('🔍 [CHAT ANALYSIS] Response timestamp:', new Date().toISOString());
+        
+        // VISUAL ALERT: Show backend and response in chat
+        const debugResponse = `🔍 BACKEND: ${backendUrl}\n📝 RESPONSE: ${data.response}\n⏰ TIME: ${new Date().toLocaleTimeString()}`;
+        
+        // Add AI response with debug info
         const aiMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
-          text: aiResponse,
+          text: debugResponse,
           isUser: false,
           timestamp: new Date(),
         };
@@ -163,6 +203,9 @@ const EnhancedFloatingChatBar: React.FC<EnhancedFloatingChatBarProps> = ({
         };
         setCurrentMessages((prev) => [...prev, errorMessage]);
         console.error('Chat error:', error);
+      } finally {
+        // Clear AI thinking state
+        setIsAIThinking(false);
       }
     }
   };
@@ -308,8 +351,8 @@ const EnhancedFloatingChatBar: React.FC<EnhancedFloatingChatBarProps> = ({
                     {activeChat ? activeChat.title : 'War Room AI Assistant'}
                   </h3>
                   {!activeChat && (
-                    <span className="text-xs text-gray-500 bg-green-100 px-2 py-1 rounded">
-                      Live AI • OpenAI GPT-4
+                    <span className="text-xs text-green-700 bg-green-100 px-2 py-1 rounded">
+                      🟢 LIVE AI • Real OpenAI GPT-4
                     </span>
                   )}
                 </div>
